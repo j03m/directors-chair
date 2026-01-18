@@ -1,0 +1,13 @@
+.env
+venv/
+__pycache__/
+*.pyc
+.DS_Store
+*.zip
+assets/loras/
+assets/training_data/
+*.safetensors
+*.mp4
+*.jpg
+*.jpeg
+*.png
