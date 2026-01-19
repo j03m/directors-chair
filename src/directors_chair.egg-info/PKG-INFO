@@ -1,0 +1,20 @@
+Metadata-Version: 2.4
+Name: directors-chair
+Version: 0.1.0
+Summary: AI Movie Director Tools
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: fal-client
+Requires-Dist: python-dotenv
+Requires-Dist: requests
+Requires-Dist: tqdm
+Requires-Dist: diffusers
+Requires-Dist: transformers
+Requires-Dist: accelerate
+Requires-Dist: sentencepiece
+Requires-Dist: protobuf
+Requires-Dist: huggingface_hub
+Requires-Dist: torch
+
+# directors-chair
+I hated comfyui so much. I needed a console app

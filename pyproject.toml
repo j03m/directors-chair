@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "directors-chair"
+version = "0.1.0"
+description = "AI Movie Director Tools"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fal-client",
+    "python-dotenv",
+    "requests",
+    "tqdm",
+    "diffusers",
+    "transformers",
+    "accelerate",
+    "sentencepiece",
+    "protobuf",
+    "huggingface_hub",
+    "torch"
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
