@@ -5,7 +5,24 @@
         "training_data": "./assets/training_data"
     },
     "model_ids": {
-        "flux-dev": "black-forest-labs/FLUX.1-dev",
-        "flux-schnell": "black-forest-labs/FLUX.1-schnell"
+        "zimage-turbo": "mflux/z-image-turbo"
+    },
+    "system": {
+        "default_generator": "zimage-turbo",
+        "use_cpu_offload": true
+    },
+    "themes": {
+        "viking_gorilla": {
+            "prompt_file": "prompts/viking.gorilla.txt",
+            "trigger": "viking",
+            "count": 20,
+            "generator": "zimage-turbo",
+            "loras": [],
+            "parameters": {
+                "steps": 25,
+                "guidance": 3.5,
+                "aspect_ratio": "1:1"
+            }
+        }
     }
 }

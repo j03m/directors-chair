@@ -9,3 +9,6 @@ sentencepiece
 protobuf
 huggingface_hub
 torch
+rich
+questionary
+mflux
