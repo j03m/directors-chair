@@ -3,7 +3,7 @@ import shutil
 import time
 import questionary
 from directors_chair.config.loader import load_config, save_config
-from directors_chair.model_manager import download_model
+from directors_chair.assets import download_model
 from directors_chair.cli.utils import console
 
 def manage_models():

@@ -1,5 +1,5 @@
 from typing import Dict, Optional
-from directors_chair.generators import BaseGenerator, ZImageTurboGenerator
+from .engine import BaseGenerator, ZImageTurboGenerator
 
 class GeneratorFactory:
     _instances: Dict[str, BaseGenerator] = {}

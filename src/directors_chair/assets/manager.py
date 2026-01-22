@@ -14,9 +14,7 @@ def download_model(repo_id: str, local_dir: str):
     try:
         snapshot_download(
             repo_id=repo_id,
-            local_dir=local_dir,
-            local_dir_use_symlinks=False, # Copy files so it's self-contained
-            resume_download=True
+            local_dir=local_dir
         )
         console.print(f"[bold green]✓ Successfully downloaded {repo_id}[/bold green]")
         return True

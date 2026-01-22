@@ -2,7 +2,7 @@ import os
 import questionary
 from rich.panel import Panel
 from directors_chair.config.loader import load_config, save_config, get_prompt
-from directors_chair.factory import get_generator
+from directors_chair.generation import get_generator
 from directors_chair.cli.utils import console
 
 def generate_images():
