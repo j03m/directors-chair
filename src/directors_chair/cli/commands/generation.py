@@ -1,4 +1,6 @@
 import os
+import random
+import json
 import questionary
 from rich.panel import Panel
 from directors_chair.config.loader import load_config, save_config, get_prompt
@@ -90,8 +92,29 @@ def generate_images():
          generator = get_generator(generator_choice)
          
          for i in range(count):
-            image = generator.generate(prompt=full_prompt, steps=steps, seed=42)
-            image.save(os.path.join(output_dir, f"{name}-{i}.png"))
+            current_seed = random.randint(0, 2**32 - 1)
+            image = generator.generate(prompt=full_prompt, steps=steps, seed=current_seed)
+            
+            base_filename = os.path.join(output_dir, f"{name}-{i}")
+            
+            # Save Image
+            image.save(f"{base_filename}.png")
+            
+            # Save Caption (Required for Training)
+            with open(f"{base_filename}.txt", "w") as f:
+                f.write(full_prompt)
+                
+            # Save Metadata (For Reproducibility)
+            metadata = {
+                "prompt": full_prompt,
+                "seed": current_seed,
+                "steps": steps,
+                "guidance": guidance,
+                "generator": generator_choice,
+                "model_path": getattr(generator, "model_path", "unknown") 
+            }
+            with open(f"{base_filename}.json", "w") as f:
+                json.dump(metadata, f, indent=4)
 
          console.print("[bold green]Generation Complete![/bold green]")
          console.print(f"Images saved to: {output_dir}")
