@@ -10,7 +10,7 @@ class BaseGenerator(ABC):
         pass
 
 class ZImageTurboGenerator(BaseGenerator):
-    def __init__(self, local_model_path: str = None):
+    def __init__(self, local_model_path: str = None, lora_paths: list[str] = None):
         if local_model_path:
              model_path = local_model_path
         else:
@@ -26,7 +26,8 @@ class ZImageTurboGenerator(BaseGenerator):
         
         self.model = ZImageTurbo(
             quantize=8,
-            model_path=model_path
+            model_path=model_path,
+            lora_paths=lora_paths
         )
 
     def generate(self, prompt: str, steps: int, seed: int):

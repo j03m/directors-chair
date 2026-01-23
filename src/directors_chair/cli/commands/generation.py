@@ -24,6 +24,7 @@ def generate_images():
         return
         
     name, trigger, prompt_text, count, generator_choice, steps, guidance = "", "", "", 1, default_generator, 25, 3.5
+    selected_lora_path = None
     
     if choice == "Create New Theme":
         name = questionary.text("Character/Subject Name (e.g. 'gorilla'):").ask()
@@ -36,6 +37,15 @@ def generate_images():
         steps = int(questionary.text("Steps:", default="25").ask())
         guidance = float(questionary.text("Guidance Scale:", default="3.5").ask())
         
+        # LoRA Selection
+        available_loras = config.get("loras", {})
+        if available_loras:
+            lora_choices = ["None"] + list(available_loras.keys())
+            lora_choice = questionary.select("Apply LoRA?", choices=lora_choices).ask()
+            if lora_choice and lora_choice != "None":
+                selected_lora_path = available_loras[lora_choice]["path"]
+                console.print(f"[cyan]Using LoRA: {lora_choice}[/cyan]")
+
         if questionary.confirm("Save this theme?").ask():
             theme_key = f"{trigger}_{name}".replace(" ", "_")
             config["themes"][theme_key] = {
@@ -43,6 +53,7 @@ def generate_images():
                 "prompt_file": prompt_text,
                 "count": count,
                 "generator": generator_choice,
+                "lora": selected_lora_path, # Save LoRA choice to theme
                 "parameters": {
                     "steps": steps,
                     "guidance": guidance
@@ -59,12 +70,15 @@ def generate_images():
         prompt_text = get_prompt(theme["prompt_file"])
         count = theme.get("count", 20)
         generator_choice = theme.get("generator", default_generator)
+        selected_lora_path = theme.get("lora", None)
         
         params = theme.get("parameters", {})
         steps = params.get("steps", 25)
         guidance = params.get("guidance", 3.5)
         
         console.print(f"Generator: {generator_choice} | Steps: {steps} | Guidance: {guidance}")
+        if selected_lora_path:
+            console.print(f"LoRA: {selected_lora_path}")
         
         # Display the full prompt construction so the user understands
         full_prompt_preview = f"{trigger} {name}, {prompt_text}"
@@ -89,7 +103,8 @@ def generate_images():
          full_prompt = f"{trigger} {name}, {prompt_text}"
 
          # Instantiate Generator
-         generator = get_generator(generator_choice)
+         lora_paths_arg = [selected_lora_path] if selected_lora_path else None
+         generator = get_generator(generator_choice, lora_paths=lora_paths_arg)
          
          for i in range(count):
             current_seed = random.randint(0, 2**32 - 1)

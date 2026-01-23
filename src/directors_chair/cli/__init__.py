@@ -4,6 +4,7 @@ from directors_chair.cli.utils import print_header, console
 from directors_chair.cli.commands.system import system_check
 from directors_chair.cli.commands.models import manage_models
 from directors_chair.cli.commands.generation import generate_images
+from directors_chair.cli.commands.training import train_lora_command
 
 def main_menu():
     while True:
@@ -15,7 +16,8 @@ def main_menu():
                 "1. System Setup & Health Check",
                 "2. Manage Models",
                 "3. Generate Training Images",
-                "4. Exit"
+                "4. Train LoRA (Create Character)",
+                "5. Exit"
             ]
         ).ask()
         
@@ -29,5 +31,7 @@ def main_menu():
         elif "3." in choice:
             generate_images()
         elif "4." in choice:
+            train_lora_command()
+        elif "5." in choice:
             console.print("Goodbye!")
             sys.exit(0)
