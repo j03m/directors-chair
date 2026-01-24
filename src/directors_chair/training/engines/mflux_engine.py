@@ -3,6 +3,7 @@ import os
 import subprocess
 import shutil
 from typing import Dict, Any
+from mflux.models.common.config.model_config import ModelConfig
 from rich.panel import Panel
 from .base import BaseTrainingEngine
 from directors_chair.cli.utils import console
@@ -25,10 +26,13 @@ class MFluxEngine(BaseTrainingEngine):
         # Ensure output dir exists
         os.makedirs(output_dir, exist_ok=True)
 
+        # Resolve correct model ID
+        model_id = ModelConfig.z_image_turbo().model_name
+
         # 2. Construct the MFlux Config
         # This structure mirrors the JSON schema expected by mflux-train
         config = {
-            "model": "mflux/z-image-turbo", # Using the turbo model for speed/memory
+            "model": model_id, # Using the turbo model for speed/memory
             "seed": 42,
             "steps": 1000, # Default max, we control via 'training_loop' usually, but mflux might differ.
                            # Actually, mflux config usually uses 'training_loop' or top level keys.
@@ -82,7 +86,7 @@ class MFluxEngine(BaseTrainingEngine):
         cmd = [
             "venv/bin/mflux-train",
             "--train-config", temp_config_path,
-            "--model", "mflux/z-image-turbo",
+            "--model", model_id,
             "--quantize", "8"
         ]
 
