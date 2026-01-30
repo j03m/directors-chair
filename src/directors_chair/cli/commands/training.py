@@ -1,5 +1,6 @@
 import os
 import questionary
+from rich.panel import Panel
 from directors_chair.config.loader import load_config, save_config
 from directors_chair.training.manager import get_training_manager
 from directors_chair.cli.utils import console
@@ -50,6 +51,31 @@ def train_lora_command():
 
     console.print(f"[bold]Configuring LoRA for {dataset_choice}[/bold]")
     
+    # Model Selection
+    model_ids = config.get("model_ids", {})
+    default_model_key = config.get("training", {}).get("default_base_model", "flux-schnell")
+    
+    model_choices = list(model_ids.keys())
+    selected_model_key = questionary.select(
+        "Select Base Model for Training:",
+        choices=model_choices,
+        default=default_model_key
+    ).ask()
+    
+    selected_model_id = model_ids[selected_model_key]
+    
+    # Determine base model type (schnell vs dev vs z-image-turbo)
+    # Heuristic: check string content or use a manual mapping if needed.
+    if "schnell" in selected_model_key or "schnell" in selected_model_id:
+        base_model_type = "schnell"
+    elif "dev" in selected_model_key or "dev" in selected_model_id:
+        base_model_type = "dev"
+    elif "z-image-turbo" in selected_model_key:
+        base_model_type = "z-image-turbo"
+    else:
+        # Fallback or ask user? Let's default to schnell for safety if unsure, or ask.
+        base_model_type = "schnell" 
+
     lora_name = questionary.text("LoRA Name (e.g. 'viking_gorilla_v1'):", default=dataset_choice).ask()
     trigger_word = questionary.text("Trigger Word:", default=default_trigger).ask()
     steps = int(questionary.text("Training Steps/Epochs:", default="1000").ask())
@@ -57,6 +83,7 @@ def train_lora_command():
 
     # 3. Confirm
     console.print(f"\n[bold]Plan:[/bold] Train LoRA '{lora_name}' on '{dataset_choice}'")
+    console.print(f"• Base Model: {selected_model_key} ({base_model_type})")
     console.print(f"• Trigger: {trigger_word}")
     console.print(f"• Steps: {steps}")
     console.print(f"• Rank: {rank}")
@@ -67,6 +94,8 @@ def train_lora_command():
             dataset_path=dataset_path,
             output_name=lora_name,
             trigger_word=trigger_word,
+            model_id=selected_model_id,
+            base_model_type=base_model_type,
             steps=steps,
             rank=rank
         )

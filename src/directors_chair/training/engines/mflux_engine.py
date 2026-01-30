@@ -7,6 +7,7 @@ from mflux.models.common.config.model_config import ModelConfig
 from rich.panel import Panel
 from .base import BaseTrainingEngine
 from directors_chair.cli.utils import console
+from directors_chair.config.loader import load_config
 
 class MFluxEngine(BaseTrainingEngine):
     def train(self, 
@@ -14,7 +15,12 @@ class MFluxEngine(BaseTrainingEngine):
               output_name: str, 
               trigger_word: str, 
               steps: int, 
-              rank: int) -> bool:
+              rank: int,
+              model_id: str,
+              base_model_type: str) -> bool:
+        
+        # 0. Ensure Absolute Paths
+        dataset_path = os.path.abspath(dataset_path)
         
         # 1. Setup Paths
         # We need a temporary directory for the config and to tell mflux where to save
@@ -26,19 +32,32 @@ class MFluxEngine(BaseTrainingEngine):
         # Ensure output dir exists
         os.makedirs(output_dir, exist_ok=True)
 
-        # Resolve correct model ID
-        model_id = ModelConfig.z_image_turbo().model_name
+        # Resolve Model Path (Local vs HF Cache)
+        # We need to map the passed 'model_id' (which is a repo ID) to our local key if possible.
+        # This is tricky because we pass the ID, not the key.
+        # Let's check config to find the key associated with this ID.
+        app_config = load_config()
+        final_model_path = model_id # Default to HF Repo ID
+        
+        for key, val in app_config.get("model_ids", {}).items():
+            if val == model_id:
+                # Found the key (e.g. "flux-schnell")
+                local_candidate = os.path.join(app_config["directories"]["models"], key)
+                if os.path.exists(local_candidate) and len(os.listdir(local_candidate)) > 0:
+                    final_model_path = os.path.abspath(local_candidate)
+                    console.print(f"[cyan]Using local model at: {final_model_path}[/cyan]")
+                break
 
         # 2. Construct the MFlux Config
         # This structure mirrors the JSON schema expected by mflux-train
         config = {
-            "model": model_id, # Using the turbo model for speed/memory
+            "model": final_model_path,
             "seed": 42,
             "steps": 1000, # Default max, we control via 'training_loop' usually, but mflux might differ.
                            # Actually, mflux config usually uses 'training_loop' or top level keys.
                            # Based on search results, let's try a standard structure.
             "guidance": 3.5,
-            "quantize": 8, # 8-bit quantization for training stability on M3
+            "quantize": 4, # 4-bit quantization for M3 memory constraints
             "width": 512,  # Standard flux resolution base
             "height": 512,
             "training_loop": {
@@ -86,8 +105,10 @@ class MFluxEngine(BaseTrainingEngine):
         cmd = [
             "venv/bin/mflux-train",
             "--train-config", temp_config_path,
-            "--model", model_id,
-            "--quantize", "8"
+            "--model", final_model_path,
+            "--base-model", base_model_type,
+            "--quantize", "4",
+            "--low-ram"
         ]
 
         console.print(Panel(f"[bold]Starting MFlux Training[/bold]\nTarget: {output_name}\nRank: {rank}\nSteps/Epochs: {steps}", border_style="green"))

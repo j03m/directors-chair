@@ -5,10 +5,14 @@
         "training_data": "./assets/training_data"
     },
     "model_ids": {
-        "zimage-turbo": "mflux/z-image-turbo"
+        "zimage-turbo": "mflux/z-image-turbo",
+        "flux-schnell": "black-forest-labs/FLUX.1-schnell"
+    },
+    "training": {
+        "default_base_model": "flux-schnell"
     },
     "system": {
-        "default_generator": "zimage-turbo",
+        "default_generator": "flux-schnell",
         "use_cpu_offload": true
     },
     "themes": {

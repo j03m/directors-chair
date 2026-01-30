@@ -11,6 +11,8 @@ class TrainingManager:
                    dataset_path: str, 
                    output_name: str, 
                    trigger_word: str, 
+                   model_id: str,
+                   base_model_type: str,
                    steps: int = 1000, 
                    rank: int = 16) -> bool:
         
@@ -19,7 +21,9 @@ class TrainingManager:
             output_name=output_name,
             trigger_word=trigger_word,
             steps=steps,
-            rank=rank
+            rank=rank,
+            model_id=model_id,
+            base_model_type=base_model_type
         )
 
 # Singleton helper

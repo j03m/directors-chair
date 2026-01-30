@@ -8,7 +8,9 @@ class BaseTrainingEngine(ABC):
               output_name: str, 
               trigger_word: str, 
               steps: int, 
-              rank: int) -> bool:
+              rank: int,
+              model_id: str,
+              base_model_type: str) -> bool:
         """
         Executes the training process.
         
@@ -18,6 +20,8 @@ class BaseTrainingEngine(ABC):
             trigger_word: The unique token to learn.
             steps: Number of training steps.
             rank: LoRA rank (size/complexity).
+            model_id: Hugging Face Repo ID (e.g., "black-forest-labs/FLUX.1-schnell")
+            base_model_type: mflux base model type (e.g., "schnell", "dev", "z-image-turbo")
             
         Returns:
             True if successful, False otherwise.
