@@ -1,9 +1,9 @@
+import glob
 import json
 import os
 import subprocess
-import shutil
+import zipfile
 from typing import Dict, Any
-from mflux.models.common.config.model_config import ModelConfig
 from rich.panel import Panel
 from .base import BaseTrainingEngine
 from directors_chair.cli.utils import console
@@ -53,9 +53,7 @@ class MFluxEngine(BaseTrainingEngine):
         config = {
             "model": final_model_path,
             "seed": 42,
-            "steps": 1000, # Default max, we control via 'training_loop' usually, but mflux might differ.
-                           # Actually, mflux config usually uses 'training_loop' or top level keys.
-                           # Based on search results, let's try a standard structure.
+            "steps": 20, # Denoising steps for validation image generation (not training)
             "guidance": 3.5,
             "quantize": 4, # 4-bit quantization for M3 memory constraints
             "width": 512,  # Standard flux resolution base
@@ -68,21 +66,26 @@ class MFluxEngine(BaseTrainingEngine):
             },
             "optimizer": {
                 "name": "AdamW",
-                "learning_rate": 4e-4 # Standard for LoRA
+                "learning_rate": 1e-4
             },
             "save": {
                 "output_path": output_dir,
-                "checkpoint_frequency": 1000, # Don't spam checkpoints
+                "checkpoint_frequency": max(steps // 4, 1),
                 "adapter_path": os.path.join(output_dir, f"{output_name}.safetensors")
+            },
+            "instrumentation": {
+                "plot_frequency": 10,
+                "generate_image_frequency": max(steps // 5, 1),
+                "validation_prompt": f"{trigger_word} {output_name}"
             },
             "lora_layers": {
                 "single_transformer_blocks": {
                     "block_range": {
                         "start": 0,
-                        "end": 38 # Full range
+                        "end": 38
                     },
                     "layer_types": [
-                        "proj_out", "proj_mlp", "attn.to_q", "attn.to_k", "attn.to_v"
+                        "attn.to_q", "attn.to_k", "attn.to_v"
                     ],
                     "lora_rank": rank
                 }
@@ -111,21 +114,38 @@ class MFluxEngine(BaseTrainingEngine):
             "--low-ram"
         ]
 
-        console.print(Panel(f"[bold]Starting MFlux Training[/bold]\nTarget: {output_name}\nRank: {rank}\nSteps/Epochs: {steps}", border_style="green"))
+        console.print(Panel(
+            f"[bold]Starting MFlux Training[/bold]\n"
+            f"Target: {output_name}\n"
+            f"Rank: {rank}\n"
+            f"Steps/Epochs: {steps}\n"
+            f"Checkpoints every {max(steps // 4, 1)} epochs\n"
+            f"Validation images every {max(steps // 5, 1)} epochs\n"
+            f"Loss plot: {output_dir}/loss.png",
+            border_style="green"
+        ))
         
         try:
-            # Run properly, streaming output to console would be ideal, 
-            # but for now let's just run it and show the result.
-            # We use check_call to raise error if it fails.
+            console.print("[cyan]mflux will show two progress bars:[/cyan]")
+            console.print("[cyan]  1. Encoding dataset[/cyan]")
+            console.print("[cyan]  2. Training epochs[/cyan]")
+            console.print("[cyan]After the bars complete, saving checkpoints + validation images may take a minute.[/cyan]\n")
             subprocess.check_call(cmd)
-            
-            console.print(f"[bold green]✓ Training Complete![/bold green]")
-            console.print(f"LoRA saved to: {config['save']['adapter_path']}")
-            
+
+            # mflux saves checkpoints as zips in a timestamped subdirectory.
+            # Find the final checkpoint and extract the adapter safetensors.
+            adapter_path = self._extract_adapter(output_dir, output_name, steps)
+
+            console.print(f"\n[bold green]✓ Training Complete![/bold green]")
+            if adapter_path:
+                console.print(f"LoRA saved to: {adapter_path}")
+            else:
+                console.print("[yellow]Warning: Could not find adapter in checkpoints. Check output directory manually.[/yellow]")
+
             # Cleanup config
             os.remove(temp_config_path)
-            return True
-            
+            return adapter_path is not None
+
         except subprocess.CalledProcessError as e:
             console.print(f"[bold red]✗ Training Failed[/bold red]")
             console.print(f"Error code: {e.returncode}")
@@ -133,6 +153,42 @@ class MFluxEngine(BaseTrainingEngine):
         except Exception as e:
              console.print(f"[bold red]✗ Unexpected Error: {e}[/bold red]")
              return False
+
+    def _extract_adapter(self, output_dir: str, output_name: str, steps: int) -> str | None:
+        """Find the final checkpoint zip mflux created and extract the adapter safetensors."""
+        # mflux creates a timestamped dir like assets/loras_YYYYMMDD_HHMMSS/_checkpoints/
+        parent = os.path.dirname(output_dir)
+        base = os.path.basename(output_dir)
+        # Find timestamped dirs matching the base name
+        candidates = sorted(glob.glob(os.path.join(parent, f"{base}_*", "_checkpoints")))
+        if not candidates:
+            # Also check the exact output_dir in case mflux used it directly
+            exact = os.path.join(output_dir, "_checkpoints")
+            if os.path.isdir(exact):
+                candidates = [exact]
+
+        if not candidates:
+            return None
+
+        checkpoint_dir = candidates[-1]  # Most recent
+        # Find the highest-numbered checkpoint zip
+        zips = sorted(glob.glob(os.path.join(checkpoint_dir, "*_checkpoint.zip")))
+        if not zips:
+            return None
+
+        final_zip = zips[-1]
+        console.print(f"[cyan]Extracting adapter from {os.path.basename(final_zip)}...[/cyan]")
+
+        adapter_dest = os.path.join(output_dir, f"{output_name}.safetensors")
+        with zipfile.ZipFile(final_zip, 'r') as zf:
+            # Find the adapter file inside the zip
+            adapter_names = [n for n in zf.namelist() if n.endswith("_adapter.safetensors")]
+            if not adapter_names:
+                return None
+            with zf.open(adapter_names[0]) as src, open(adapter_dest, 'wb') as dst:
+                dst.write(src.read())
+
+        return adapter_dest
 
     def _generate_image_list(self, dataset_path: str, trigger_word: str):
         """Scans the folder and creates the list of image/prompt pairs."""

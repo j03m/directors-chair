@@ -28,5 +28,12 @@
                 "aspect_ratio": "1:1"
             }
         }
+    },
+    "loras": {
+        "viking_gorilla": {
+            "path": "assets/loras/viking_gorilla.safetensors",
+            "trigger": "viking",
+            "base_model": "z-image-turbo"
+        }
     }
 }

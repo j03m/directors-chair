@@ -79,7 +79,7 @@ def train_lora_command():
     lora_name = questionary.text("LoRA Name (e.g. 'viking_gorilla_v1'):", default=dataset_choice).ask()
     trigger_word = questionary.text("Trigger Word:", default=default_trigger).ask()
     steps = int(questionary.text("Training Steps/Epochs:", default="1000").ask())
-    rank = int(questionary.text("LoRA Rank (Complexity):", default="16").ask())
+    rank = int(questionary.text("LoRA Rank (Complexity):", default="4").ask())
 
     # 3. Confirm
     console.print(f"\n[bold]Plan:[/bold] Train LoRA '{lora_name}' on '{dataset_choice}'")
