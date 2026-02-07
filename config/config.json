@@ -2,7 +2,9 @@
     "directories": {
         "models": "./models",
         "output": "./assets/generated",
-        "training_data": "./assets/training_data"
+        "training_data": "./assets/training_data",
+        "storyboards": "./storyboards",
+        "videos": "./assets/generated/videos"
     },
     "model_ids": {
         "zimage-turbo": "mflux/z-image-turbo",
@@ -10,6 +12,12 @@
     },
     "training": {
         "default_base_model": "flux-schnell"
+    },
+    "video": {
+        "default_engine": "fal-wan",
+        "default_resolution": "480p",
+        "default_num_frames": 81,
+        "default_fps": 16
     },
     "system": {
         "default_generator": "flux-schnell",
