@@ -6,7 +6,6 @@ import zipfile
 from typing import Dict, Any
 from rich.panel import Panel
 from .base import BaseTrainingEngine
-from directors_chair.cli.utils import console
 from directors_chair.config.loader import load_config
 
 class MFluxEngine(BaseTrainingEngine):
@@ -19,6 +18,8 @@ class MFluxEngine(BaseTrainingEngine):
               model_id: str,
               base_model_type: str) -> bool:
         
+        from directors_chair.cli.utils import console
+
         # 0. Ensure Absolute Paths
         dataset_path = os.path.abspath(dataset_path)
         

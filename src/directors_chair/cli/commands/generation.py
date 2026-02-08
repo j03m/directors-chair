@@ -10,7 +10,7 @@ from directors_chair.cli.utils import console
 def generate_images():
     config = load_config()
     themes = config.get("themes", {})
-    available_generators = list(config.get("model_ids", {}).keys())
+    available_generators = list(config.get("model_ids", {}).keys()) + ["fal-flux"]
     default_generator = config["system"].get("default_generator", "zimage-turbo")
     
     theme_choices = ["Create New Theme"] + list(themes.keys()) + ["Back"]

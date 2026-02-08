@@ -6,7 +6,7 @@ from tqdm import tqdm
 from .base import BaseVideoEngine
 
 
-class FalWanEngine(BaseVideoEngine):
+class FalWanI2VEngine(BaseVideoEngine):
     def generate_clip(self,
                       prompt: str,
                       start_image_path: str,
@@ -21,16 +21,12 @@ class FalWanEngine(BaseVideoEngine):
                       negative_prompt: Optional[str] = None) -> bool:
         from directors_chair.cli.utils import console
 
-        console.print(f"  Uploading start image: {os.path.basename(start_image_path)}")
-        start_url = fal_client.upload_file(start_image_path)
-
-        console.print(f"  Uploading end image: {os.path.basename(end_image_path)}")
-        end_url = fal_client.upload_file(end_image_path)
+        console.print(f"  Uploading image: {os.path.basename(start_image_path)}")
+        image_url = fal_client.upload_file(start_image_path)
 
         arguments = {
             "prompt": prompt,
-            "start_image_url": start_url,
-            "end_image_url": end_url,
+            "image_url": image_url,
             "resolution": resolution,
             "num_frames": num_frames,
             "frames_per_second": fps,
@@ -43,8 +39,8 @@ class FalWanEngine(BaseVideoEngine):
         if negative_prompt:
             arguments["negative_prompt"] = negative_prompt
 
-        console.print(f"  Submitting video generation job...")
-        handler = fal_client.submit("fal-ai/wan-flf2v", arguments=arguments)
+        console.print(f"  Submitting video generation job (wan-i2v)...")
+        handler = fal_client.submit("fal-ai/wan-i2v", arguments=arguments)
 
         for event in handler.iter_events(with_logs=True):
             if isinstance(event, fal_client.InProgress):

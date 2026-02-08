@@ -20,7 +20,7 @@
         "default_fps": 16
     },
     "system": {
-        "default_generator": "flux-schnell",
+        "default_generator": "fal-flux",
         "use_cpu_offload": true
     },
     "themes": {
@@ -28,10 +28,10 @@
             "prompt_file": "prompts/viking.gorilla.txt",
             "trigger": "viking",
             "count": 20,
-            "generator": "zimage-turbo",
+            "generator": "fal-flux",
             "loras": [],
             "parameters": {
-                "steps": 25,
+                "steps": 28,
                 "guidance": 3.5,
                 "aspect_ratio": "1:1"
             }
@@ -42,6 +42,13 @@
             "path": "assets/loras/viking_gorilla.safetensors",
             "trigger": "viking",
             "base_model": "z-image-turbo"
+        },
+        "viking_gorilla_wan": {
+            "path": "assets/loras/viking_gorilla_wan.safetensors",
+            "trigger": "@viking-gorilla",
+            "type": "wan",
+            "base_model": "wan-2.1",
+            "fal_url": "https://v3b.fal.media/files/b/0a8db11d/n5wvNLfyBZCtHfMe4cbe6_adapter_model.safetensors"
         }
     }
 }

@@ -1,0 +1,23 @@
+{
+    "hero_image": "assets/training_data/viking_gorilla/gorilla-1.png",
+    "training_prompt": "mutant gorilla, viking helmet, red scarf, shotgun shell bandolier, post-apocalyptic desert, photorealistic VFX creature, cinematic film lighting, Weta Digital style, wet skin detail, 8k, 35mm film grain",
+    "gear": [
+        "large duct-tape wrapped hockey stick",
+        "large double barrel shotgun"
+    ],
+    "poses": [
+        "standing tall, front view, arms at sides, neutral pose",
+        "walking forward with heavy stride, side profile view",
+        "crouching low, alert stance, looking to the side",
+        "sitting on the ground cross-legged, resting",
+        "from behind, looking over shoulder, 3/4 rear view",
+        "close-up face portrait, direct eye contact, skeptical frown",
+        "running, action pose, dust kicking up behind",
+        "battle stance, holding {gear}",
+        "swinging {gear} overhead, mid-action",
+        "leaning against a rusted out, abandoned truck, arms crossed, casual",
+        "kneeling on one knee, head bowed",
+        "standing in profile silhouette against bright sky",
+        "throwing a ferocious punch, roaring"
+    ]
+}
