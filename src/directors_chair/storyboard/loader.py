@@ -22,6 +22,11 @@ def load_storyboard(path: str) -> Dict[str, Any]:
             shot["image_prompt"] = _resolve_file_ref(base_dir, shot["image_prompt_file"])
         if "motion_file" in shot:
             shot["motion"] = _resolve_file_ref(base_dir, shot["motion_file"])
+        # Multi-character: resolve keyframe_passes prompt files
+        if "keyframe_passes" in shot:
+            for kp in shot["keyframe_passes"]:
+                if "prompt_file" in kp:
+                    kp["prompt"] = _resolve_file_ref(base_dir, kp["prompt_file"])
 
     return storyboard
 
@@ -36,12 +41,50 @@ def validate_storyboard(storyboard: Dict[str, Any]) -> Tuple[bool, List[str]]:
     elif not isinstance(storyboard["shots"], list) or len(storyboard["shots"]) < 1:
         errors.append("'shots' must be a list with at least 1 entry")
 
+    characters = storyboard.get("characters", {})
+    is_multichar = len(characters) > 0
+
+    if is_multichar:
+        for char_name, char_def in characters.items():
+            if "reference_image" not in char_def:
+                errors.append(f"Character '{char_name}': missing 'reference_image'")
+            elif not os.path.exists(char_def["reference_image"]):
+                errors.append(f"Character '{char_name}': reference_image not found: {char_def['reference_image']}")
+
     if "shots" in storyboard and isinstance(storyboard["shots"], list):
         for i, shot in enumerate(storyboard["shots"]):
-            if i == 0 and "image_prompt" not in shot:
-                errors.append(f"Shot 1: missing 'image_prompt' (or 'image_prompt_file') — first shot must have a scene prompt")
+            if is_multichar:
+                if "image_prompt" not in shot and "keyframe_passes" not in shot:
+                    errors.append(f"Shot {i + 1}: needs 'image_prompt' (composite) or 'keyframe_passes' (multi-pass)")
+                elif "keyframe_passes" in shot:
+                    passes = shot["keyframe_passes"]
+                    if not isinstance(passes, list) or len(passes) < 1:
+                        errors.append(f"Shot {i + 1}: 'keyframe_passes' must be a non-empty list")
+                    else:
+                        for j, kp in enumerate(passes):
+                            if "character" not in kp:
+                                errors.append(f"Shot {i + 1}, pass {j + 1}: missing 'character'")
+                            elif kp["character"] not in characters:
+                                errors.append(f"Shot {i + 1}, pass {j + 1}: character '{kp['character']}' not in 'characters'")
+                            if "prompt" not in kp:
+                                errors.append(f"Shot {i + 1}, pass {j + 1}: missing 'prompt' (or 'prompt_file')")
+            else:
+                if i == 0 and "image_prompt" not in shot:
+                    errors.append(f"Shot 1: missing 'image_prompt' (or 'image_prompt_file') — first shot must have a scene prompt")
             if "motion" not in shot:
                 errors.append(f"Shot {i + 1}: missing 'motion' (or 'motion_file')")
+            if "video_params" in shot:
+                svp = shot["video_params"]
+                if "num_frames" in svp:
+                    nf = svp["num_frames"]
+                    if not isinstance(nf, int) or nf < 81 or nf > 129:
+                        errors.append(f"Shot {i + 1}: video_params.num_frames must be integer 17-129")
+                if "resolution" in svp and svp["resolution"] not in ("480p", "720p"):
+                    errors.append(f"Shot {i + 1}: video_params.resolution must be '480p' or '720p'")
+                if "fps" in svp:
+                    sfps = svp["fps"]
+                    if not isinstance(sfps, (int, float)) or sfps < 5 or sfps > 24:
+                        errors.append(f"Shot {i + 1}: video_params.fps must be 5-24")
 
     if "loras" in storyboard:
         for i, lora in enumerate(storyboard["loras"]):
@@ -65,8 +108,8 @@ def validate_storyboard(storyboard: Dict[str, Any]) -> Tuple[bool, List[str]]:
             errors.append("video_params.resolution must be '480p' or '720p'")
         if "num_frames" in vp:
             nf = vp["num_frames"]
-            if not isinstance(nf, int) or nf < 81 or nf > 100:
-                errors.append("video_params.num_frames must be integer 81-100")
+            if not isinstance(nf, int) or nf < 81 or nf > 129:
+                errors.append("video_params.num_frames must be integer 17-129")
         if "fps" in vp:
             fps = vp["fps"]
             if not isinstance(fps, (int, float)) or fps < 5 or fps > 24:
