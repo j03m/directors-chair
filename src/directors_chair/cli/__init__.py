@@ -3,6 +3,7 @@ import questionary
 from directors_chair.cli.utils import print_header, console
 from directors_chair.cli.commands.generation import generate_images
 from directors_chair.cli.commands.storyboard import storyboard_to_video
+from directors_chair.cli.commands.assemble import assemble_movie
 
 def main_menu():
     while True:
@@ -13,7 +14,8 @@ def main_menu():
             choices=[
                 "1. Generate Character",
                 "2. Storyboard to Video",
-                "3. Exit"
+                "3. Assemble Movie",
+                "4. Exit"
             ]
         ).ask()
 
@@ -25,5 +27,7 @@ def main_menu():
         elif "2." in choice:
             storyboard_to_video()
         elif "3." in choice:
+            assemble_movie()
+        elif "4." in choice:
             console.print("Goodbye!")
             sys.exit(0)

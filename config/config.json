@@ -36,6 +36,17 @@
                 "guidance": 3.5,
                 "aspect_ratio": "1:1"
             }
+        },
+        "zombie1_zombie1": {
+            "trigger": "zombie1",
+            "prompt_file": "An undead human zombie. It is covered in dust and grime and has been living in a fallout/mad max radio active world for years. Its clothing is filthy and torn, but not bloody as the sun and dust have caked and bleached everything. Its eyes are cloudy white and devoid of iris or pubil. Photorealistic. Set on a cracked desert ground. ",
+            "count": 5,
+            "generator": "fal-flux",
+            "lora": null,
+            "parameters": {
+                "steps": 25,
+                "guidance": 3.5
+            }
         }
     },
     "loras": {

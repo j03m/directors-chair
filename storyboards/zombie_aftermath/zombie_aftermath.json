@@ -1,0 +1,24 @@
+{
+    "name": "zombie_aftermath",
+    "characters": {
+        "zombie": {
+            "reference_image": "assets/training_data/zombie1_zombie1/zombie1-1.png",
+            "body_type": "regular_male",
+            "description": "emaciated shambling zombie, sun-blackened leathery skin, caked in dust and grime, bleached tattered rags, cloudy white eyes, jaw hanging open"
+        }
+    },
+    "kling_params": {
+        "aspect_ratio": "16:9",
+        "resolution": "2K"
+    },
+    "shots": [
+        {
+            "name": "aftermath",
+            "layout_prompt_file": "layout.txt",
+            "keyframe_prompt_file": "keyframe.txt",
+            "beats": [
+                {"prompt_file": "beat1.txt", "duration": "5"}
+            ]
+        }
+    ]
+}

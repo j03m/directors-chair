@@ -9,38 +9,52 @@ from directors_chair.storyboard import load_storyboard, validate_storyboard
 from directors_chair.cli.utils import console
 
 
-def storyboard_to_video():
-    """Main storyboard pipeline: Layout → Keyframe → Video."""
+def storyboard_to_video(storyboard_file=None, auto_mode=False):
+    """Main storyboard pipeline: Layout → Keyframe → Video.
+
+    Args:
+        storyboard_file: Path to storyboard JSON (skips file selection if provided).
+        auto_mode: If True, skip all interactive prompts and review loops.
+    """
     config = load_config()
 
     # --- Select Storyboard File ---
-    storyboard_dir = config.get("directories", {}).get("storyboards", "storyboards")
-    if not os.path.exists(storyboard_dir):
-        console.print(f"[red]Storyboard directory not found: {storyboard_dir}/[/red]")
-        console.print("[yellow]Create a 'storyboards/' directory and add JSON files.[/yellow]")
-        input("\nPress Enter to continue...")
-        return
+    if storyboard_file:
+        storyboard_path = storyboard_file
+        if not os.path.exists(storyboard_path):
+            console.print(f"[red]Storyboard file not found: {storyboard_path}[/red]")
+            return
+    else:
+        storyboard_dir = config.get("directories", {}).get("storyboards", "storyboards")
+        if not os.path.exists(storyboard_dir):
+            console.print(f"[red]Storyboard directory not found: {storyboard_dir}/[/red]")
+            console.print("[yellow]Create a 'storyboards/' directory and add JSON files.[/yellow]")
+            if not auto_mode:
+                input("\nPress Enter to continue...")
+            return
 
-    json_files = []
-    for root, dirs, files in os.walk(storyboard_dir):
-        for f in files:
-            if f.endswith(".json"):
-                rel = os.path.relpath(os.path.join(root, f), storyboard_dir)
-                json_files.append(rel)
-    if not json_files:
-        console.print("[yellow]No storyboard JSON files found in storyboards/[/yellow]")
-        input("\nPress Enter to continue...")
-        return
+        json_files = []
+        for root, dirs, files in os.walk(storyboard_dir):
+            for f in files:
+                if f.endswith(".json"):
+                    rel = os.path.relpath(os.path.join(root, f), storyboard_dir)
+                    json_files.append(rel)
+        if not json_files:
+            console.print("[yellow]No storyboard JSON files found in storyboards/[/yellow]")
+            if not auto_mode:
+                input("\nPress Enter to continue...")
+            return
 
-    file_choice = questionary.select(
-        "Select Storyboard:",
-        choices=sorted(json_files) + ["Back"]
-    ).ask()
+        file_choice = questionary.select(
+            "Select Storyboard:",
+            choices=sorted(json_files) + ["Back"]
+        ).ask()
 
-    if not file_choice or file_choice == "Back":
-        return
+        if not file_choice or file_choice == "Back":
+            return
 
-    storyboard_path = os.path.join(storyboard_dir, file_choice)
+        storyboard_path = os.path.join(storyboard_dir, file_choice)
+    storyboard_base_dir = os.path.dirname(os.path.abspath(storyboard_path))
     storyboard = load_storyboard(storyboard_path)
 
     # --- Validate ---
@@ -49,7 +63,8 @@ def storyboard_to_video():
         console.print("[red]Storyboard validation failed:[/red]")
         for err in errors:
             console.print(f"  [red]- {err}[/red]")
-        input("\nPress Enter to continue...")
+        if not auto_mode:
+            input("\nPress Enter to continue...")
         return
 
     # --- Display Summary ---
@@ -100,8 +115,9 @@ def storyboard_to_video():
     total_cost = layout_cost + keyframe_cost + video_cost
     console.print(f"[bold]Estimated cost:[/bold] ~${total_cost:.2f} ({num_shots} shots, {total_beats} beats, {total_duration}s total)")
 
-    if not questionary.confirm("Proceed?").ask():
-        return
+    if not auto_mode:
+        if not questionary.confirm("Proceed?").ask():
+            return
 
     # --- Setup Output Directories ---
     videos_dir = config.get("directories", {}).get("videos", "assets/generated/videos")
@@ -131,53 +147,77 @@ def storyboard_to_video():
         ok = generate_layout(shot["layout_prompt"], characters, layout_path)
         if not ok:
             console.print(f"[red]Layout generation failed for shot {i + 1}.[/red]")
-            input("\nPress Enter to continue...")
+            if not auto_mode:
+                input("\nPress Enter to continue...")
             return
 
     # Layout review
-    console.print(Panel(
-        f"[bold]Review layouts before keyframe generation.[/bold]\n\n"
-        f"Layouts: {layouts_dir}/\n"
-        f"Open this folder and inspect each image.",
-        title="Layout Review",
-        border_style="yellow"
-    ))
+    if not auto_mode:
+        console.print(Panel(
+            f"[bold]Review layouts before keyframe generation.[/bold]\n\n"
+            f"Layouts: {layouts_dir}/\n"
+            f"Open this folder and inspect each image.",
+            title="Layout Review",
+            border_style="yellow"
+        ))
 
-    while True:
-        review = questionary.select(
-            "Layout Review:",
-            choices=[
-                "Accept all layouts - proceed to keyframes",
-                "Re-generate a layout",
-                "Abort storyboard"
-            ]
-        ).ask()
+        while True:
+            review = questionary.select(
+                "Layout Review:",
+                choices=[
+                    "Accept all layouts - proceed to keyframes",
+                    "Re-generate a layout",
+                    "Abort storyboard"
+                ]
+            ).ask()
 
-        if not review or review == "Abort storyboard":
-            console.print("[yellow]Aborted.[/yellow]")
-            input("\nPress Enter to continue...")
-            return
+            if not review or review == "Abort storyboard":
+                console.print("[yellow]Aborted.[/yellow]")
+                input("\nPress Enter to continue...")
+                return
 
-        if review == "Accept all layouts - proceed to keyframes":
-            break
+            if review == "Accept all layouts - proceed to keyframes":
+                break
 
-        if review == "Re-generate a layout":
-            regen_choices = [f"Shot {i + 1}: {shots[i].get('name', '')}" for i in range(num_shots)]
-            pick = questionary.select("Which layout?", choices=regen_choices + ["Cancel"]).ask()
-            if pick and pick != "Cancel":
-                idx = int(pick.split(":")[0].split(" ")[1]) - 1
-                layout_path = layout_paths[idx]
-                if os.path.exists(layout_path):
-                    os.remove(layout_path)
-                # Also remove the generated script
-                script_path = layout_path.replace(".png", "_layout.py")
-                if os.path.exists(script_path):
-                    os.remove(script_path)
+            if review == "Re-generate a layout":
+                regen_choices = [f"Shot {i + 1}: {shots[i].get('name', '')}" for i in range(num_shots)]
+                pick = questionary.select("Which layout?", choices=regen_choices + ["Cancel"]).ask()
+                if pick and pick != "Cancel":
+                    idx = int(pick.split(":")[0].split(" ")[1]) - 1
+                    layout_path = layout_paths[idx]
 
-                console.print(f"Re-generating layout {idx + 1}...")
-                ok = generate_layout(shots[idx]["layout_prompt"], characters, layout_path)
-                if ok:
-                    console.print(f"  [green]Layout {idx + 1} re-generated.[/green]")
+                    # Show current prompt and offer to edit
+                    current_prompt = shots[idx].get("layout_prompt", "")
+                    if current_prompt:
+                        console.print(f"\n[dim]Current prompt:[/dim]")
+                        console.print(f"  {current_prompt}")
+                        edited = questionary.text(
+                            "Edit prompt (Enter to keep, or type new):",
+                            default=current_prompt,
+                        ).ask()
+                        if edited and edited != current_prompt:
+                            shots[idx]["layout_prompt"] = edited
+                            # Save back to file
+                            prompt_file = shots[idx].get("layout_prompt_file")
+                            if prompt_file:
+                                save_path = os.path.join(storyboard_base_dir, prompt_file)
+                                with open(save_path, "w") as f:
+                                    f.write(edited)
+                                console.print(f"  [yellow]Prompt saved to {prompt_file}[/yellow]")
+
+                    if os.path.exists(layout_path):
+                        os.remove(layout_path)
+                    # Also remove the generated script
+                    script_path = layout_path.replace(".png", "_layout.py")
+                    if os.path.exists(script_path):
+                        os.remove(script_path)
+
+                    console.print(f"Re-generating layout {idx + 1}...")
+                    ok = generate_layout(shots[idx]["layout_prompt"], characters, layout_path)
+                    if ok:
+                        console.print(f"  [green]Layout {idx + 1} re-generated.[/green]")
+    else:
+        console.print("[dim]Auto mode: accepting all layouts.[/dim]")
 
     # --- Phase 2: Keyframe Generation ---
     engine_label = "Kling O3 i2i" if keyframe_engine == "kling" else "Nano Banana Pro (Gemini)"
@@ -214,90 +254,100 @@ def storyboard_to_video():
             )
         if not ok:
             console.print(f"[red]Keyframe generation failed for shot {i + 1}.[/red]")
-            input("\nPress Enter to continue...")
+            if not auto_mode:
+                input("\nPress Enter to continue...")
             return
 
     # Keyframe review
-    console.print(Panel(
-        f"[bold]Review keyframes before video generation.[/bold]\n\n"
-        f"Keyframes: {keyframes_dir}/\n"
-        f"Open this folder and inspect each image.",
-        title="Keyframe Review",
-        border_style="yellow"
-    ))
+    if not auto_mode:
+        console.print(Panel(
+            f"[bold]Review keyframes before video generation.[/bold]\n\n"
+            f"Keyframes: {keyframes_dir}/\n"
+            f"Open this folder and inspect each image.",
+            title="Keyframe Review",
+            border_style="yellow"
+        ))
 
-    while True:
-        review = questionary.select(
-            "Keyframe Review:",
-            choices=[
-                "Accept all keyframes - proceed to video",
-                "Re-generate a keyframe",
-                "Abort storyboard"
-            ]
-        ).ask()
+        while True:
+            review = questionary.select(
+                "Keyframe Review:",
+                choices=[
+                    "Accept all keyframes - proceed to video",
+                    "Re-generate a keyframe",
+                    "Abort storyboard"
+                ]
+            ).ask()
 
-        if not review or review == "Abort storyboard":
-            console.print("[yellow]Aborted.[/yellow]")
-            input("\nPress Enter to continue...")
-            return
+            if not review or review == "Abort storyboard":
+                console.print("[yellow]Aborted.[/yellow]")
+                input("\nPress Enter to continue...")
+                return
 
-        if review == "Accept all keyframes - proceed to video":
-            break
+            if review == "Accept all keyframes - proceed to video":
+                break
 
-        if review == "Re-generate a keyframe":
-            regen_choices = [f"Shot {i + 1}: {shots[i].get('name', '')}" for i in range(num_shots)]
-            pick = questionary.select("Which keyframe?", choices=regen_choices + ["Cancel"]).ask()
-            if pick and pick != "Cancel":
-                idx = int(pick.split(":")[0].split(" ")[1]) - 1
-                kf = keyframe_paths[idx]
+            if review == "Re-generate a keyframe":
+                regen_choices = [f"Shot {i + 1}: {shots[i].get('name', '')}" for i in range(num_shots)]
+                pick = questionary.select("Which keyframe?", choices=regen_choices + ["Cancel"]).ask()
+                if pick and pick != "Cancel":
+                    idx = int(pick.split(":")[0].split(" ")[1]) - 1
+                    kf = keyframe_paths[idx]
 
-                # Show current prompt and offer to edit
-                current_prompt = shots[idx].get("keyframe_prompt", "")
-                if current_prompt:
-                    console.print(f"\n[dim]Current prompt:[/dim]")
-                    console.print(f"  {current_prompt[:120]}...")
-                    edited = questionary.text(
-                        "Edit prompt (Enter to keep, or type new):",
-                        default=current_prompt,
-                    ).ask()
-                    if edited and edited != current_prompt:
-                        shots[idx]["keyframe_prompt"] = edited
-                        console.print(f"  [yellow]Prompt updated for this run.[/yellow]")
+                    # Show current prompt and offer to edit
+                    current_prompt = shots[idx].get("keyframe_prompt", "")
+                    if current_prompt:
+                        console.print(f"\n[dim]Current prompt:[/dim]")
+                        console.print(f"  {current_prompt}")
+                        edited = questionary.text(
+                            "Edit prompt (Enter to keep, or type new):",
+                            default=current_prompt,
+                        ).ask()
+                        if edited and edited != current_prompt:
+                            shots[idx]["keyframe_prompt"] = edited
+                            # Save back to file
+                            prompt_file = shots[idx].get("keyframe_prompt_file")
+                            if prompt_file:
+                                save_path = os.path.join(storyboard_base_dir, prompt_file)
+                                with open(save_path, "w") as f:
+                                    f.write(edited)
+                                console.print(f"  [yellow]Prompt saved to {prompt_file}[/yellow]")
 
-                # How many variants?
-                num_variants = 1
-                if keyframe_engine == "gemini":
-                    variant_pick = questionary.select(
-                        "How many variants?",
-                        choices=["1 (default)", "2", "3", "4"]
-                    ).ask()
-                    if variant_pick:
-                        num_variants = int(variant_pick[0])
+                    # How many variants?
+                    num_variants = 1
+                    if keyframe_engine == "gemini":
+                        variant_pick = questionary.select(
+                            "How many variants?",
+                            choices=["1 (default)", "2", "3", "4"]
+                        ).ask()
+                        if variant_pick:
+                            num_variants = int(variant_pick[0])
 
-                if os.path.exists(kf):
-                    os.remove(kf)
+                    if os.path.exists(kf):
+                        os.remove(kf)
 
-                console.print(f"Re-generating keyframe {idx + 1} ({num_variants} variant(s))...")
-                if keyframe_engine == "gemini":
-                    ok = generate_keyframe_nano_banana(
-                        prompt=shots[idx].get("keyframe_prompt", ""),
-                        comp_image_path=layout_paths[idx],
-                        characters=characters,
-                        output_path=kf,
-                        kling_params=kling_params,
-                        num_images=num_variants,
-                    )
-                else:
-                    ok = generate_keyframe_kling(
-                        prompt=shots[idx].get("keyframe_prompt"),
-                        comp_image_path=layout_paths[idx],
-                        characters=characters,
-                        output_path=kf,
-                        kling_params=kling_params,
-                        keyframe_passes=shots[idx].get("keyframe_passes"),
-                    )
-                if ok:
-                    console.print(f"  [green]Keyframe {idx + 1} re-generated.[/green]")
+                    console.print(f"Re-generating keyframe {idx + 1} ({num_variants} variant(s))...")
+                    if keyframe_engine == "gemini":
+                        ok = generate_keyframe_nano_banana(
+                            prompt=shots[idx].get("keyframe_prompt", ""),
+                            comp_image_path=layout_paths[idx],
+                            characters=characters,
+                            output_path=kf,
+                            kling_params=kling_params,
+                            num_images=num_variants,
+                        )
+                    else:
+                        ok = generate_keyframe_kling(
+                            prompt=shots[idx].get("keyframe_prompt"),
+                            comp_image_path=layout_paths[idx],
+                            characters=characters,
+                            output_path=kf,
+                            kling_params=kling_params,
+                            keyframe_passes=shots[idx].get("keyframe_passes"),
+                        )
+                    if ok:
+                        console.print(f"  [green]Keyframe {idx + 1} re-generated.[/green]")
+    else:
+        console.print("[dim]Auto mode: accepting all keyframes.[/dim]")
 
     # --- Phase 3: Video Generation ---
     console.print(Panel("[bold]Phase 3: Video Generation (Kling O3 i2v)[/bold]", border_style="cyan"))
@@ -325,7 +375,8 @@ def storyboard_to_video():
         )
         if not ok:
             console.print(f"[red]Video generation failed for shot {i + 1}.[/red]")
-            input("\nPress Enter to continue...")
+            if not auto_mode:
+                input("\nPress Enter to continue...")
             return
 
     # --- Phase 4: Stitch (if multiple shots) ---
@@ -346,7 +397,8 @@ def storyboard_to_video():
     console.print(f"[yellow]  Layouts: {layouts_dir}/[/yellow]")
     console.print(f"[yellow]  Keyframes: {keyframes_dir}/[/yellow]")
     console.print(f"[yellow]  Clips: {clips_dir}/[/yellow]")
-    input("\nPress Enter to continue...")
+    if not auto_mode:
+        input("\nPress Enter to continue...")
 
 
 def _stitch_clips(clip_paths, final_path):
