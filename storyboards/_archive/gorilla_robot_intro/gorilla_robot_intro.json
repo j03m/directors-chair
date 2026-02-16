@@ -1,0 +1,31 @@
+{
+    "name": "gorilla_robot_intro",
+    "characters": {
+        "gorilla": {
+            "reference_image": "assets/training_data/viking_gorilla/gorilla-1.png"
+        },
+        "robot": {
+            "reference_image": "assets/training_data/friend_robot/robot.jpeg"
+        }
+    },
+    "video_params": {
+        "resolution": "720p",
+        "num_frames": 81,
+        "fps": 16
+    },
+    "shots": [
+        {
+            "image_prompt_file": "gr_shot1_scene.txt",
+            "motion_file": "gr_shot1_motion.txt"
+        },
+        {
+            "image_prompt_file": "gr_shot2_scene.txt",
+            "motion_file": "gr_shot2_motion.txt"
+        },
+        {
+            "image_prompt_file": "gr_shot3_scene.txt",
+            "motion_file": "gr_shot3_motion.txt",
+            "video_params": {"num_frames": 81, "fps": 24}
+        }
+    ]
+}

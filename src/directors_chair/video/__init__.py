@@ -1,3 +1,3 @@
-from .manager import get_video_manager
+from .manager import get_kling_engine
 
-__all__ = ["get_video_manager"]
+__all__ = ["get_kling_engine"]

@@ -21,7 +21,8 @@
     },
     "system": {
         "default_generator": "fal-flux",
-        "use_cpu_offload": true
+        "use_cpu_offload": true,
+        "blender_path": "/Applications/Blender.app/Contents/MacOS/Blender"
     },
     "themes": {
         "viking_gorilla": {

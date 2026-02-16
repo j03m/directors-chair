@@ -1,0 +1,4 @@
+Western standoff scene. Camera positioned behind the gorilla character (over-the-shoulder shot).
+Gorilla is in the foreground bottom-left, facing away from camera toward the robot.
+Robot is far away in the background top-right, facing the gorilla.
+Wide arena floor between them. Camera lens ~24mm for dramatic perspective.

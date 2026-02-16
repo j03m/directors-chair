@@ -16,19 +16,30 @@ def load_storyboard(path: str) -> Dict[str, Any]:
     with open(path, "r") as f:
         storyboard = json.load(f)
 
-    # Resolve file references in shots
     for shot in storyboard.get("shots", []):
-        if "image_prompt_file" in shot:
-            shot["image_prompt"] = _resolve_file_ref(base_dir, shot["image_prompt_file"])
-        if "motion_file" in shot:
-            shot["motion"] = _resolve_file_ref(base_dir, shot["motion_file"])
-        # Multi-character: resolve keyframe_passes prompt files
+        # Layout prompt (Blender layout description)
+        if "layout_prompt_file" in shot:
+            shot["layout_prompt"] = _resolve_file_ref(base_dir, shot["layout_prompt_file"])
+        # Keyframe prompt (Kling i2i) — single prompt for <= 2 characters
+        if "keyframe_prompt_file" in shot:
+            shot["keyframe_prompt"] = _resolve_file_ref(base_dir, shot["keyframe_prompt_file"])
+        # Keyframe passes (multi-pass for > 2 characters)
         if "keyframe_passes" in shot:
             for kp in shot["keyframe_passes"]:
                 if "prompt_file" in kp:
                     kp["prompt"] = _resolve_file_ref(base_dir, kp["prompt_file"])
+        # Beats (Kling i2v multi-prompt)
+        if "beats" in shot:
+            for beat in shot["beats"]:
+                if "prompt_file" in beat:
+                    beat["prompt"] = _resolve_file_ref(base_dir, beat["prompt_file"])
 
     return storyboard
+
+
+VALID_BODY_TYPES = {"large", "regular_male", "regular_female"}
+VALID_DURATIONS = {"3", "4", "5", "6", "7", "8", "9", "10"}
+VALID_KEYFRAME_ENGINES = {"kling", "gemini"}
 
 
 def validate_storyboard(storyboard: Dict[str, Any]) -> Tuple[bool, List[str]]:
@@ -41,78 +52,57 @@ def validate_storyboard(storyboard: Dict[str, Any]) -> Tuple[bool, List[str]]:
     elif not isinstance(storyboard["shots"], list) or len(storyboard["shots"]) < 1:
         errors.append("'shots' must be a list with at least 1 entry")
 
-    characters = storyboard.get("characters", {})
-    is_multichar = len(characters) > 0
+    # Keyframe engine (optional, defaults to kling)
+    kf_engine = storyboard.get("keyframe_engine", "gemini")
+    if kf_engine not in VALID_KEYFRAME_ENGINES:
+        errors.append(f"'keyframe_engine' must be one of {VALID_KEYFRAME_ENGINES}, got '{kf_engine}'")
 
-    if is_multichar:
+    # Characters are required
+    characters = storyboard.get("characters", {})
+    if not characters:
+        errors.append("Missing required field: 'characters' (dict of character definitions)")
+    else:
         for char_name, char_def in characters.items():
             if "reference_image" not in char_def:
                 errors.append(f"Character '{char_name}': missing 'reference_image'")
             elif not os.path.exists(char_def["reference_image"]):
                 errors.append(f"Character '{char_name}': reference_image not found: {char_def['reference_image']}")
+            if "body_type" in char_def and char_def["body_type"] not in VALID_BODY_TYPES:
+                errors.append(f"Character '{char_name}': body_type must be one of {VALID_BODY_TYPES}")
 
+    # Validate shots
     if "shots" in storyboard and isinstance(storyboard["shots"], list):
         for i, shot in enumerate(storyboard["shots"]):
-            if is_multichar:
-                if "image_prompt" not in shot and "keyframe_passes" not in shot:
-                    errors.append(f"Shot {i + 1}: needs 'image_prompt' (composite) or 'keyframe_passes' (multi-pass)")
-                elif "keyframe_passes" in shot:
-                    passes = shot["keyframe_passes"]
-                    if not isinstance(passes, list) or len(passes) < 1:
-                        errors.append(f"Shot {i + 1}: 'keyframe_passes' must be a non-empty list")
-                    else:
-                        for j, kp in enumerate(passes):
-                            if "character" not in kp:
-                                errors.append(f"Shot {i + 1}, pass {j + 1}: missing 'character'")
-                            elif kp["character"] not in characters:
-                                errors.append(f"Shot {i + 1}, pass {j + 1}: character '{kp['character']}' not in 'characters'")
-                            if "prompt" not in kp:
-                                errors.append(f"Shot {i + 1}, pass {j + 1}: missing 'prompt' (or 'prompt_file')")
+            # Layout prompt required for Blender layout generation
+            if "layout_prompt" not in shot:
+                errors.append(f"Shot {i + 1}: missing 'layout_prompt' (or 'layout_prompt_file')")
+            # Keyframe: either single prompt or multi-pass
+            has_keyframe = "keyframe_prompt" in shot
+            has_passes = "keyframe_passes" in shot
+            if not has_keyframe and not has_passes:
+                errors.append(f"Shot {i + 1}: missing 'keyframe_prompt' or 'keyframe_passes'")
+            if has_passes:
+                passes = shot["keyframe_passes"]
+                if not isinstance(passes, list) or len(passes) < 2:
+                    errors.append(f"Shot {i + 1}: 'keyframe_passes' must have at least 2 entries")
+                else:
+                    for pi, kp in enumerate(passes):
+                        if "prompt" not in kp:
+                            errors.append(f"Shot {i + 1}, pass {pi + 1}: missing 'prompt' (or 'prompt_file')")
+                        if "characters" not in kp or not isinstance(kp.get("characters"), list):
+                            errors.append(f"Shot {i + 1}, pass {pi + 1}: missing 'characters' list")
+            # Beats required for Kling i2v
+            if "beats" not in shot:
+                errors.append(f"Shot {i + 1}: missing 'beats' (multi-prompt narrative beats)")
+            elif not isinstance(shot["beats"], list) or len(shot["beats"]) < 1:
+                errors.append(f"Shot {i + 1}: 'beats' must be a non-empty list")
             else:
-                if i == 0 and "image_prompt" not in shot:
-                    errors.append(f"Shot 1: missing 'image_prompt' (or 'image_prompt_file') — first shot must have a scene prompt")
-            if "motion" not in shot:
-                errors.append(f"Shot {i + 1}: missing 'motion' (or 'motion_file')")
-            if "video_params" in shot:
-                svp = shot["video_params"]
-                if "num_frames" in svp:
-                    nf = svp["num_frames"]
-                    if not isinstance(nf, int) or nf < 81 or nf > 129:
-                        errors.append(f"Shot {i + 1}: video_params.num_frames must be integer 17-129")
-                if "resolution" in svp and svp["resolution"] not in ("480p", "720p"):
-                    errors.append(f"Shot {i + 1}: video_params.resolution must be '480p' or '720p'")
-                if "fps" in svp:
-                    sfps = svp["fps"]
-                    if not isinstance(sfps, (int, float)) or sfps < 5 or sfps > 24:
-                        errors.append(f"Shot {i + 1}: video_params.fps must be 5-24")
-
-    if "loras" in storyboard:
-        for i, lora in enumerate(storyboard["loras"]):
-            if "path" not in lora:
-                errors.append(f"LoRA {i + 1}: missing 'path'")
-            elif not os.path.exists(lora["path"]):
-                errors.append(f"LoRA {i + 1}: file not found at '{lora['path']}'")
-
-    if "video_loras" in storyboard:
-        for i, lora in enumerate(storyboard["video_loras"]):
-            if "path" not in lora:
-                errors.append(f"video_loras[{i}]: missing 'path' (URL to LoRA weights)")
-            if "scale" in lora:
-                s = lora["scale"]
-                if not isinstance(s, (int, float)) or s < 0 or s > 4:
-                    errors.append(f"video_loras[{i}]: scale must be 0.0-4.0")
-
-    if "video_params" in storyboard:
-        vp = storyboard["video_params"]
-        if "resolution" in vp and vp["resolution"] not in ("480p", "720p"):
-            errors.append("video_params.resolution must be '480p' or '720p'")
-        if "num_frames" in vp:
-            nf = vp["num_frames"]
-            if not isinstance(nf, int) or nf < 81 or nf > 129:
-                errors.append("video_params.num_frames must be integer 17-129")
-        if "fps" in vp:
-            fps = vp["fps"]
-            if not isinstance(fps, (int, float)) or fps < 5 or fps > 24:
-                errors.append("video_params.fps must be 5-24")
+                for j, beat in enumerate(shot["beats"]):
+                    if "prompt" not in beat:
+                        errors.append(f"Shot {i + 1}, beat {j + 1}: missing 'prompt' (or 'prompt_file')")
+                    if "duration" not in beat:
+                        errors.append(f"Shot {i + 1}, beat {j + 1}: missing 'duration'")
+                    elif str(beat["duration"]) not in VALID_DURATIONS:
+                        errors.append(f"Shot {i + 1}, beat {j + 1}: duration must be one of {VALID_DURATIONS}")
 
     return (len(errors) == 0, errors)

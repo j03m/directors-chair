@@ -1,0 +1,31 @@
+{
+    "name": "thunderdome_fight",
+    "characters": {
+        "gorilla": {
+            "reference_image": "assets/training_data/viking_gorilla/gorilla-1.jpg",
+            "body_type": "large",
+            "description": "massive muscular gorilla warrior in viking armor, horned helmet, fur cape, ammunition belts"
+        },
+        "robot": {
+            "reference_image": "assets/training_data/friend_robot/robot.jpeg",
+            "body_type": "regular_male",
+            "description": "rusty mechanical robot with a glowing blue CRT television screen head, exposed pistons and wires"
+        }
+    },
+    "kling_params": {
+        "aspect_ratio": "16:9",
+        "resolution": "2K"
+    },
+    "shots": [
+        {
+            "name": "thunderdome_fight",
+            "layout_prompt_file": "thunderdome_layout.txt",
+            "keyframe_prompt_file": "thunderdome_keyframe.txt",
+            "beats": [
+                {"prompt_file": "thunderdome_beat1_standoff.txt", "duration": "3"},
+                {"prompt_file": "thunderdome_beat2_combat.txt", "duration": "5"},
+                {"prompt_file": "thunderdome_beat3_victory.txt", "duration": "3"}
+            ]
+        }
+    ]
+}
