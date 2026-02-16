@@ -22,7 +22,7 @@
             "layout_prompt_file": "shot1_layout.txt",
             "keyframe_prompt_file": "shot1_keyframe.txt",
             "beats": [
-                {"prompt_file": "shot1_beat2.txt", "duration": "5"}
+                {"prompt_file": "shot1_beat2.txt", "duration": "3"}
             ]
         },
         {
