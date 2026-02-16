@@ -1,0 +1,8 @@
+{
+    "prompt": "leaning against a rusted out, abandoned truck, arms crossed, casual, mutant gorilla, viking helmet, red scarf, shotgun shell bandolier, post-apocalyptic desert, photorealistic VFX creature, cinematic film lighting, Weta Digital style, wet skin detail, 8k, 35mm film grain",
+    "pose": "leaning against a rusted out, abandoned truck, arms crossed, casual",
+    "seed": 16717008,
+    "identity_scale": 0.9,
+    "hero_image": "assets/training_data/viking_gorilla/gorilla-1.png",
+    "generator": "fal-ai/instant-character + fal-ai/flux-pro/kontext"
+}

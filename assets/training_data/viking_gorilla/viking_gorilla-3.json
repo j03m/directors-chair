@@ -1,0 +1,8 @@
+{
+    "prompt": "crouching low, alert stance, looking to the side, mutant gorilla, viking helmet, red scarf, shotgun shell bandolier, post-apocalyptic desert, photorealistic VFX creature, cinematic film lighting, Weta Digital style, wet skin detail, 8k, 35mm film grain",
+    "pose": "crouching low, alert stance, looking to the side",
+    "seed": 3649218802,
+    "identity_scale": 0.9,
+    "hero_image": "assets/training_data/viking_gorilla/gorilla-1.png",
+    "generator": "fal-ai/instant-character + fal-ai/flux-pro/kontext"
+}

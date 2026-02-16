@@ -1,0 +1,7 @@
+{
+    "prompt": "viking gorilla, A professional character design reference sheet of a mutant gorilla standing fully upright with human-like posture.\n\nThe character is set in a gritty, Mad Max-style post-apocalyptic desert world.\nHe is photorealistic, styled like the modern Planet of the Apes (detailed skin texture, intelligent eyes, wet nose), not a cartoon.\n\nCostume Details:\n- Head: He wears a rusty, iconic horned viking helmet that looks out of place and scavenged.\n- Neck: A bedraggled, dirty red scarf wrapped loosely.\n- Torso: Bare muscular chest with a leather bandolier holding shotgun shells across his body.\n- Legs: Loose-fitting, dusty cloth scavenger pants.\n\nThe image shows three views:\n1. Front View: Standing tall and imposing, arms at his sides, expression is a skeptical frown (tough but intelligent).\n2. Side View: Profile showing the helmet shape and the bandolier wrapping around the back.\n3. Close-up: A detailed shot of his face, slightly angled, with a subtle, dry smirk.\n\nLighting is harsh desert sunlight but softened for character visibility. Background is a flat, neutral sand color. 8k resolution, cinematic dirt and grime texture.",
+    "seed": 2754239436,
+    "strength": 0.6,
+    "reference_image": "assets/training_data/viking_gorilla/gorilla-0.png",
+    "generator": "fal-ai/flux/dev/image-to-image"
+}

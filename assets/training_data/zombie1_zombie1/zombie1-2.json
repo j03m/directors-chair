@@ -1,0 +1,8 @@
+{
+    "prompt": "zombie1 zombie1, Full body portrait of a single undead human zombie standing on cracked sun-baked desert earth. Emaciated, sun-blackened leathery skin stretched over visible ribs and joints, patches of dried flesh peeling away to expose grey bone beneath. Covered head to        \n        toe in years of caked dust and radioactive grime. Clothing is nothing but filthy bleached rags, torn strips of what was once a shirt and pants, hanging loose, stiff with dried mud and sun-bleached to the color of the wasteland. Hair is gone, scalp is crac\n        ked and flaking. Face is gaunt and hollow, cheekbones jutting, lips pulled back exposing broken yellowed teeth. Eyes are completely cloudy white \u2014 no iris, no pupil \u2014 just dead milky orbs staring at nothing. Jaw hangs slightly slack. Fingers are bony claw       \n        s, nails blackened and split. Posture is hunched, broken, loping \u2014 a thing that forgot how to stand straight long ago. The desert sun has bleached and baked everything on this creature into the same dead khaki-grey as the ground it stands on. Plain cracke\n        d desert floor, no other elements, no background objects. Photorealistic, cinematic, Cormac McCarthy's The Road meets Mad Max Fury Road, shot like a Fallout character portrait.",
+    "seed": 3309300243,
+    "steps": 25,
+    "guidance": 3.5,
+    "generator": "fal-flux",
+    "model_path": "unknown"
+}
