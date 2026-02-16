@@ -1,0 +1,31 @@
+{
+    "name": "zombie_mailbox",
+    "characters": {
+        "gorilla": {
+            "reference_image": "assets/training_data/viking_gorilla/gorilla-1.jpg",
+            "body_type": "large",
+            "description": "massive muscular gorilla warrior in viking armor, horned helmet, fur cape, ammunition belts"
+        },
+        "zombie": {
+            "reference_image": "assets/training_data/zombie1_zombie1/zombie1-1.png",
+            "body_type": "regular_male",
+            "description": "emaciated shambling zombie, sun-blackened leathery skin, caked in dust and grime, bleached tattered rags, cloudy white eyes, jaw hanging open"
+        }
+    },
+    "kling_params": {
+        "aspect_ratio": "16:9",
+        "resolution": "2K"
+    },
+    "shots": [
+        {
+            "name": "mailbox_baseball",
+            "layout_prompt_file": "layout.txt",
+            "keyframe_prompt_file": "keyframe.txt",
+            "beats": [
+                {"prompt_file": "beat1.txt", "duration": "5"},
+                {"prompt_file": "beat2.txt", "duration": "5"},
+                {"prompt_file": "beat3.txt", "duration": "5"}
+            ]
+        }
+    ]
+}
