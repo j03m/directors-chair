@@ -1,1 +1,7 @@
-Use @Image1 as composition reference. Camera behind a classic open-top military jeep, olive drab, rusted, roll bars. The jeep barrels down a cracked desert highway. @Element1 a massive gorilla in viking armor stands in the rear cargo bed gripping a baseball bat, seen from behind. A rugged bearded warrior drives in the front left seat. @Element2 a rusty CRT-headed robot sits in the front right passenger seat. All face forward, away from camera. Far ahead on the right shoulder, @Element3 a shambling zombie in bleached tattered rags walks along the roadside, small in frame, distant. Harsh midday sun, cracked asphalt, dust haze, vast empty desert. Photorealistic, cinematic, Mad Max Fury Road.
+Use @Image1 as composition reference. Camera directly behind and slightly above a classic open-top military jeep, olive drab, rusted, roll bars visible. The jeep fills the bottom half of frame, centered on the road, facing away from camera.
+
+@Element1 a massive gorilla in viking armor stands tall in the rear cargo bed, back to camera, center of frame, gripping a baseball bat. A rugged bearded warrior drives in the front left. @Element2 a rusty CRT-headed robot sits in the front right passenger seat. Everyone faces forward, away from camera.
+
+The desert highway stretches ahead to a distant vanishing point. Very far down the road on the right shoulder, barely visible, @Element3 a shambling zombie in tattered rags — tiny, distant, at least 200 meters ahead. The zombie is a small speck on the road, not close.
+
+Harsh midday sun, cracked asphalt stretching to the horizon, dust haze, vast empty desert. Photorealistic, cinematic, Mad Max Fury Road.
