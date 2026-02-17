@@ -79,7 +79,7 @@
         {
             "name": "cranial_reaction",
             "characters": ["cranial", "gorilla", "robot"],
-            "layout_prompt_file": "shot1_layout.txt",
+            "layout_prompt_file": "shot7_layout.txt",
             "keyframe_prompt_file": "shot7_keyframe.txt",
             "beats": [
                 {"prompt_file": "shot7_beat.txt", "duration": "5"}
