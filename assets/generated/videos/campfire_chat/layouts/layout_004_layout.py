@@ -227,59 +227,63 @@ def build_regular_female(name, mat, position, pose="standing"):
                  (x + 0.45, y, z + 0.65), (0.08, 0.08, 0.38))
 
 
-# === SCENE SETUP ===
-
+# --- Scene Setup ---
 clean_scene()
 scene = bpy.context.scene
 setup_render(scene)
 add_light(scene)
 
 # Materials
-mat_ground = make_mat("Ground", (0.2, 0.15, 0.1, 1))
-mat_cranial = make_mat("Cranial", (0.25, 0.18, 0.1, 1))
-mat_gorilla = make_mat("Gorilla", (0.6, 0.6, 0.65, 1))
-mat_chair = make_mat("Chair", (0.35, 0.25, 0.15, 1))
+cranial_mat = make_mat("Cranial", (0.25, 0.18, 0.1, 1))
+gorilla_mat = make_mat("Gorilla", (0.6, 0.6, 0.65, 1))
+ground_mat = make_mat("Ground", (0.2, 0.15, 0.1, 1))
+chair_mat = make_mat("Chair", (0.3, 0.25, 0.15, 1))
 
 # Ground
-add_ground(mat_ground)
+add_ground(ground_mat)
 
-# Beach chairs — low flat cubes as seat bases
-# Left chair (for Cranial)
-add_mesh("ChairL_Seat", bpy.ops.mesh.primitive_cube_add, mat_chair,
-         (-1.0, 0, 0.25), (0.5, 0.4, 0.05))
-add_mesh("ChairL_Back", bpy.ops.mesh.primitive_cube_add, mat_chair,
-         (-1.0, 0.35, 0.55), (0.5, 0.05, 0.3),
-         rot=(math.radians(-15), 0, 0))
-add_mesh("ChairL_LegFL", bpy.ops.mesh.primitive_cylinder_add, mat_chair,
-         (-1.4, -0.3, 0.12), (0.03, 0.03, 0.12))
-add_mesh("ChairL_LegFR", bpy.ops.mesh.primitive_cylinder_add, mat_chair,
-         (-0.6, -0.3, 0.12), (0.03, 0.03, 0.12))
-add_mesh("ChairL_LegBL", bpy.ops.mesh.primitive_cylinder_add, mat_chair,
-         (-1.4, 0.3, 0.12), (0.03, 0.03, 0.12))
-add_mesh("ChairL_LegBR", bpy.ops.mesh.primitive_cylinder_add, mat_chair,
-         (-0.6, 0.3, 0.12), (0.03, 0.03, 0.12))
+# Beach chairs - low slung frames
+# Left chair (for cranial)
+add_mesh("ChairL_Seat", bpy.ops.mesh.primitive_cube_add, chair_mat,
+         (-1.2, 0, 0.35), (0.45, 0.35, 0.04),
+         rot=(math.radians(-10), 0, 0))
+add_mesh("ChairL_Back", bpy.ops.mesh.primitive_cube_add, chair_mat,
+         (-1.2, 0.3, 0.65), (0.45, 0.04, 0.35),
+         rot=(math.radians(-20), 0, 0))
+add_mesh("ChairL_LegFL", bpy.ops.mesh.primitive_cylinder_add, chair_mat,
+         (-1.55, -0.3, 0.15), (0.03, 0.03, 0.2))
+add_mesh("ChairL_LegFR", bpy.ops.mesh.primitive_cylinder_add, chair_mat,
+         (-0.85, -0.3, 0.15), (0.03, 0.03, 0.2))
+add_mesh("ChairL_LegBL", bpy.ops.mesh.primitive_cylinder_add, chair_mat,
+         (-1.55, 0.3, 0.25), (0.03, 0.03, 0.3))
+add_mesh("ChairL_LegBR", bpy.ops.mesh.primitive_cylinder_add, chair_mat,
+         (-0.85, 0.3, 0.25), (0.03, 0.03, 0.3))
 
-# Right chair (for Gorilla — wider)
-add_mesh("ChairR_Seat", bpy.ops.mesh.primitive_cube_add, mat_chair,
-         (1.2, 0, 0.25), (0.65, 0.5, 0.05))
-add_mesh("ChairR_Back", bpy.ops.mesh.primitive_cube_add, mat_chair,
-         (1.2, 0.45, 0.55), (0.65, 0.05, 0.3),
-         rot=(math.radians(-15), 0, 0))
-add_mesh("ChairR_LegFL", bpy.ops.mesh.primitive_cylinder_add, mat_chair,
-         (0.65, -0.4, 0.12), (0.04, 0.04, 0.12))
-add_mesh("ChairR_LegFR", bpy.ops.mesh.primitive_cylinder_add, mat_chair,
-         (1.75, -0.4, 0.12), (0.04, 0.04, 0.12))
-add_mesh("ChairR_LegBL", bpy.ops.mesh.primitive_cylinder_add, mat_chair,
-         (0.65, 0.4, 0.12), (0.04, 0.04, 0.12))
-add_mesh("ChairR_LegBR", bpy.ops.mesh.primitive_cylinder_add, mat_chair,
-         (1.75, 0.4, 0.12), (0.04, 0.04, 0.12))
+# Right chair (for gorilla - wider)
+add_mesh("ChairR_Seat", bpy.ops.mesh.primitive_cube_add, chair_mat,
+         (1.3, 0, 0.35), (0.55, 0.4, 0.04),
+         rot=(math.radians(-10), 0, 0))
+add_mesh("ChairR_Back", bpy.ops.mesh.primitive_cube_add, chair_mat,
+         (1.3, 0.35, 0.7), (0.55, 0.04, 0.4),
+         rot=(math.radians(-20), 0, 0))
+add_mesh("ChairR_LegFL", bpy.ops.mesh.primitive_cylinder_add, chair_mat,
+         (0.85, -0.35, 0.15), (0.04, 0.04, 0.2))
+add_mesh("ChairR_LegFR", bpy.ops.mesh.primitive_cylinder_add, chair_mat,
+         (1.75, -0.35, 0.15), (0.04, 0.04, 0.2))
+add_mesh("ChairR_LegBL", bpy.ops.mesh.primitive_cylinder_add, chair_mat,
+         (0.85, 0.35, 0.25), (0.04, 0.04, 0.3))
+add_mesh("ChairR_LegBR", bpy.ops.mesh.primitive_cylinder_add, chair_mat,
+         (1.75, 0.35, 0.25), (0.04, 0.04, 0.3))
 
-# Characters — seated pose
-build_regular_male("Cranial", mat_cranial, (-1.0, 0, 0.25), pose="seated")
-build_large_figure("Gorilla", mat_gorilla, (1.2, 0, 0.25), pose="seated")
+# Characters seated in chairs
+# Cranial on the left, seated pose
+build_regular_male("Cranial", cranial_mat, (-1.2, 0, 0.35), pose="seated")
 
-# Camera — low angle, slightly below eye level, about 6 feet (1.8m) away
-setup_camera(scene, loc=(0.1, -3.5, 0.8), target_loc=(0.1, 0, 1.0), lens=28)
+# Gorilla on the right, seated pose
+build_large_figure("Gorilla", gorilla_mat, (1.3, 0, 0.35), pose="seated")
+
+# Camera - low angle, slightly below eye level, about 6 feet (1.8m) away, facing the characters
+setup_camera(scene, loc=(0.0, -3.5, 0.8), target_loc=(0.0, 0.0, 1.0), lens=28)
 
 # Render
 scene.frame_set(1)
