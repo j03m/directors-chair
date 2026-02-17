@@ -234,61 +234,58 @@ setup_render(scene)
 add_light(scene)
 
 # Materials
-mat_ground = make_mat("Ground", (0.2, 0.15, 0.1, 1))
 mat_cranial = make_mat("Cranial", (0.25, 0.18, 0.1, 1))
 mat_gorilla = make_mat("Gorilla", (0.6, 0.6, 0.65, 1))
 mat_robot = make_mat("Robot", (0.2, 0.35, 0.5, 1))
+mat_ground = make_mat("Ground", (0.2, 0.15, 0.1, 1))
+mat_chair = make_mat("Chair", (0.3, 0.2, 0.1, 1))
 
 # Ground
 add_ground(mat_ground)
 
-# Beach chairs (simple low-profile shapes)
-mat_chair = make_mat("Chair", (0.3, 0.2, 0.12, 1))
-
-# Left chair for cranial
+# Beach chairs - low simple frames
+# Left chair (for cranial)
 add_mesh("ChairL_Seat", bpy.ops.mesh.primitive_cube_add, mat_chair,
-         (-1.2, 1.0, 0.25), (0.5, 0.35, 0.05),
-         rot=(math.radians(-10), 0, 0))
+         (-1.2, 2.0, 0.25), (0.5, 0.4, 0.05))
 add_mesh("ChairL_Back", bpy.ops.mesh.primitive_cube_add, mat_chair,
-         (-1.2, 1.35, 0.55), (0.5, 0.05, 0.3),
-         rot=(math.radians(-20), 0, 0))
+         (-1.2, 2.35, 0.55), (0.5, 0.05, 0.3),
+         rot=(math.radians(-15), 0, 0))
 add_mesh("ChairL_LegFL", bpy.ops.mesh.primitive_cylinder_add, mat_chair,
-         (-1.55, 0.7, 0.12), (0.03, 0.03, 0.15))
+         (-1.55, 1.7, 0.12), (0.03, 0.03, 0.12))
 add_mesh("ChairL_LegFR", bpy.ops.mesh.primitive_cylinder_add, mat_chair,
-         (-0.85, 0.7, 0.12), (0.03, 0.03, 0.15))
+         (-0.85, 1.7, 0.12), (0.03, 0.03, 0.12))
 add_mesh("ChairL_LegBL", bpy.ops.mesh.primitive_cylinder_add, mat_chair,
-         (-1.55, 1.3, 0.18), (0.03, 0.03, 0.2))
+         (-1.55, 2.3, 0.12), (0.03, 0.03, 0.12))
 add_mesh("ChairL_LegBR", bpy.ops.mesh.primitive_cylinder_add, mat_chair,
-         (-0.85, 1.3, 0.18), (0.03, 0.03, 0.2))
+         (-0.85, 2.3, 0.12), (0.03, 0.03, 0.12))
 
-# Right chair for gorilla (slightly larger)
+# Right chair (for gorilla)
 add_mesh("ChairR_Seat", bpy.ops.mesh.primitive_cube_add, mat_chair,
-         (1.2, 1.0, 0.3), (0.6, 0.4, 0.05),
-         rot=(math.radians(-10), 0, 0))
+         (1.2, 2.0, 0.25), (0.6, 0.45, 0.05))
 add_mesh("ChairR_Back", bpy.ops.mesh.primitive_cube_add, mat_chair,
-         (1.2, 1.4, 0.6), (0.6, 0.05, 0.35),
-         rot=(math.radians(-20), 0, 0))
+         (1.2, 2.4, 0.55), (0.6, 0.05, 0.3),
+         rot=(math.radians(-15), 0, 0))
 add_mesh("ChairR_LegFL", bpy.ops.mesh.primitive_cylinder_add, mat_chair,
-         (0.75, 0.65, 0.14), (0.04, 0.04, 0.17))
+         (0.75, 1.65, 0.12), (0.03, 0.03, 0.12))
 add_mesh("ChairR_LegFR", bpy.ops.mesh.primitive_cylinder_add, mat_chair,
-         (1.65, 0.65, 0.14), (0.04, 0.04, 0.17))
+         (1.65, 1.65, 0.12), (0.03, 0.03, 0.12))
 add_mesh("ChairR_LegBL", bpy.ops.mesh.primitive_cylinder_add, mat_chair,
-         (0.75, 1.35, 0.2), (0.04, 0.04, 0.22))
+         (0.75, 2.35, 0.12), (0.03, 0.03, 0.12))
 add_mesh("ChairR_LegBR", bpy.ops.mesh.primitive_cylinder_add, mat_chair,
-         (1.65, 1.35, 0.2), (0.04, 0.04, 0.22))
+         (1.65, 2.35, 0.12), (0.03, 0.03, 0.12))
 
 # Characters
-# Cranial — seated on the left chair
-build_regular_male("Cranial", mat_cranial, (-1.2, 1.0, 0.25), pose="seated")
+# Cranial seated in left chair
+build_regular_male("Cranial", mat_cranial, (-1.2, 2.0, 0.25), pose="seated")
 
-# Gorilla — seated on the right chair (large figure)
-build_large_figure("Gorilla", mat_gorilla, (1.2, 1.0, 0.3), pose="seated")
+# Gorilla seated in right chair
+build_large_figure("Gorilla", mat_gorilla, (1.2, 2.0, 0.25), pose="seated")
 
-# Robot — standing just behind and between the two seated figures
-build_regular_male("Robot", mat_robot, (0.0, 1.8, 0.0), pose="standing")
+# Robot standing in front of the two seated figures, facing them (closer to camera)
+build_regular_male("Robot", mat_robot, (0.0, 0.3, 0.0), pose="standing")
 
-# Camera — low angle, slightly below eye level, about 6 feet (~1.8m) away
-setup_camera(scene, loc=(0.0, -1.8, 0.7), target_loc=(0.0, 1.0, 1.0), lens=28)
+# Camera - low angle, slightly below eye level, about 6 feet (1.8m) away
+setup_camera(scene, loc=(0.0, -1.8, 0.8), target_loc=(0.0, 1.5, 1.0), lens=28)
 
 # Render
 scene.frame_set(1)

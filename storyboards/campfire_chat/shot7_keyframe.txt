@@ -2,6 +2,6 @@ Use @Image1 as composition reference. Front-facing camera, low angle, same two-s
 
 @Element1 a rugged bearded warrior in tactical vest slouches in a cheap low-profile folding beach chair — the chair is faded hot-pink canvas with white tropical hibiscus flower print, aluminum frame, dirty and sand-caked but still absurdly cheerful. He sits on the left. @Element2 a massive gorilla in full viking armor and horned helmet sprawls in a cheap low-profile folding beach chair — the chair is faded lime-green canvas with white tropical palm tree print, aluminum frame, dirty and sand-caked but still absurdly cheerful. He sits on the right. Both look at each other with lazy amusement. The warrior shakes his head dismissively, like saying "no way." The gorilla watches him, unbothered.
 
-@Element3 a rusty CRT-headed robot stands just behind and between the two chairs, slightly back, having just walked up. The robot's glowing blue screen faces the camera.
+@Element3 a rusty CRT-headed robot stands in front of the two chairs, facing them, having just walked up. The robot is between the camera and the seated characters, seen from behind at a slight angle so both the robot and the two seated characters are visible. The robot's glowing blue CRT screen faces the seated characters.
 
 Brown whiskey bottle rests between the chairs. Desert ground, hazy sky. Warm golden hour light. Photorealistic, cinematic. Slacker energy — two bums and a robot at the end of the world.
