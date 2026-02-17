@@ -32,6 +32,7 @@
         },
         {
             "name": "aftermath",
+            "characters": ["zombie"],
             "layout_prompt_file": "shot2_layout.txt",
             "keyframe_prompt_file": "shot2_keyframe.txt",
             "beats": [

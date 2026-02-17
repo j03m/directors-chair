@@ -235,11 +235,17 @@ def storyboard_to_video(storyboard_file=None, auto_mode=False):
             continue
 
         console.print(f"\n[bold]Keyframe {i + 1}/{num_shots}: {shot.get('name', '')}[/bold]")
+        # Per-shot character scoping: if shot has "characters" list, only use those
+        shot_characters = characters
+        if "characters" in shot and isinstance(shot["characters"], list):
+            shot_characters = {k: v for k, v in characters.items() if k in shot["characters"]}
+            console.print(f"  [dim]Shot characters: {list(shot_characters.keys())}[/dim]")
+
         if keyframe_engine == "gemini":
             ok = generate_keyframe_nano_banana(
                 prompt=shot.get("keyframe_prompt", ""),
                 comp_image_path=layout_paths[i],
-                characters=characters,
+                characters=shot_characters,
                 output_path=kf_path,
                 kling_params=kling_params,
             )
@@ -247,7 +253,7 @@ def storyboard_to_video(storyboard_file=None, auto_mode=False):
             ok = generate_keyframe_kling(
                 prompt=shot.get("keyframe_prompt"),
                 comp_image_path=layout_paths[i],
-                characters=characters,
+                characters=shot_characters,
                 output_path=kf_path,
                 kling_params=kling_params,
                 keyframe_passes=shot.get("keyframe_passes"),
