@@ -232,11 +232,13 @@ def storyboard_to_video(storyboard_file=None, auto_mode=False, keyframes_only=Fa
         kf_path = os.path.join(keyframes_dir, f"keyframe_{i:03d}.png")
         keyframe_paths.append(kf_path)
 
-        # If regen requested for this shot, delete existing keyframe first
-        if regen_keyframes and (i + 1) in regen_keyframes:
+        # If regen requested for this keyframe, delete existing first
+        # regen_keyframes uses 0-indexed keyframe numbers matching filenames
+        # (e.g. "6" = keyframe_006.png)
+        if regen_keyframes and i in regen_keyframes:
             if os.path.exists(kf_path):
                 os.remove(kf_path)
-                console.print(f"  [yellow]Deleted keyframe {i + 1} for regeneration.[/yellow]")
+                console.print(f"  [yellow]Deleted keyframe_{i:03d}.png for regeneration.[/yellow]")
 
         if os.path.exists(kf_path):
             console.print(f"  [dim]Keyframe {i + 1}/{num_shots} already exists, skipping.[/dim]")

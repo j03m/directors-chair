@@ -22,7 +22,7 @@ def main():
     sb = subparsers.add_parser("storyboard", help="Run storyboard pipeline (autonomous)")
     sb.add_argument("--file", required=True, help="Path to storyboard JSON file")
     sb.add_argument("--keyframes-only", action="store_true", help="Stop after keyframe generation (skip video)")
-    sb.add_argument("--regen-keyframes", type=str, help="Comma-separated shot numbers (1-indexed) to regenerate keyframes for, e.g. '2,3,4'")
+    sb.add_argument("--regen-keyframes", type=str, help="Comma-separated keyframe numbers matching filenames (0-indexed), e.g. '2,3,4' = keyframe_002, keyframe_003, keyframe_004")
 
     # --- generate subcommand ---
     gen = subparsers.add_parser("generate", help="Generate character images (autonomous)")
