@@ -6,6 +6,11 @@
             "body_type": "large",
             "description": "massive muscular gorilla warrior in viking armor, horned helmet, fur cape, ammunition belts"
         },
+        "robot": {
+            "reference_image": "assets/training_data/friend_robot/robot.jpeg",
+            "body_type": "regular_male",
+            "description": "rusty mechanical robot with a glowing blue CRT television screen head, exposed pistons and wires"
+        },
         "zombie": {
             "reference_image": "assets/training_data/zombie1_zombie1/zombie1-1.png",
             "body_type": "regular_male",

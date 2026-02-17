@@ -126,7 +126,7 @@ def build_large_figure(name, mat, position, pose="standing"):
                  (x - 0.7, y, z + 0.85), (0.14, 0.14, 0.5))
         add_mesh(f"{name}_ArmR", bpy.ops.mesh.primitive_cylinder_add, mat,
                  (x + 0.7, y, z + 0.85), (0.14, 0.14, 0.5))
-    else:
+    else:  # standing
         add_mesh(f"{name}_ArmL", bpy.ops.mesh.primitive_cylinder_add, mat,
                  (x - 0.7, y, z + 0.85), (0.14, 0.14, 0.5))
         add_mesh(f"{name}_ArmR", bpy.ops.mesh.primitive_cylinder_add, mat,
@@ -176,7 +176,7 @@ def build_regular_male(name, mat, position, pose="standing"):
         add_mesh(f"{name}_ArmR", bpy.ops.mesh.primitive_cylinder_add, mat,
                  (x + 0.5, y - 0.3, z + 1.2), (0.1, 0.1, 0.35),
                  rot=(math.radians(-50), 0, math.radians(10)))
-    else:
+    else:  # standing, seated
         add_mesh(f"{name}_ArmL", bpy.ops.mesh.primitive_cylinder_add, mat,
                  (x - 0.5, y, z + 0.7), (0.1, 0.1, 0.4))
         add_mesh(f"{name}_ArmR", bpy.ops.mesh.primitive_cylinder_add, mat,
@@ -220,105 +220,121 @@ def build_regular_female(name, mat, position, pose="standing"):
         add_mesh(f"{name}_ArmR", bpy.ops.mesh.primitive_cylinder_add, mat,
                  (x + 0.45, y - 0.25, z + 1.1), (0.08, 0.08, 0.32),
                  rot=(math.radians(-50), 0, math.radians(10)))
-    else:
+    else:  # standing, seated
         add_mesh(f"{name}_ArmL", bpy.ops.mesh.primitive_cylinder_add, mat,
                  (x - 0.45, y, z + 0.65), (0.08, 0.08, 0.38))
         add_mesh(f"{name}_ArmR", bpy.ops.mesh.primitive_cylinder_add, mat,
                  (x + 0.45, y, z + 0.65), (0.08, 0.08, 0.38))
 
 
-# --- Scene Setup ---
+# ============================================================
+# SCENE SETUP
+# ============================================================
+
 clean_scene()
 scene = bpy.context.scene
 setup_render(scene)
 add_light(scene)
 
 # Materials
-gorilla_mat = make_mat("Gorilla", (0.25, 0.18, 0.1, 1))
-zombie_mat = make_mat("Zombie", (0.6, 0.6, 0.65, 1))
-ground_mat = make_mat("Ground", (0.2, 0.15, 0.1, 1))
-jeep_body_mat = make_mat("JeepBody", (0.22, 0.28, 0.18, 1))
-jeep_wheel_mat = make_mat("JeepWheel", (0.08, 0.08, 0.08, 1))
-jeep_frame_mat = make_mat("JeepFrame", (0.15, 0.15, 0.12, 1))
-road_mat = make_mat("Road", (0.12, 0.1, 0.08, 1))
-bat_mat = make_mat("Bat", (0.45, 0.3, 0.15, 1))
+mat_ground = make_mat("Ground", (0.2, 0.15, 0.1, 1))
+mat_gorilla = make_mat("Gorilla", (0.25, 0.18, 0.1, 1))
+mat_robot = make_mat("Robot", (0.6, 0.6, 0.65, 1))
+mat_zombie = make_mat("Zombie", (0.2, 0.35, 0.5, 1))
+mat_jeep = make_mat("Jeep", (0.22, 0.28, 0.18, 1))
+mat_road = make_mat("Road", (0.12, 0.12, 0.12, 1))
+mat_bat = make_mat("Bat", (0.45, 0.3, 0.15, 1))
+mat_tire = make_mat("Tire", (0.05, 0.05, 0.05, 1))
+mat_windshield = make_mat("Windshield", (0.3, 0.4, 0.5, 1))
 
-# Ground — desert sand
-add_ground(ground_mat, size=30)
+# Ground plane (desert)
+add_ground(mat_ground, size=20)
 
-# Desert highway — long dark strip running along Y axis
-add_mesh("Road", bpy.ops.mesh.primitive_cube_add, road_mat,
-         (0, 5, 0.01), (2.5, 25, 0.01))
+# Desert highway — long flat road strip along Y axis
+add_mesh("Road", bpy.ops.mesh.primitive_cube_add, mat_road,
+         (0, 0, 0.01), (2.5, 20, 0.01))
 
-# Road center line dashes
-line_mat = make_mat("RoadLine", (0.7, 0.65, 0.4, 1))
-for i in range(-8, 20, 3):
-    add_mesh(f"Line_{i}", bpy.ops.mesh.primitive_cube_add, line_mat,
-             (0, float(i), 0.02), (0.06, 0.8, 0.005))
+# ============================================================
+# JEEP — boxy military jeep, facing +Y (forward direction)
+# Jeep center at origin, elevated on wheels
+# ============================================================
 
-# --- Military Jeep (at origin area, facing +Y direction) ---
-jeep_x, jeep_y, jeep_z = 0.0, 0.0, 0.0
+# Jeep body (main chassis)
+add_mesh("Jeep_Body", bpy.ops.mesh.primitive_cube_add, mat_jeep,
+         (0, 0, 0.7), (1.0, 1.8, 0.45))
 
-# Jeep body — main chassis
-add_mesh("Jeep_Chassis", bpy.ops.mesh.primitive_cube_add, jeep_body_mat,
-         (jeep_x, jeep_y, jeep_z + 0.65), (1.0, 1.8, 0.35))
+# Jeep hood (front, lower)
+add_mesh("Jeep_Hood", bpy.ops.mesh.primitive_cube_add, mat_jeep,
+         (0, 1.6, 0.55), (0.8, 0.6, 0.3))
 
-# Jeep hood — front sloped section
-add_mesh("Jeep_Hood", bpy.ops.mesh.primitive_cube_add, jeep_body_mat,
-         (jeep_x, jeep_y + 1.6, jeep_z + 0.55), (0.85, 0.6, 0.2),
-         rot=(math.radians(-10), 0, 0))
-
-# Jeep rear cargo bed — open flat bed where gorilla stands
-add_mesh("Jeep_CargoBed", bpy.ops.mesh.primitive_cube_add, jeep_frame_mat,
-         (jeep_x, jeep_y - 1.2, jeep_z + 0.5), (0.95, 0.8, 0.05))
-
-# Jeep rear side walls (low)
-add_mesh("Jeep_SideL", bpy.ops.mesh.primitive_cube_add, jeep_body_mat,
-         (jeep_x - 0.9, jeep_y - 1.2, jeep_z + 0.7), (0.05, 0.8, 0.2))
-add_mesh("Jeep_SideR", bpy.ops.mesh.primitive_cube_add, jeep_body_mat,
-         (jeep_x + 0.9, jeep_y - 1.2, jeep_z + 0.7), (0.05, 0.8, 0.2))
-
-# Jeep rear gate
-add_mesh("Jeep_RearGate", bpy.ops.mesh.primitive_cube_add, jeep_body_mat,
-         (jeep_x, jeep_y - 2.0, jeep_z + 0.7), (0.9, 0.05, 0.2))
+# Jeep rear cargo bed (open top, slightly raised sides)
+add_mesh("Jeep_CargoBed", bpy.ops.mesh.primitive_cube_add, mat_jeep,
+         (0, -1.0, 0.6), (1.0, 0.9, 0.35))
 
 # Jeep windshield frame
-add_mesh("Jeep_Windshield", bpy.ops.mesh.primitive_cube_add, jeep_frame_mat,
-         (jeep_x, jeep_y + 0.9, jeep_z + 1.2), (0.9, 0.05, 0.4))
+add_mesh("Jeep_Windshield", bpy.ops.mesh.primitive_cube_add, mat_windshield,
+         (0, 0.7, 1.25), (0.85, 0.05, 0.35))
 
-# Jeep roll bar
-add_mesh("Jeep_RollBar", bpy.ops.mesh.primitive_cube_add, jeep_frame_mat,
-         (jeep_x, jeep_y - 0.3, jeep_z + 1.3), (0.85, 0.04, 0.04))
-add_mesh("Jeep_RollBarL", bpy.ops.mesh.primitive_cylinder_add, jeep_frame_mat,
-         (jeep_x - 0.85, jeep_y - 0.3, jeep_z + 1.0), (0.04, 0.04, 0.35))
-add_mesh("Jeep_RollBarR", bpy.ops.mesh.primitive_cylinder_add, jeep_frame_mat,
-         (jeep_x + 0.85, jeep_y - 0.3, jeep_z + 1.0), (0.04, 0.04, 0.35))
+# Jeep roll cage / top frame bars
+add_mesh("Jeep_RollBar", bpy.ops.mesh.primitive_cube_add, mat_jeep,
+         (0, -0.2, 1.45), (0.9, 0.04, 0.04))
 
-# Wheels
-for wx, wy, wname in [(-1.0, 1.0, "FL"), (1.0, 1.0, "FR"),
-                       (-1.0, -1.0, "RL"), (1.0, -1.0, "RR")]:
-    add_mesh(f"Jeep_Wheel_{wname}", bpy.ops.mesh.primitive_cylinder_add, jeep_wheel_mat,
-             (jeep_x + wx, jeep_y + wy, jeep_z + 0.25), (0.3, 0.3, 0.12),
-             rot=(0, math.radians(90), 0))
+# Wheels (4 tires)
+add_mesh("Wheel_FL", bpy.ops.mesh.primitive_cylinder_add, mat_tire,
+         (-1.1, 1.2, 0.3), (0.3, 0.3, 0.15),
+         rot=(0, math.radians(90), 0))
+add_mesh("Wheel_FR", bpy.ops.mesh.primitive_cylinder_add, mat_tire,
+         (1.1, 1.2, 0.3), (0.3, 0.3, 0.15),
+         rot=(0, math.radians(90), 0))
+add_mesh("Wheel_RL", bpy.ops.mesh.primitive_cylinder_add, mat_tire,
+         (-1.1, -0.8, 0.3), (0.3, 0.3, 0.15),
+         rot=(0, math.radians(90), 0))
+add_mesh("Wheel_RR", bpy.ops.mesh.primitive_cylinder_add, mat_tire,
+         (1.1, -0.8, 0.3), (0.3, 0.3, 0.15),
+         rot=(0, math.radians(90), 0))
 
-# --- Gorilla — standing in rear cargo bed, arms raised holding bat ---
-build_large_figure("Gorilla", gorilla_mat, (jeep_x, jeep_y - 1.2, jeep_z + 0.55), pose="arms_raised")
+# ============================================================
+# GORILLA — standing in rear cargo bed, arm extended right with bat
+# Cargo bed center is at (0, -1.0, ~1.0 top surface)
+# ============================================================
 
-# Baseball bat — held above gorilla's head
-add_mesh("Bat_Handle", bpy.ops.mesh.primitive_cylinder_add, bat_mat,
-         (jeep_x, jeep_y - 1.2, jeep_z + 3.3), (0.06, 0.06, 0.7),
-         rot=(0, math.radians(15), math.radians(10)))
-add_mesh("Bat_Barrel", bpy.ops.mesh.primitive_cylinder_add, bat_mat,
-         (jeep_x + 0.25, jeep_y - 1.2, jeep_z + 3.9), (0.1, 0.1, 0.35),
-         rot=(0, math.radians(15), math.radians(10)))
+build_large_figure("Gorilla", mat_gorilla, (0, -1.0, 1.0), pose="fighting_stance")
 
-# --- Zombie — far ahead on right shoulder of road, walking/shambling ---
-build_regular_male("Zombie", zombie_mat, (3.0, 14.0, 0.0), pose="standing")
+# Baseball bat — extending from gorilla's right arm out to the right
+# Bat is a long cylinder angled outward
+add_mesh("Bat", bpy.ops.mesh.primitive_cylinder_add, mat_bat,
+         (1.8, -1.3, 2.3), (0.06, 0.06, 0.7),
+         rot=(math.radians(10), math.radians(70), math.radians(15)))
 
-# --- Camera — behind and above the jeep, looking forward down the road ---
-setup_camera(scene, loc=(0.0, -6.0, 4.0), target_loc=(0.0, 5.0, 1.0), lens=24)
+# ============================================================
+# ROBOT — seated in passenger seat (right side, +X)
+# Passenger seat roughly at (0.5, 0.3, 0.7 top of chassis)
+# ============================================================
 
-# Render
+build_regular_male("Robot", mat_robot, (0.5, 0.3, 0.7), pose="seated")
+
+# ============================================================
+# ZOMBIE — standing on right road shoulder, very close to jeep
+# Right shoulder at x ~ 3.0, slightly ahead at y ~ 0.5
+# Close enough to be within bat reach
+# ============================================================
+
+build_regular_male("Zombie", mat_zombie, (2.8, 0.2, 0.0), pose="standing")
+
+# ============================================================
+# CAMERA — behind and above the jeep, looking forward
+# Behind = -Y, above = +Z, wide 24mm lens
+# ============================================================
+
+setup_camera(scene,
+             loc=(0.3, -5.5, 3.5),
+             target_loc=(0.5, 1.0, 1.2),
+             lens=24)
+
+# ============================================================
+# RENDER
+# ============================================================
+
 scene.frame_set(1)
 scene.render.filepath = "/Users/jmordetsky/directors-chair/assets/generated/videos/zombie_mailbox_v2/layouts/layout_000.png"
 bpy.ops.render.render(write_still=True)
