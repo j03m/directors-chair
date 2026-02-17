@@ -21,6 +21,7 @@ def main():
     # --- storyboard subcommand ---
     sb = subparsers.add_parser("storyboard", help="Run storyboard pipeline (autonomous)")
     sb.add_argument("--file", required=True, help="Path to storyboard JSON file")
+    sb.add_argument("--keyframes-only", action="store_true", help="Stop after keyframe generation (skip video)")
 
     # --- generate subcommand ---
     gen = subparsers.add_parser("generate", help="Generate character images (autonomous)")
@@ -44,7 +45,7 @@ def main():
 
     elif args.command == "storyboard":
         from directors_chair.cli.commands.storyboard import storyboard_to_video
-        storyboard_to_video(storyboard_file=args.file, auto_mode=True)
+        storyboard_to_video(storyboard_file=args.file, auto_mode=True, keyframes_only=getattr(args, 'keyframes_only', False))
 
     elif args.command == "generate":
         from directors_chair.cli.commands.generation import generate_images

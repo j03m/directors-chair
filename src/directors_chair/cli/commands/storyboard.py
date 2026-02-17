@@ -9,12 +9,13 @@ from directors_chair.storyboard import load_storyboard, validate_storyboard
 from directors_chair.cli.utils import console
 
 
-def storyboard_to_video(storyboard_file=None, auto_mode=False):
+def storyboard_to_video(storyboard_file=None, auto_mode=False, keyframes_only=False):
     """Main storyboard pipeline: Layout → Keyframe → Video.
 
     Args:
         storyboard_file: Path to storyboard JSON (skips file selection if provided).
         auto_mode: If True, skip all interactive prompts and review loops.
+        keyframes_only: If True, stop after keyframe generation (skip video).
     """
     config = load_config()
 
@@ -354,6 +355,14 @@ def storyboard_to_video(storyboard_file=None, auto_mode=False):
                         console.print(f"  [green]Keyframe {idx + 1} re-generated.[/green]")
     else:
         console.print("[dim]Auto mode: accepting all keyframes.[/dim]")
+
+    if keyframes_only:
+        console.print(f"\n[bold green]Keyframes only — stopping here.[/bold green]")
+        console.print(f"[yellow]  Layouts: {layouts_dir}/[/yellow]")
+        console.print(f"[yellow]  Keyframes: {keyframes_dir}/[/yellow]")
+        if not auto_mode:
+            input("\nPress Enter to continue...")
+        return
 
     # --- Phase 3: Video Generation ---
     console.print(Panel("[bold]Phase 3: Video Generation (Kling O3 i2v)[/bold]", border_style="cyan"))
