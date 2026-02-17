@@ -9,13 +9,14 @@ from directors_chair.storyboard import load_storyboard, validate_storyboard
 from directors_chair.cli.utils import console
 
 
-def storyboard_to_video(storyboard_file=None, auto_mode=False, keyframes_only=False):
+def storyboard_to_video(storyboard_file=None, auto_mode=False, keyframes_only=False, regen_keyframes=None):
     """Main storyboard pipeline: Layout → Keyframe → Video.
 
     Args:
         storyboard_file: Path to storyboard JSON (skips file selection if provided).
         auto_mode: If True, skip all interactive prompts and review loops.
         keyframes_only: If True, stop after keyframe generation (skip video).
+        regen_keyframes: List of 1-indexed shot numbers whose keyframes should be regenerated.
     """
     config = load_config()
 
@@ -230,6 +231,12 @@ def storyboard_to_video(storyboard_file=None, auto_mode=False, keyframes_only=Fa
     for i, shot in enumerate(shots):
         kf_path = os.path.join(keyframes_dir, f"keyframe_{i:03d}.png")
         keyframe_paths.append(kf_path)
+
+        # If regen requested for this shot, delete existing keyframe first
+        if regen_keyframes and (i + 1) in regen_keyframes:
+            if os.path.exists(kf_path):
+                os.remove(kf_path)
+                console.print(f"  [yellow]Deleted keyframe {i + 1} for regeneration.[/yellow]")
 
         if os.path.exists(kf_path):
             console.print(f"  [dim]Keyframe {i + 1}/{num_shots} already exists, skipping.[/dim]")
