@@ -23,20 +23,11 @@
     },
     "shots": [
         {
-            "name": "approach_and_strike",
+            "name": "mailbox_baseball",
             "layout_prompt_file": "shot1_layout.txt",
             "keyframe_prompt_file": "shot1_keyframe.txt",
             "beats": [
-                {"prompt_file": "shot1_beat2.txt", "duration": "3"}
-            ]
-        },
-        {
-            "name": "aftermath",
-            "characters": ["zombie"],
-            "layout_prompt_file": "shot2_layout.txt",
-            "keyframe_prompt_file": "shot2_keyframe.txt",
-            "beats": [
-                {"prompt_file": "shot2_beat1.txt", "duration": "5"}
+                {"prompt_file": "shot1_full.txt", "duration": "5"}
             ]
         }
     ]
