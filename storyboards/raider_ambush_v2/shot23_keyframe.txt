@@ -1,5 +1,5 @@
 Use @Image1 as composition reference. Over the shoulder, aiming at distance target.
 
-Over @Element1 a lean woman with blonde war hawk hair and sleeve tattoos' shoulder on the left. She stands in a combat stance, aiming a large weapon at a target across the road. In the distance on the right, @Element2 a heavyset raider with a beer gut and executioner hood stands near the truck, turning to face her. Distance between them — she has him in her sights. Her posture is steady, determined.
+Over @Element1 a lean woman with blonde war hawk hair and sleeve tattoos' shoulder on the left. She stands in a wide combat stance, unloading a machine gun at a target across the road. Muzzle flash erupts from the barrel. Brass shell casings fly through the air. Her tattooed arms absorb the recoil. In the distance on the right, @Element2 a heavyset raider with a beer gut and executioner hood staggers near the truck, taking hits. Distance between them — she is unleashing everything she has.
 
-Desert road between them, dust. Harsh light. Photorealistic, cinematic. The tables have turned.
+Desert road between them, dust, muzzle flash. Harsh light. Photorealistic, cinematic. The tables have turned.
