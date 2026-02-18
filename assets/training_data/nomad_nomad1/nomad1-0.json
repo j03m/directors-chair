@@ -1,0 +1,8 @@
+{
+    "prompt": "nomad nomad1, A professional character design reference of a male desert nomad standing upright.\n\nSet in a gritty, Mad Max-style post-apocalyptic desert world. Photorealistic, cinematic quality.\n\nCostume Details:\n- Head: Wrapped desert headscarf or loose hood, sun-bleached and dusty. No helmet or armor.\n- Face: Weather-beaten but not menacing. Tired, cautious eyes. Stubble or short beard.\n- Torso: Layered loose desert robes and a worn poncho or shawl. Earth tones \u2014 tan, brown, faded olive. No spikes, no armor, no weapons visible.\n- Belt: Simple rope or leather belt with a canteen and a small pouch.\n- Legs: Loose linen pants wrapped at the calves, dusty leather sandals or worn boots.\n\nHe looks like a traveler, not a fighter. Sunburned, dusty, and tired but not aggressive. A civilian surviving in the wasteland.\n\nThe image shows the full body, standing, facing the camera. Harsh desert sunlight. Background is flat neutral sand. 8k resolution, cinematic.",
+    "seed": 1807917912,
+    "steps": 28,
+    "guidance": 3.5,
+    "generator": "fal-flux",
+    "model_path": "unknown"
+}
