@@ -269,10 +269,7 @@ def storyboard_to_video(storyboard_file=None, auto_mode=False, keyframes_only=Fa
                 keyframe_passes=shot.get("keyframe_passes"),
             )
         if not ok:
-            console.print(f"[red]Keyframe generation failed for shot {i + 1}.[/red]")
-            if not auto_mode:
-                input("\nPress Enter to continue...")
-            return
+            console.print(f"[red]Keyframe generation failed for shot {i + 1}, continuing...[/red]")
 
     # Keyframe review
     if not auto_mode:

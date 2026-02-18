@@ -120,7 +120,11 @@ def generate_keyframe_nano_banana(
                 result = handler.get()
                 break  # Success
         except Exception as e:
-            if "500" in str(e) or "downstream_service_error" in str(e):
+            err_str = str(e)
+            if "422" in err_str or "no_media_generated" in err_str:
+                console.print(f"  [red]Content filter rejected this prompt (422). Skipping.[/red]")
+                return False
+            elif "500" in err_str or "downstream_service_error" in err_str:
                 if attempt < max_retries - 1:
                     wait = 10 * (attempt + 1)
                     console.print(f"  [yellow]Server error (attempt {attempt + 1}/{max_retries}), retrying in {wait}s...[/yellow]")
