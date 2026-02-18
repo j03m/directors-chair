@@ -227,8 +227,7 @@ def build_regular_female(name, mat, position, pose="standing"):
                  (x + 0.45, y, z + 0.65), (0.08, 0.08, 0.38))
 
 
-# === SCENE SETUP ===
-
+# --- Scene Setup ---
 clean_scene()
 scene = bpy.context.scene
 setup_render(scene)
@@ -237,83 +236,42 @@ add_light(scene)
 # Materials
 mat_ground = make_mat("Ground", (0.2, 0.15, 0.1, 1))
 mat_heavy = make_mat("Heavy", (0.25, 0.18, 0.1, 1))
-mat_truck = make_mat("Truck", (0.3, 0.25, 0.2, 1))
-mat_axe = make_mat("Axe", (0.4, 0.4, 0.4, 1))
-mat_dust = make_mat("Dust", (0.6, 0.5, 0.35, 0.6))
 
 # Ground
-add_ground(mat_ground, size=15)
+add_ground(mat_ground)
 
-# Heavy raider — knocked backwards, airborne, arms flung wide
-# Using a custom airborne pose since "fallen" is on the ground
-# Place him center-frame, elevated off ground to show airborne
-x_h, y_h, z_h = 0, 0, 0
+# Add a desert road feel — lighter strip down the center
+mat_road = make_mat("Road", (0.35, 0.3, 0.22, 1))
+add_mesh("Road", bpy.ops.mesh.primitive_plane_add, mat_road, (0, 0, 0.01), (3, 15, 1))
 
-# Body tilted backwards and slightly airborne
+# Heavy raider — knocked backwards off his feet, airborne, arms flung wide
+# Using "fallen" pose but elevated off the ground to show airborne moment
+x, y, z = 0, 0, 0
+# Body tilted back dramatically, elevated to show being knocked airborne
 add_mesh("Heavy_Body", bpy.ops.mesh.primitive_cube_add, mat_heavy,
-         (x_h, y_h, z_h + 1.2), (0.65, 0.45, 0.75),
-         rot=(math.radians(-35), 0, math.radians(5)))
-
+         (x, y, z + 1.2), (0.65, 0.45, 0.75),
+         rot=(math.radians(-55), 0, math.radians(5)))
 # Head snapping back
 add_mesh("Heavy_Head", bpy.ops.mesh.primitive_uv_sphere_add, mat_heavy,
-         (x_h + 0.2, y_h, z_h + 2.1), (0.38, 0.33, 0.33),
-         rot=(math.radians(-25), 0, 0))
-
-# Arms flung wide outward
+         (x + 0.1, y, z + 2.1), (0.38, 0.33, 0.33),
+         rot=(math.radians(-40), 0, 0))
+# Arms flung wide — splayed out to the sides
 add_mesh("Heavy_ArmL", bpy.ops.mesh.primitive_cylinder_add, mat_heavy,
-         (x_h - 1.1, y_h + 0.2, z_h + 1.5), (0.14, 0.14, 0.55),
-         rot=(math.radians(-20), math.radians(15), math.radians(-70)))
+         (x - 1.1, y + 0.2, z + 1.5), (0.14, 0.14, 0.55),
+         rot=(math.radians(-20), math.radians(70), math.radians(-30)))
 add_mesh("Heavy_ArmR", bpy.ops.mesh.primitive_cylinder_add, mat_heavy,
-         (x_h + 1.2, y_h - 0.3, z_h + 1.7), (0.14, 0.14, 0.55),
-         rot=(math.radians(10), math.radians(-20), math.radians(65)))
-
-# Legs kicking up from the impact
+         (x + 1.1, y - 0.3, z + 1.6), (0.14, 0.14, 0.55),
+         rot=(math.radians(15), math.radians(-65), math.radians(25)))
+# Legs kicking up — feet leaving the ground
 add_mesh("Heavy_LegL", bpy.ops.mesh.primitive_cylinder_add, mat_heavy,
-         (x_h - 0.4, y_h + 0.3, z_h + 0.3), (0.16, 0.16, 0.45),
-         rot=(math.radians(30), 0, math.radians(-10)))
+         (x - 0.4, y + 0.5, z + 0.4), (0.16, 0.16, 0.5),
+         rot=(math.radians(40), 0, math.radians(-10)))
 add_mesh("Heavy_LegR", bpy.ops.mesh.primitive_cylinder_add, mat_heavy,
-         (x_h + 0.5, y_h + 0.4, z_h + 0.2), (0.16, 0.16, 0.45),
-         rot=(math.radians(40), 0, math.radians(15)))
+         (x + 0.4, y + 0.3, z + 0.3), (0.16, 0.16, 0.5),
+         rot=(math.radians(50), 0, math.radians(15)))
 
-# Axe flying away from his hand (upper right)
-add_mesh("Axe_Handle", bpy.ops.mesh.primitive_cylinder_add, mat_axe,
-         (x_h + 2.0, y_h - 0.5, z_h + 2.3), (0.04, 0.04, 0.4),
-         rot=(math.radians(25), math.radians(-40), math.radians(55)))
-add_mesh("Axe_Blade", bpy.ops.mesh.primitive_cube_add, mat_axe,
-         (x_h + 2.2, y_h - 0.7, z_h + 2.7), (0.15, 0.03, 0.12),
-         rot=(math.radians(25), math.radians(-40), math.radians(55)))
-
-# Truck behind him — simple box shape
-add_mesh("Truck_Body", bpy.ops.mesh.primitive_cube_add, mat_truck,
-         (x_h, y_h + 3.5, z_h + 1.2), (1.2, 2.0, 1.0))
-add_mesh("Truck_Cab", bpy.ops.mesh.primitive_cube_add, mat_truck,
-         (x_h, y_h + 5.8, z_h + 1.5), (1.0, 0.8, 0.7))
-# Wheels
-mat_wheel = make_mat("Wheel", (0.1, 0.1, 0.1, 1))
-add_mesh("Truck_WheelFL", bpy.ops.mesh.primitive_cylinder_add, mat_wheel,
-         (x_h - 1.3, y_h + 5.0, z_h + 0.3), (0.3, 0.3, 0.15),
-         rot=(math.radians(90), 0, 0))
-add_mesh("Truck_WheelFR", bpy.ops.mesh.primitive_cylinder_add, mat_wheel,
-         (x_h + 1.3, y_h + 5.0, z_h + 0.3), (0.3, 0.3, 0.15),
-         rot=(math.radians(90), 0, 0))
-add_mesh("Truck_WheelRL", bpy.ops.mesh.primitive_cylinder_add, mat_wheel,
-         (x_h - 1.3, y_h + 2.5, z_h + 0.3), (0.3, 0.3, 0.15),
-         rot=(math.radians(90), 0, 0))
-add_mesh("Truck_WheelRR", bpy.ops.mesh.primitive_cylinder_add, mat_wheel,
-         (x_h + 1.3, y_h + 2.5, z_h + 0.3), (0.3, 0.3, 0.15),
-         rot=(math.radians(90), 0, 0))
-
-# Dust and debris — scattered small cubes/spheres near ground
-for i in range(8):
-    angle = i * math.radians(45)
-    dx = math.cos(angle) * (1.0 + i * 0.15)
-    dy = math.sin(angle) * (0.8 + i * 0.1)
-    dz = 0.1 + (i % 3) * 0.15
-    add_mesh(f"Dust_{i}", bpy.ops.mesh.primitive_uv_sphere_add, mat_dust,
-             (x_h + dx, y_h + dy, z_h + dz), (0.08 + i * 0.02, 0.08 + i * 0.02, 0.06))
-
-# Camera — medium shot from front-left, capturing the airborne heavy and truck behind
-setup_camera(scene, loc=(4.0, -5.0, 2.5), target_loc=(0, 0, 1.3), lens=32)
+# Camera — medium shot, slightly low angle to emphasize the figure being knocked back
+setup_camera(scene, loc=(3.5, -4, 1.8), target_loc=(0, 0, 1.2), lens=35)
 
 # Render
 scene.frame_set(1)
