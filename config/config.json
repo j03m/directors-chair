@@ -49,7 +49,7 @@
             }
         },
         "nomad1": {
-            "prompt_file": "prompts/nomad.txt",
+            "prompt_file": "prompts/nomad1.txt",
             "trigger": "nomad",
             "count": 3,
             "generator": "fal-flux",
@@ -57,7 +57,7 @@
             "parameters": { "steps": 28, "guidance": 3.5, "aspect_ratio": "1:1" }
         },
         "nomad2": {
-            "prompt_file": "prompts/nomad.txt",
+            "prompt_file": "prompts/nomad2.txt",
             "trigger": "nomad",
             "count": 3,
             "generator": "fal-flux",
@@ -65,7 +65,7 @@
             "parameters": { "steps": 28, "guidance": 3.5, "aspect_ratio": "1:1" }
         },
         "nomad3": {
-            "prompt_file": "prompts/nomad.txt",
+            "prompt_file": "prompts/nomad3.txt",
             "trigger": "nomad",
             "count": 3,
             "generator": "fal-flux",
@@ -80,40 +80,32 @@
             "loras": [],
             "parameters": { "steps": 28, "guidance": 3.5, "aspect_ratio": "1:1" }
         },
-        "raider1": {
-            "prompt_file": "prompts/raider.txt",
+        "raider_hockey": {
+            "prompt_file": "prompts/raider_hockey.txt",
             "trigger": "raider",
             "count": 3,
             "generator": "fal-flux",
             "loras": [],
             "parameters": { "steps": 28, "guidance": 3.5, "aspect_ratio": "1:1" }
         },
-        "raider2": {
-            "prompt_file": "prompts/raider.txt",
+        "raider_heavy": {
+            "prompt_file": "prompts/raider_heavy.txt",
             "trigger": "raider",
             "count": 3,
             "generator": "fal-flux",
             "loras": [],
             "parameters": { "steps": 28, "guidance": 3.5, "aspect_ratio": "1:1" }
         },
-        "raider3": {
-            "prompt_file": "prompts/raider.txt",
+        "raider_goggles": {
+            "prompt_file": "prompts/raider_goggles.txt",
             "trigger": "raider",
             "count": 3,
             "generator": "fal-flux",
             "loras": [],
             "parameters": { "steps": 28, "guidance": 3.5, "aspect_ratio": "1:1" }
         },
-        "raider4": {
-            "prompt_file": "prompts/raider.txt",
-            "trigger": "raider",
-            "count": 3,
-            "generator": "fal-flux",
-            "loras": [],
-            "parameters": { "steps": 28, "guidance": 3.5, "aspect_ratio": "1:1" }
-        },
-        "raider5": {
-            "prompt_file": "prompts/raider.txt",
+        "raider_greasy": {
+            "prompt_file": "prompts/raider_greasy.txt",
             "trigger": "raider",
             "count": 3,
             "generator": "fal-flux",

@@ -1,14 +1,20 @@
-nomad nomad3, A professional character design reference of a male desert nomad standing upright.
+nomad nomad3, A professional character design reference of a Middle Eastern male post-apocalyptic civilian standing upright.
 
-Set in a gritty, Mad Max-style post-apocalyptic desert world. Photorealistic, cinematic quality.
+Set in a gritty, Mad Max / Fallout style post-apocalyptic desert world. Photorealistic, cinematic quality.
+
+Physical Details:
+- Ethnicity: Middle Eastern descent. Olive skin darkened by sun. Dark eyes, thick eyebrows.
+- Face: Short dark beard, trimmed but rough. Mid-30s. Weathered but kind face, not aggressive.
+- Build: Stocky, sturdy.
 
 Costume Details:
-- Head: Wrapped desert headscarf or loose hood, sun-bleached and dusty. No helmet or armor.
-- Face: Weather-beaten but not menacing. Tired, cautious eyes. Stubble or short beard.
-- Torso: Layered loose desert robes and a worn poncho or shawl. Earth tones — tan, brown, faded olive. No spikes, no armor, no weapons visible.
-- Belt: Simple rope or leather belt with a canteen and a small pouch.
-- Legs: Loose linen pants wrapped at the calves, dusty leather sandals or worn boots.
+- Head: A faded and dusty keffiyeh worn loosely around his neck and shoulders, not wrapped — used as a scarf and sun shield, not a hood.
+- Torso: A repurposed military field jacket — olive drab, faded, with the insignia torn off. Buttons replaced with safety pins. Worn open over a dirty henley shirt.
+- Hands: Makeshift gloves — one is a cut rubber kitchen glove, the other is a leather work glove. Mismatched.
+- Belt: Rope belt with a metal canteen and a small canvas drawstring pouch.
+- Legs: Dark work pants, baggy and dusty. Held up with the rope belt. Fraying at the cuffs.
+- Feet: Heavy rubber boots, cracked and sun-faded. One has a different colored sole — clearly a replacement.
 
-He looks like a traveler, not a fighter. Sunburned, dusty, and tired but not aggressive. A civilian surviving in the wasteland.
+He is covered in dust and grime. Everything he wears was scavenged and repurposed. He is a civilian, not a fighter — just a regular guy getting by.
 
 The image shows the full body, standing, facing the camera. Harsh desert sunlight. Background is flat neutral sand. 8k resolution, cinematic.

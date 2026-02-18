@@ -1,14 +1,20 @@
-nomad nomad2, A professional character design reference of a male desert nomad standing upright.
+nomad nomad2, A professional character design reference of an East Asian male post-apocalyptic civilian standing upright.
 
-Set in a gritty, Mad Max-style post-apocalyptic desert world. Photorealistic, cinematic quality.
+Set in a gritty, Mad Max / Fallout style post-apocalyptic desert world. Photorealistic, cinematic quality.
+
+Physical Details:
+- Ethnicity: East Asian. Dark hair buzzed short. Tan skin weathered by sun.
+- Face: Young, mid-20s. Quiet, cautious expression. Clean-shaven or barely visible stubble.
+- Build: Slim, wiry.
 
 Costume Details:
-- Head: Wrapped desert headscarf or loose hood, sun-bleached and dusty. No helmet or armor.
-- Face: Weather-beaten but not menacing. Tired, cautious eyes. Stubble or short beard.
-- Torso: Layered loose desert robes and a worn poncho or shawl. Earth tones — tan, brown, faded olive. No spikes, no armor, no weapons visible.
-- Belt: Simple rope or leather belt with a canteen and a small pouch.
-- Legs: Loose linen pants wrapped at the calves, dusty leather sandals or worn boots.
+- Head: A pair of cracked safety goggles pushed up on his forehead. No hat.
+- Torso: A faded mechanic's jumpsuit with the top half unzipped and tied around his waist, revealing a grimy thermal undershirt underneath. Sleeves rolled up.
+- Hands: Worn leather work gloves, cracked and sun-bleached.
+- Belt: A nylon tool belt repurposed as a utility belt, holding a wrench and a water bottle.
+- Legs: The bottom half of the mechanic's jumpsuit, stained with grease and dust. One knee patched with canvas.
+- Feet: Old hiking boots, soles worn smooth.
 
-He looks like a traveler, not a fighter. Sunburned, dusty, and tired but not aggressive. A civilian surviving in the wasteland.
+He is covered in dust and grime. Everything he wears was found or repurposed from pre-war junk. He is a civilian, not a fighter — quiet and careful.
 
 The image shows the full body, standing, facing the camera. Harsh desert sunlight. Background is flat neutral sand. 8k resolution, cinematic.
