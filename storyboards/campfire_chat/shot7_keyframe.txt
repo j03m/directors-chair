@@ -1,7 +1,7 @@
-Use @Image1 as composition reference. Front-facing camera, low angle, same two-shot framing as the opening — camera returns to the front.
+Use @Image1 as composition reference. Front-facing camera, low angle.
 
-@Element1 a rugged bearded warrior in tactical vest slouches in a cheap low-profile folding beach chair — the chair is faded hot-pink canvas with white tropical hibiscus flower print, aluminum frame, dirty and sand-caked but still absurdly cheerful. He sits on the left. @Element2 a massive gorilla in full viking armor and horned helmet sprawls in a cheap low-profile folding beach chair — the chair is faded lime-green canvas with white tropical palm tree print, aluminum frame, dirty and sand-caked but still absurdly cheerful. He sits on the right. Both look at each other with lazy amusement. The warrior shakes his head dismissively, like saying "no way." The gorilla watches him, unbothered.
+Two characters sit side by side in the desert. Only two chairs in the scene — no other furniture. @Element1 a rugged bearded warrior sits on the left in a faded hot-pink folding beach chair with white hibiscus print. @Element2 a massive gorilla in viking armor sits on the right in a faded lime-green folding beach chair with white palm tree print. They look at each other with lazy amusement.
 
-@Element3 a rusty CRT-headed robot stands in front of the two chairs, facing them, having just walked up. The robot is between the camera and the seated characters, seen from behind at a slight angle so both the robot and the two seated characters are visible. The robot's glowing blue CRT screen faces the seated characters.
+@Element3 a robot stands in front of them, facing them, seen from behind at a slight angle. The robot's back is toward the camera.
 
-Brown whiskey bottle rests between the chairs. Desert ground, hazy sky. Warm golden hour light. Photorealistic, cinematic. Slacker energy — two bums and a robot at the end of the world.
+Brown whiskey bottle between the chairs. Desert ground, golden hour. Photorealistic, cinematic. Slacker energy.
