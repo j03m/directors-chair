@@ -1,6 +1,7 @@
 import io
 import os
 import re
+import time
 import requests
 from typing import Dict, Any, Optional
 
@@ -91,28 +92,44 @@ def generate_keyframe_nano_banana(
     console.print(f"  [dim]Images: {len(image_urls)} (1 comp + {len(char_names)} characters)[/dim]")
     console.print(f"  [dim]Prompt: {translated_prompt[:80]}...[/dim]")
 
-    # Submit to Nano Banana Pro edit
+    # Submit to Nano Banana Pro edit (with retry on 500 errors)
     console.print(f"  [dim]Requesting {num_images} variant(s)[/dim]")
-    with console.status("[cyan]Generating keyframe via Nano Banana Pro (Gemini)...[/cyan]") as status:
-        handler = fal_client.submit(
-            "fal-ai/nano-banana-pro/edit",
-            arguments={
-                "prompt": full_prompt,
-                "image_urls": image_urls,
-                "aspect_ratio": aspect_ratio,
-                "resolution": resolution,
-                "output_format": "png",
-                "num_images": num_images,
-            },
-        )
-        for event in handler.iter_events(with_logs=True):
-            if isinstance(event, fal_client.InProgress):
-                if event.logs:
-                    for log in event.logs:
-                        msg = log.get('message', '') if isinstance(log, dict) else str(log)
-                        console.print(f"  [dim]  gemini: {msg}[/dim]")
-                        status.update(f"[cyan]{msg}[/cyan]")
-        result = handler.get()
+    max_retries = 3
+    result = None
+    for attempt in range(max_retries):
+        try:
+            with console.status("[cyan]Generating keyframe via Nano Banana Pro (Gemini)...[/cyan]") as status:
+                handler = fal_client.submit(
+                    "fal-ai/nano-banana-pro/edit",
+                    arguments={
+                        "prompt": full_prompt,
+                        "image_urls": image_urls,
+                        "aspect_ratio": aspect_ratio,
+                        "resolution": resolution,
+                        "output_format": "png",
+                        "num_images": num_images,
+                    },
+                )
+                for event in handler.iter_events(with_logs=True):
+                    if isinstance(event, fal_client.InProgress):
+                        if event.logs:
+                            for log in event.logs:
+                                msg = log.get('message', '') if isinstance(log, dict) else str(log)
+                                console.print(f"  [dim]  gemini: {msg}[/dim]")
+                                status.update(f"[cyan]{msg}[/cyan]")
+                result = handler.get()
+                break  # Success
+        except Exception as e:
+            if "500" in str(e) or "downstream_service_error" in str(e):
+                if attempt < max_retries - 1:
+                    wait = 10 * (attempt + 1)
+                    console.print(f"  [yellow]Server error (attempt {attempt + 1}/{max_retries}), retrying in {wait}s...[/yellow]")
+                    time.sleep(wait)
+                else:
+                    console.print(f"  [red]Server error after {max_retries} attempts, giving up.[/red]")
+                    raise
+            else:
+                raise
 
     # Log response metadata
     for key in result:
