@@ -22,8 +22,8 @@ def main():
     sb = subparsers.add_parser("storyboard", help="Run storyboard pipeline (autonomous)")
     sb.add_argument("--file", required=True, help="Path to storyboard JSON file")
     sb.add_argument("--keyframes-only", action="store_true", help="Stop after keyframe generation (skip video)")
-    sb.add_argument("--regen-keyframes", type=str, help="Comma-separated keyframe numbers (0-indexed), 'all' to regen everything, or 'missing' to only generate missing keyframes. e.g. '2,3,4' = keyframe_002, keyframe_003, keyframe_004")
-    sb.add_argument("--edit-keyframes", type=str, help="Comma-separated keyframe numbers (0-indexed) to run ONLY the edit pass on existing keyframes. e.g. '0,1' = edit keyframe_000, keyframe_001")
+    sb.add_argument("--regen-keyframes", type=str, help="Comma-separated shot names, 'all' to regen everything, or 'missing' to only generate missing keyframes. e.g. 'hockey_threat,greasy_cigarette'")
+    sb.add_argument("--edit-keyframes", type=str, help="Comma-separated shot names to run ONLY the edit pass on existing keyframes. e.g. 'hockey_threat,hockey_face'")
 
     # --- generate subcommand ---
     gen = subparsers.add_parser("generate", help="Generate character images (autonomous)")
@@ -33,20 +33,20 @@ def main():
     # --- edit-clip subcommand ---
     ec = subparsers.add_parser("edit-clip", help="Edit an existing video clip (v2v)")
     ec.add_argument("--file", required=True, help="Path to storyboard JSON file")
-    ec.add_argument("--clip", required=True, type=int, help="0-based clip index to edit")
+    ec.add_argument("--clip", required=True, type=str, help="Shot name of clip to edit")
     ec.add_argument("--prompt", required=True, help="Edit prompt describing desired changes")
     ec.add_argument("--save-as-new", action="store_true", help="Save as new file instead of overwriting")
 
     # --- edit-keyframe subcommand ---
     ek = subparsers.add_parser("edit-keyframe", help="Edit an existing keyframe image")
     ek.add_argument("--file", required=True, help="Path to storyboard JSON file")
-    ek.add_argument("--keyframe", required=True, type=int, help="0-based keyframe index to edit")
+    ek.add_argument("--keyframe", required=True, type=str, help="Shot name of keyframe to edit")
     ek.add_argument("--prompt", required=True, help="Edit prompt describing desired changes")
 
     # --- regen-clip subcommand ---
     rc = subparsers.add_parser("regen-clip", help="Regenerate a single video clip")
     rc.add_argument("--file", required=True, help="Path to storyboard JSON file")
-    rc.add_argument("--clip", required=True, type=int, help="0-based clip index to regenerate")
+    rc.add_argument("--clip", required=True, type=str, help="Shot name of clip to regenerate")
 
     # --- assemble subcommand ---
     asm = subparsers.add_parser("assemble", help="Assemble movie from storyboard videos")
@@ -73,10 +73,10 @@ def main():
             elif val == "missing":
                 regen_kf = "missing"
             else:
-                regen_kf = [int(x.strip()) for x in val.split(",")]
+                regen_kf = [x.strip() for x in val.split(",")]
         edit_kf = None
         if getattr(args, 'edit_keyframes', None):
-            edit_kf = [int(x.strip()) for x in args.edit_keyframes.split(",")]
+            edit_kf = [x.strip() for x in args.edit_keyframes.split(",")]
         storyboard_to_video(
             storyboard_file=args.file,
             auto_mode=True,
@@ -97,7 +97,7 @@ def main():
         from directors_chair.cli.commands.clip_tools import edit_clip_command
         edit_clip_command(
             storyboard_file=args.file,
-            clip_index=args.clip,
+            clip_name=args.clip,
             edit_prompt=args.prompt,
             auto_mode=True,
             save_as_new=getattr(args, 'save_as_new', False),
@@ -107,7 +107,7 @@ def main():
         from directors_chair.cli.commands.clip_tools import edit_keyframe_command
         edit_keyframe_command(
             storyboard_file=args.file,
-            keyframe_index=args.keyframe,
+            keyframe_name=args.keyframe,
             edit_prompt=args.prompt,
             auto_mode=True,
         )
@@ -116,7 +116,7 @@ def main():
         from directors_chair.cli.commands.clip_tools import regen_clip_command
         regen_clip_command(
             storyboard_file=args.file,
-            clip_index=args.clip,
+            clip_name=args.clip,
             auto_mode=True,
         )
 

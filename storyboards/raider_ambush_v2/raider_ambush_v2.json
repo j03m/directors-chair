@@ -118,6 +118,21 @@
             ]
         },
         {
+            "name": "greasy_cigarette",
+            "characters": [
+                "greasy"
+            ],
+            "anchor_keyframe": "hockey_threat",
+            "layout_prompt_file": "shot_greasy_cig_layout.txt",
+            "keyframe_prompt_file": "shot_greasy_cig_keyframe.txt",
+            "beats": [
+                {
+                    "prompt_file": "shot_greasy_cig_beat.txt",
+                    "duration": "5"
+                }
+            ]
+        },
+        {
             "name": "cliff_exchange",
             "characters": [
                 "cranial",
@@ -148,6 +163,20 @@
                 {
                     "prompt_file": "shot08_beat.txt",
                     "duration": "3"
+                }
+            ]
+        },
+        {
+            "name": "heavy_behind_truck",
+            "characters": [
+                "heavy"
+            ],
+            "layout_prompt_file": "shot_heavy_truck_layout.txt",
+            "keyframe_prompt_file": "shot_heavy_truck_keyframe.txt",
+            "beats": [
+                {
+                    "prompt_file": "shot_heavy_truck_beat.txt",
+                    "duration": "5"
                 }
             ]
         },

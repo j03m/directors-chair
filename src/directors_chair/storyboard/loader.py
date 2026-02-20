@@ -55,7 +55,7 @@ def validate_storyboard(storyboard: Dict[str, Any]) -> Tuple[bool, List[str]]:
     elif not isinstance(storyboard["shots"], list) or len(storyboard["shots"]) < 1:
         errors.append("'shots' must be a list with at least 1 entry")
 
-    # Keyframe engine (optional, defaults to kling)
+    # Keyframe engine (optional, defaults to gemini)
     kf_engine = storyboard.get("keyframe_engine", "gemini")
     if kf_engine not in VALID_KEYFRAME_ENGINES:
         errors.append(f"'keyframe_engine' must be one of {VALID_KEYFRAME_ENGINES}, got '{kf_engine}'")
@@ -75,45 +75,59 @@ def validate_storyboard(storyboard: Dict[str, Any]) -> Tuple[bool, List[str]]:
 
     # Validate shots
     if "shots" in storyboard and isinstance(storyboard["shots"], list):
+        # Unique shot names
+        seen_names = set()
+        shot_names_before = []  # track names in order for anchor validation
+
         for i, shot in enumerate(storyboard["shots"]):
+            sname = shot.get("name", "")
+            if not sname:
+                errors.append(f"Shot {i + 1}: missing required 'name' field")
+            elif sname in seen_names:
+                errors.append(f"Shot {i + 1}: duplicate name '{sname}' — shot names must be unique")
+            seen_names.add(sname)
+
             # Layout prompt required for Blender layout generation
             if "layout_prompt" not in shot:
-                errors.append(f"Shot {i + 1}: missing 'layout_prompt' (or 'layout_prompt_file')")
+                errors.append(f"Shot '{sname}': missing 'layout_prompt' (or 'layout_prompt_file')")
             # Keyframe: either single prompt or multi-pass
             has_keyframe = "keyframe_prompt" in shot
             has_passes = "keyframe_passes" in shot
             if not has_keyframe and not has_passes:
-                errors.append(f"Shot {i + 1}: missing 'keyframe_prompt' or 'keyframe_passes'")
+                errors.append(f"Shot '{sname}': missing 'keyframe_prompt' or 'keyframe_passes'")
             if has_passes:
                 passes = shot["keyframe_passes"]
                 if not isinstance(passes, list) or len(passes) < 2:
-                    errors.append(f"Shot {i + 1}: 'keyframe_passes' must have at least 2 entries")
+                    errors.append(f"Shot '{sname}': 'keyframe_passes' must have at least 2 entries")
                 else:
                     for pi, kp in enumerate(passes):
                         if "prompt" not in kp:
-                            errors.append(f"Shot {i + 1}, pass {pi + 1}: missing 'prompt' (or 'prompt_file')")
+                            errors.append(f"Shot '{sname}', pass {pi + 1}: missing 'prompt' (or 'prompt_file')")
                         if "characters" not in kp or not isinstance(kp.get("characters"), list):
-                            errors.append(f"Shot {i + 1}, pass {pi + 1}: missing 'characters' list")
-            # Anchor keyframe (optional — must reference an earlier shot)
+                            errors.append(f"Shot '{sname}', pass {pi + 1}: missing 'characters' list")
+
+            # Anchor keyframe (optional — must reference an earlier shot by name)
             if "anchor_keyframe" in shot:
                 anchor = shot["anchor_keyframe"]
-                if not isinstance(anchor, int) or anchor < 0:
-                    errors.append(f"Shot {i + 1}: 'anchor_keyframe' must be a non-negative integer")
-                elif anchor >= i:
-                    errors.append(f"Shot {i + 1}: 'anchor_keyframe' ({anchor}) must reference an earlier shot (< {i})")
+                if not isinstance(anchor, str) or not anchor:
+                    errors.append(f"Shot '{sname}': 'anchor_keyframe' must be a shot name string")
+                elif anchor not in shot_names_before:
+                    errors.append(f"Shot '{sname}': 'anchor_keyframe' '{anchor}' must reference an earlier shot")
+
+            shot_names_before.append(sname)
 
             # Beats required for Kling i2v
             if "beats" not in shot:
-                errors.append(f"Shot {i + 1}: missing 'beats' (multi-prompt narrative beats)")
+                errors.append(f"Shot '{sname}': missing 'beats' (multi-prompt narrative beats)")
             elif not isinstance(shot["beats"], list) or len(shot["beats"]) < 1:
-                errors.append(f"Shot {i + 1}: 'beats' must be a non-empty list")
+                errors.append(f"Shot '{sname}': 'beats' must be a non-empty list")
             else:
                 for j, beat in enumerate(shot["beats"]):
                     if "prompt" not in beat:
-                        errors.append(f"Shot {i + 1}, beat {j + 1}: missing 'prompt' (or 'prompt_file')")
+                        errors.append(f"Shot '{sname}', beat {j + 1}: missing 'prompt' (or 'prompt_file')")
                     if "duration" not in beat:
-                        errors.append(f"Shot {i + 1}, beat {j + 1}: missing 'duration'")
+                        errors.append(f"Shot '{sname}', beat {j + 1}: missing 'duration'")
                     elif str(beat["duration"]) not in VALID_DURATIONS:
-                        errors.append(f"Shot {i + 1}, beat {j + 1}: duration must be one of {VALID_DURATIONS}")
+                        errors.append(f"Shot '{sname}', beat {j + 1}: duration must be one of {VALID_DURATIONS}")
 
     return (len(errors) == 0, errors)
