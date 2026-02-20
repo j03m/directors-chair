@@ -38,10 +38,7 @@ def setup_render(scene, width=1280, height=720):
     scene.render.resolution_percentage = 100
     scene.render.image_settings.file_format = 'PNG'
     scene.world = bpy.data.worlds.new("World")
-    scene.world.use_nodes = True
-    bg = scene.world.node_tree.nodes["Background"]
-    bg.inputs["Color"].default_value = (0.15, 0.12, 0.08, 1)
-    bg.inputs["Strength"].default_value = 1.0
+    scene.world.color = (0.15, 0.12, 0.08)
 
 
 def setup_camera(scene, loc, target_loc, lens=28):
@@ -227,122 +224,104 @@ def build_regular_female(name, mat, position, pose="standing"):
                  (x + 0.45, y, z + 0.65), (0.08, 0.08, 0.38))
 
 
-# ============================================================
-# SCENE SETUP
-# ============================================================
-
+# ── Scene Setup ──────────────────────────────────────────────────────────────
 clean_scene()
 scene = bpy.context.scene
 setup_render(scene)
 add_light(scene)
 
-# Materials
-mat_ground = make_mat("Ground", (0.2, 0.15, 0.1, 1))
-mat_road = make_mat("Road", (0.12, 0.1, 0.08, 1))
-mat_vehicle_dark = make_mat("VehicleDark", (0.15, 0.12, 0.1, 1))
-mat_vehicle_rust = make_mat("VehicleRust", (0.35, 0.2, 0.1, 1))
-mat_truck = make_mat("Truck", (0.3, 0.25, 0.18, 1))
-mat_motorcycle = make_mat("Motorcycle", (0.1, 0.1, 0.12, 1))
+# ── Materials ────────────────────────────────────────────────────────────────
+ground_mat = make_mat("Ground", (0.2, 0.15, 0.1, 1))
+road_mat = make_mat("Road", (0.1, 0.08, 0.06, 1))
+road_line_mat = make_mat("RoadLine", (0.35, 0.3, 0.2, 1))
+barricade_mat = make_mat("Barricade", (0.3, 0.22, 0.15, 1))
+tire_mat = make_mat("Tire", (0.08, 0.08, 0.08, 1))
+moto_mat = make_mat("Motorcycle", (0.12, 0.1, 0.1, 1))
+truck_mat = make_mat("Truck", (0.4, 0.3, 0.18, 1))
+truck_cab_mat = make_mat("TruckCab", (0.35, 0.25, 0.15, 1))
+hockey_mat = make_mat("HockeyMat", (0.2, 0.35, 0.5, 1))
+goggles_mat = make_mat("GogglesMat", (0.5, 0.2, 0.2, 1))
+greasy_mat = make_mat("GreasyMat", (0.3, 0.4, 0.2, 1))
+heavy_mat = make_mat("HeavyMat", (0.25, 0.18, 0.1, 1))
 
-# Character materials
-mat_hockey = make_mat("Hockey", (0.2, 0.35, 0.5, 1))
-mat_goggles = make_mat("Goggles", (0.5, 0.2, 0.2, 1))
-mat_greasy = make_mat("Greasy", (0.3, 0.4, 0.2, 1))
-mat_heavy = make_mat("Heavy", (0.25, 0.18, 0.1, 1))
-mat_nomad1 = make_mat("Nomad1", (0.3, 0.4, 0.2, 1))
-mat_nomad2 = make_mat("Nomad2", (0.25, 0.18, 0.1, 1))
-mat_nomad3 = make_mat("Nomad3", (0.6, 0.6, 0.65, 1))
+# ── Ground ───────────────────────────────────────────────────────────────────
+add_ground(ground_mat, size=80)
 
-# Ground plane (desert)
-add_ground(mat_ground, size=25)
+# ── Road running left to right (along X axis) ───────────────────────────────
+add_mesh("Road", bpy.ops.mesh.primitive_cube_add, road_mat,
+         (0, 0, 0.02), (70, 3, 0.02))
 
-# Road stretching into the distance (long flat box)
-add_mesh("Road", bpy.ops.mesh.primitive_cube_add, mat_road,
-         (0, 0, 0.01), (2.5, 25, 0.01))
+# Dashed center line
+for i in range(-60, 61, 8):
+    add_mesh(f"Line_{i}", bpy.ops.mesh.primitive_cube_add, road_line_mat,
+             (i, 0, 0.05), (1.5, 0.08, 0.01))
 
-# === ROADBLOCK (left side of road) ===
-# Wrecked car 1 — angled across left lane
-add_mesh("Wreck1_Body", bpy.ops.mesh.primitive_cube_add, mat_vehicle_dark,
-         (-2.5, -3, 0.4), (1.2, 0.5, 0.35),
-         rot=(0, 0, math.radians(25)))
-add_mesh("Wreck1_Cab", bpy.ops.mesh.primitive_cube_add, mat_vehicle_dark,
-         (-2.2, -3, 0.85), (0.6, 0.45, 0.25),
-         rot=(0, 0, math.radians(25)))
+# ── Barricade cluster (far left, x ~ -25) ───────────────────────────────────
+# Debris cubes
+add_mesh("Debris1", bpy.ops.mesh.primitive_cube_add, barricade_mat,
+         (-26, -1.0, 0.4), (1.0, 0.6, 0.4))
+add_mesh("Debris2", bpy.ops.mesh.primitive_cube_add, barricade_mat,
+         (-24.5, 0.8, 0.5), (0.7, 0.8, 0.5))
+add_mesh("Debris3", bpy.ops.mesh.primitive_cube_add, barricade_mat,
+         (-27, 0.3, 0.3), (1.2, 0.4, 0.3))
+add_mesh("Debris4", bpy.ops.mesh.primitive_cube_add, barricade_mat,
+         (-23.5, -0.5, 0.35), (0.5, 0.9, 0.35))
 
-# Wrecked car 2 — perpendicular block
-add_mesh("Wreck2_Body", bpy.ops.mesh.primitive_cube_add, mat_vehicle_rust,
-         (-1.0, -4.5, 0.4), (1.0, 0.5, 0.3),
-         rot=(0, 0, math.radians(-15)))
-add_mesh("Wreck2_Cab", bpy.ops.mesh.primitive_cube_add, mat_vehicle_rust,
-         (-0.8, -4.5, 0.75), (0.5, 0.4, 0.22),
-         rot=(0, 0, math.radians(-15)))
-
-# Motorcycle near the roadblock
-add_mesh("Motorcycle_Frame", bpy.ops.mesh.primitive_cube_add, mat_motorcycle,
-         (-3.5, -2.0, 0.35), (0.3, 0.7, 0.2),
-         rot=(0, 0, math.radians(10)))
-add_mesh("Motorcycle_Wheel1", bpy.ops.mesh.primitive_cylinder_add, mat_motorcycle,
-         (-3.5, -1.4, 0.2), (0.2, 0.2, 0.05),
+# Tire cylinders
+add_mesh("Tire1", bpy.ops.mesh.primitive_cylinder_add, tire_mat,
+         (-25.5, -1.5, 0.25), (0.35, 0.35, 0.12),
          rot=(math.radians(90), 0, 0))
-add_mesh("Motorcycle_Wheel2", bpy.ops.mesh.primitive_cylinder_add, mat_motorcycle,
-         (-3.5, -2.6, 0.2), (0.2, 0.2, 0.05),
-         rot=(math.radians(90), 0, 0))
+add_mesh("Tire2", bpy.ops.mesh.primitive_cylinder_add, tire_mat,
+         (-24, 1.5, 0.25), (0.35, 0.35, 0.12),
+         rot=(math.radians(90), 0, math.radians(15)))
+add_mesh("Tire3", bpy.ops.mesh.primitive_cylinder_add, tire_mat,
+         (-26.5, 1.0, 0.25), (0.3, 0.3, 0.12),
+         rot=(math.radians(90), 0, math.radians(-10)))
 
-# === CIVILIAN TRUCK (right side, stopped) ===
-add_mesh("Truck_Cab", bpy.ops.mesh.primitive_cube_add, mat_truck,
-         (2.5, -1.0, 0.7), (0.8, 0.6, 0.55))
-add_mesh("Truck_Bed", bpy.ops.mesh.primitive_cube_add, mat_truck,
-         (2.5, -3.5, 0.5), (0.85, 1.5, 0.35))
-add_mesh("Truck_WheelFL", bpy.ops.mesh.primitive_cylinder_add, mat_motorcycle,
-         (1.7, -0.5, 0.2), (0.2, 0.2, 0.06),
-         rot=(math.radians(90), 0, 0))
-add_mesh("Truck_WheelFR", bpy.ops.mesh.primitive_cylinder_add, mat_motorcycle,
-         (3.3, -0.5, 0.2), (0.2, 0.2, 0.06),
-         rot=(math.radians(90), 0, 0))
-add_mesh("Truck_WheelRL", bpy.ops.mesh.primitive_cylinder_add, mat_motorcycle,
-         (1.7, -4.5, 0.2), (0.2, 0.2, 0.06),
-         rot=(math.radians(90), 0, 0))
-add_mesh("Truck_WheelRR", bpy.ops.mesh.primitive_cylinder_add, mat_motorcycle,
-         (3.3, -4.5, 0.2), (0.2, 0.2, 0.06),
-         rot=(math.radians(90), 0, 0))
+# ── 4 Motorcycles near barricade ─────────────────────────────────────────────
+moto_positions = [(-28, -2.5), (-27, -3.5), (-23, -2.5), (-22, -3.5)]
+for i, (mx, my) in enumerate(moto_positions):
+    add_mesh(f"Moto{i}_Body", bpy.ops.mesh.primitive_cube_add, moto_mat,
+             (mx, my, 0.35), (0.6, 0.15, 0.25))
+    add_mesh(f"Moto{i}_WheelF", bpy.ops.mesh.primitive_cylinder_add, moto_mat,
+             (mx + 0.45, my, 0.2), (0.18, 0.18, 0.04),
+             rot=(math.radians(90), 0, 0))
+    add_mesh(f"Moto{i}_WheelR", bpy.ops.mesh.primitive_cylinder_add, moto_mat,
+             (mx - 0.45, my, 0.2), (0.18, 0.18, 0.04),
+             rot=(math.radians(90), 0, 0))
+    add_mesh(f"Moto{i}_Handle", bpy.ops.mesh.primitive_cylinder_add, moto_mat,
+             (mx + 0.3, my, 0.55), (0.03, 0.03, 0.15))
 
-# === RAIDERS surrounding the truck ===
-# Hockey — standing aggressively near truck cab, fighting stance
-build_regular_male("Hockey", mat_hockey, (1.2, -0.5, 0), pose="fighting_stance")
+# ── 4 Raider figures near the barricade ──────────────────────────────────────
+build_regular_male("hockey", hockey_mat, (-27.5, 1.5, 0), "standing")
+build_regular_male("goggles", goggles_mat, (-25.5, 2.0, 0), "standing")
+build_regular_male("greasy", greasy_mat, (-24, 1.8, 0), "standing")
+build_large_figure("heavy", heavy_mat, (-22.5, 1.5, 0), "standing")
 
-# Goggles — near truck bed, pulling someone
-build_regular_male("Goggles", mat_goggles, (1.0, -3.0, 0), pose="fighting_stance")
+# ── Cab-over truck (far right, x ~ 25) ──────────────────────────────────────
+# Cargo box
+add_mesh("Truck_Cargo", bpy.ops.mesh.primitive_cube_add, truck_mat,
+         (23, 0, 1.5), (3.5, 1.5, 1.5))
+# Cab
+add_mesh("Truck_Cab", bpy.ops.mesh.primitive_cube_add, truck_cab_mat,
+         (27.5, 0, 1.2), (1.2, 1.3, 1.2))
+# Windshield hint
+add_mesh("Truck_Windshield", bpy.ops.mesh.primitive_cube_add,
+         make_mat("Glass", (0.3, 0.35, 0.4, 1)),
+         (28.0, 0, 1.8), (0.05, 1.0, 0.5))
+# Wheels
+for wx in [21, 24, 27]:
+    add_mesh(f"TruckWheelL_{wx}", bpy.ops.mesh.primitive_cylinder_add, tire_mat,
+             (wx, -1.7, 0.4), (0.4, 0.4, 0.15),
+             rot=(math.radians(90), 0, 0))
+    add_mesh(f"TruckWheelR_{wx}", bpy.ops.mesh.primitive_cylinder_add, tire_mat,
+             (wx, 1.7, 0.4), (0.4, 0.4, 0.15),
+             rot=(math.radians(90), 0, 0))
 
-# Greasy — lingering near roadblock
-build_regular_male("Greasy", mat_greasy, (-1.5, -2.0, 0), pose="standing")
+# ── Camera — extreme bird's eye, very high up ───────────────────────────────
+setup_camera(scene, loc=(2, -15, 220), target_loc=(0, 0, 0), lens=24)
 
-# Heavy — large imposing figure near truck, arms raised menacingly
-build_large_figure("Heavy", mat_heavy, (3.8, -2.5, 0), pose="arms_raised")
-
-# === NOMADS being pulled from the truck ===
-# Nomad1 — stumbling out of truck, arms raised in surrender
-build_regular_male("Nomad1", mat_nomad1, (2.0, -2.0, 0), pose="arms_raised")
-
-# Nomad2 — on the ground near the truck
-build_regular_male("Nomad2", mat_nomad2, (1.8, -4.0, 0), pose="fallen")
-
-# Nomad3 — being dragged, arms raised
-build_regular_male("Nomad3", mat_nomad3, (3.0, -4.5, 0), pose="arms_raised")
-
-# === DUST HAZE — scattered small cubes for atmospheric particles ===
-mat_dust = make_mat("Dust", (0.6, 0.5, 0.35, 1))
-for i in range(8):
-    angle = i * math.radians(45)
-    dx = math.cos(angle) * 6
-    dy = math.sin(angle) * 6
-    add_mesh(f"Dust_{i}", bpy.ops.mesh.primitive_cube_add, mat_dust,
-             (dx, dy, 0.3 + (i % 3) * 0.2), (0.8, 0.8, 0.05),
-             rot=(0, 0, angle))
-
-# Camera — high angle, slightly elevated, very wide shot looking down at the scene
-setup_camera(scene, loc=(0, 18, 12), target_loc=(0, -2, 0), lens=22)
-
-# Render
+# ── Render ───────────────────────────────────────────────────────────────────
 scene.frame_set(1)
 scene.render.filepath = "/Users/jmordetsky/directors-chair/assets/generated/videos/raider_ambush_v2/layouts/layout_000.png"
 bpy.ops.render.render(write_still=True)

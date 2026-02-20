@@ -38,10 +38,7 @@ def setup_render(scene, width=1280, height=720):
     scene.render.resolution_percentage = 100
     scene.render.image_settings.file_format = 'PNG'
     scene.world = bpy.data.worlds.new("World")
-    scene.world.use_nodes = True
-    bg = scene.world.node_tree.nodes["Background"]
-    bg.inputs["Color"].default_value = (0.15, 0.12, 0.08, 1)
-    bg.inputs["Strength"].default_value = 1.0
+    scene.world.color = (0.15, 0.12, 0.08)
 
 
 def setup_camera(scene, loc, target_loc, lens=28):
@@ -79,6 +76,7 @@ def add_ground(mat, size=15):
 
 
 def build_large_figure(name, mat, position, pose="standing"):
+    """Build a large/heavy character from primitives (gorilla-like proportions)."""
     x, y, z = position
 
     if pose == "fallen":
@@ -133,6 +131,7 @@ def build_large_figure(name, mat, position, pose="standing"):
 
 
 def build_regular_male(name, mat, position, pose="standing"):
+    """Build a regular male character from primitives."""
     x, y, z = position
 
     if pose == "fallen":
@@ -182,6 +181,7 @@ def build_regular_male(name, mat, position, pose="standing"):
 
 
 def build_regular_female(name, mat, position, pose="standing"):
+    """Build a regular female character from primitives."""
     x, y, z = position
 
     if pose == "fallen":
@@ -224,146 +224,82 @@ def build_regular_female(name, mat, position, pose="standing"):
                  (x + 0.45, y, z + 0.65), (0.08, 0.08, 0.38))
 
 
-# ============================================================
-# SCENE SETUP
-# ============================================================
-
+# ── Scene Setup ──────────────────────────────────────────────────────────────
 clean_scene()
 scene = bpy.context.scene
 setup_render(scene)
 add_light(scene)
 
-# Materials
-mat_ground = make_mat("Ground", (0.2, 0.15, 0.1, 1))
-mat_road = make_mat("Road", (0.12, 0.1, 0.08, 1))
-mat_motorcycle = make_mat("Motorcycle", (0.15, 0.15, 0.18, 1))
-mat_chrome = make_mat("Chrome", (0.5, 0.5, 0.55, 1))
-mat_debris_dark = make_mat("DebrisDark", (0.18, 0.12, 0.08, 1))
-mat_debris_rust = make_mat("DebrisRust", (0.4, 0.2, 0.1, 1))
-mat_debris_wood = make_mat("DebrisWood", (0.3, 0.2, 0.1, 1))
-mat_scope_ring = make_mat("ScopeRing", (0.02, 0.02, 0.02, 1))
-mat_tire = make_mat("Tire", (0.05, 0.05, 0.05, 1))
+# ── Materials ────────────────────────────────────────────────────────────────
+ground_mat = make_mat("Ground", (0.2, 0.15, 0.1, 1))
+road_mat = make_mat("Road", (0.35, 0.28, 0.2, 1))
+cliff_mat = make_mat("Cliff", (0.3, 0.22, 0.14, 1))
+truck_body_mat = make_mat("TruckBody", (0.45, 0.38, 0.3, 1))
+truck_cab_mat = make_mat("TruckCab", (0.35, 0.3, 0.25, 1))
+wheel_mat = make_mat("Wheel", (0.08, 0.08, 0.08, 1))
 
-# Ground
-add_ground(mat_ground, size=20)
+hockey_mat = make_mat("Hockey", (0.2, 0.35, 0.5, 1))
+goggles_mat = make_mat("Goggles", (0.5, 0.2, 0.2, 1))
+greasy_mat = make_mat("Greasy", (0.3, 0.4, 0.2, 1))
+heavy_mat = make_mat("Heavy", (0.25, 0.18, 0.1, 1))
 
-# Desert road — long flat strip
-add_mesh("Road", bpy.ops.mesh.primitive_cube_add, mat_road,
-         (0, 0, 0.01), (1.5, 12, 0.02))
+# ── Ground & Road ────────────────────────────────────────────────────────────
+add_ground(ground_mat, size=25)
 
-# Road edge lines (faded paint)
-mat_paint = make_mat("Paint", (0.35, 0.3, 0.2, 1))
-add_mesh("RoadLineL", bpy.ops.mesh.primitive_cube_add, mat_paint,
-         (-1.4, 0, 0.02), (0.03, 12, 0.01))
-add_mesh("RoadLineR", bpy.ops.mesh.primitive_cube_add, mat_paint,
-         (1.4, 0, 0.02), (0.03, 12, 0.01))
+# Desert road running left to right across the scene
+add_mesh("Road", bpy.ops.mesh.primitive_cube_add, road_mat,
+         (3, 0, 0.02), (12, 1.5, 0.02))
 
-# ============================================================
-# ROADBLOCK — motorcycle + debris at far end of road
-# ============================================================
+# Road shoulder / dust edges
+dust_mat = make_mat("Dust", (0.28, 0.22, 0.15, 1))
+add_mesh("RoadEdgeL", bpy.ops.mesh.primitive_cube_add, dust_mat,
+         (3, 1.8, 0.01), (12, 0.5, 0.01))
+add_mesh("RoadEdgeR", bpy.ops.mesh.primitive_cube_add, dust_mat,
+         (3, -1.8, 0.01), (12, 0.5, 0.01))
 
-# Motorcycle body (laid on its side)
-add_mesh("MotoBody", bpy.ops.mesh.primitive_cube_add, mat_motorcycle,
-         (0.3, 6, 0.35), (0.25, 0.7, 0.2),
-         rot=(0, 0, math.radians(15)))
+# ── Cliff / Foreground Rocks (near camera) ──────────────────────────────────
+add_mesh("CliffMain", bpy.ops.mesh.primitive_cube_add, cliff_mat,
+         (-4, -8, 1.5), (2.5, 1.5, 2.0),
+         rot=(0.08, 0.05, 0.15))
+add_mesh("CliffRock2", bpy.ops.mesh.primitive_cube_add, cliff_mat,
+         (-6, -7, 1.0), (1.2, 1.0, 1.2),
+         rot=(0.12, -0.08, 0.25))
+add_mesh("CliffRock3", bpy.ops.mesh.primitive_cube_add, cliff_mat,
+         (-2, -9, 0.8), (1.0, 0.8, 0.9),
+         rot=(-0.05, 0.1, -0.1))
 
-# Motorcycle wheels
-add_mesh("MotoWheelF", bpy.ops.mesh.primitive_torus_add, mat_tire,
-         (0.2, 6.7, 0.3), (0.3, 0.3, 0.3),
-         rot=(math.radians(90), 0, math.radians(15)))
-add_mesh("MotoWheelR", bpy.ops.mesh.primitive_torus_add, mat_tire,
-         (0.4, 5.3, 0.3), (0.3, 0.3, 0.3),
-         rot=(math.radians(90), 0, math.radians(15)))
-
-# Motorcycle handlebars
-add_mesh("MotoHandlebar", bpy.ops.mesh.primitive_cylinder_add, mat_chrome,
-         (0.15, 6.9, 0.55), (0.03, 0.03, 0.3),
-         rot=(math.radians(20), math.radians(70), 0))
-
-# Motorcycle exhaust pipe
-add_mesh("MotoExhaust", bpy.ops.mesh.primitive_cylinder_add, mat_chrome,
-         (0.5, 5.8, 0.15), (0.04, 0.04, 0.5),
-         rot=(math.radians(90), 0, math.radians(15)))
-
-# Debris — scattered barrels, crates, metal sheets around the motorcycle
-add_mesh("Barrel1", bpy.ops.mesh.primitive_cylinder_add, mat_debris_rust,
-         (-0.8, 5.5, 0.4), (0.25, 0.25, 0.4),
-         rot=(math.radians(8), 0, 0))
-add_mesh("Barrel2", bpy.ops.mesh.primitive_cylinder_add, mat_debris_rust,
-         (1.2, 6.5, 0.35), (0.22, 0.22, 0.35),
-         rot=(math.radians(-5), math.radians(10), 0))
-add_mesh("Barrel3_Fallen", bpy.ops.mesh.primitive_cylinder_add, mat_debris_dark,
-         (-0.3, 7.2, 0.2), (0.22, 0.22, 0.35),
-         rot=(math.radians(85), 0, math.radians(30)))
-
-# Crates
-add_mesh("Crate1", bpy.ops.mesh.primitive_cube_add, mat_debris_wood,
-         (-1.3, 6.8, 0.3), (0.3, 0.3, 0.3),
-         rot=(0, 0, math.radians(20)))
-add_mesh("Crate2", bpy.ops.mesh.primitive_cube_add, mat_debris_wood,
-         (0.9, 7.5, 0.25), (0.25, 0.25, 0.25),
-         rot=(0, 0, math.radians(-10)))
-
-# Sheet metal debris
-add_mesh("MetalSheet1", bpy.ops.mesh.primitive_cube_add, mat_debris_dark,
-         (-0.5, 6.2, 0.05), (0.5, 0.3, 0.015),
-         rot=(0, 0, math.radians(25)))
-add_mesh("MetalSheet2", bpy.ops.mesh.primitive_cube_add, mat_chrome,
-         (1.5, 5.8, 0.08), (0.35, 0.2, 0.01),
-         rot=(math.radians(5), 0, math.radians(-15)))
-
-# Scattered tire
-add_mesh("LooseTire", bpy.ops.mesh.primitive_torus_add, mat_tire,
-         (-1.6, 7.0, 0.2), (0.25, 0.25, 0.25),
-         rot=(math.radians(70), math.radians(15), 0))
-
-# Small rocks / rubble
-add_mesh("Rock1", bpy.ops.mesh.primitive_uv_sphere_add, mat_ground,
-         (0.6, 5.0, 0.08), (0.1, 0.12, 0.07))
-add_mesh("Rock2", bpy.ops.mesh.primitive_uv_sphere_add, mat_ground,
-         (-0.9, 6.0, 0.06), (0.08, 0.1, 0.06))
-add_mesh("Rock3", bpy.ops.mesh.primitive_uv_sphere_add, mat_ground,
-         (1.0, 7.8, 0.07), (0.12, 0.09, 0.06))
-
-# ============================================================
-# SNIPER SCOPE VIGNETTE — black ring framing the view
-# ============================================================
-
-# Outer ring (thick black torus very close to camera to frame the shot)
-add_mesh("ScopeRing", bpy.ops.mesh.primitive_torus_add, mat_scope_ring,
-         (0, -7.8, 1.5), (1.8, 1.8, 1.8),
+# ── Cabover Truck (stopped, in the distance right side) ─────────────────────
+# Cab-over: flat-front cab sitting directly above front axle
+add_mesh("TruckCab", bpy.ops.mesh.primitive_cube_add, truck_cab_mat,
+         (10, 0, 1.3), (0.9, 0.8, 0.8))
+# Cargo box behind cab
+add_mesh("TruckCargo", bpy.ops.mesh.primitive_cube_add, truck_body_mat,
+         (12.5, 0, 1.1), (2.0, 0.85, 1.0))
+# Wheels
+add_mesh("TruckWheelFL", bpy.ops.mesh.primitive_cylinder_add, wheel_mat,
+         (9.5, 0.9, 0.35), (0.35, 0.35, 0.12),
+         rot=(math.radians(90), 0, 0))
+add_mesh("TruckWheelFR", bpy.ops.mesh.primitive_cylinder_add, wheel_mat,
+         (9.5, -0.9, 0.35), (0.35, 0.35, 0.12),
+         rot=(math.radians(90), 0, 0))
+add_mesh("TruckWheelRL", bpy.ops.mesh.primitive_cylinder_add, wheel_mat,
+         (13.0, 0.9, 0.35), (0.35, 0.35, 0.12),
+         rot=(math.radians(90), 0, 0))
+add_mesh("TruckWheelRR", bpy.ops.mesh.primitive_cylinder_add, wheel_mat,
+         (13.0, -0.9, 0.35), (0.35, 0.35, 0.12),
          rot=(math.radians(90), 0, 0))
 
-# Crosshair lines (thin cylinders crossing through scope center)
-mat_crosshair = make_mat("Crosshair", (0.02, 0.02, 0.02, 1))
-add_mesh("CrosshairH", bpy.ops.mesh.primitive_cylinder_add, mat_crosshair,
-         (0, -7.8, 1.5), (0.005, 0.005, 1.6),
-         rot=(0, math.radians(90), 0))
-add_mesh("CrosshairV", bpy.ops.mesh.primitive_cylinder_add, mat_crosshair,
-         (0, -7.8, 1.5), (0.005, 0.005, 1.6),
-         rot=(0, 0, 0))
+# ── Armed Figures on Road (aiming toward truck) ─────────────────────────────
+# Spread along road, all in fighting_stance aiming right toward the truck
+build_regular_male("Hockey", hockey_mat, (1.0, -0.3, 0), pose="fighting_stance")
+build_regular_male("Goggles", goggles_mat, (2.5, 0.5, 0), pose="fighting_stance")
+build_regular_male("Greasy", greasy_mat, (0.0, 0.8, 0), pose="fighting_stance")
+build_large_figure("Heavy", heavy_mat, (3.5, -0.5, 0), pose="fighting_stance")
 
-# Scope body blocks (top/bottom/left/right to mask outside the circle)
-mat_scope_body = make_mat("ScopeBody", (0.01, 0.01, 0.01, 1))
-add_mesh("ScopeMaskTop", bpy.ops.mesh.primitive_cube_add, mat_scope_body,
-         (0, -7.75, 3.8), (3, 0.3, 1.5))
-add_mesh("ScopeMaskBot", bpy.ops.mesh.primitive_cube_add, mat_scope_body,
-         (0, -7.75, -0.8), (3, 0.3, 1.5))
-add_mesh("ScopeMaskL", bpy.ops.mesh.primitive_cube_add, mat_scope_body,
-         (-3.2, -7.75, 1.5), (1.5, 0.3, 3))
-add_mesh("ScopeMaskR", bpy.ops.mesh.primitive_cube_add, mat_scope_body,
-         (3.2, -7.75, 1.5), (1.5, 0.3, 3))
+# ── Camera — elevated cliff position, longer lens for scope perspective ──────
+setup_camera(scene, loc=(-5, -10, 8), target_loc=(5, 0, 0.8), lens=70)
 
-# ============================================================
-# CAMERA — looking down the road toward the roadblock
-# ============================================================
-
-setup_camera(scene, loc=(0, -8, 1.5), target_loc=(0, 6.5, 0.3), lens=35)
-
-# ============================================================
-# RENDER
-# ============================================================
-
+# ── Render ───────────────────────────────────────────────────────────────────
 scene.frame_set(1)
 scene.render.filepath = "/Users/jmordetsky/directors-chair/assets/generated/videos/raider_ambush_v2/layouts/layout_001.png"
 bpy.ops.render.render(write_still=True)

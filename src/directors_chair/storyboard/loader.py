@@ -23,6 +23,9 @@ def load_storyboard(path: str) -> Dict[str, Any]:
         # Keyframe prompt (Kling i2i) — single prompt for <= 2 characters
         if "keyframe_prompt_file" in shot:
             shot["keyframe_prompt"] = _resolve_file_ref(base_dir, shot["keyframe_prompt_file"])
+        # Optional keyframe edit prompt (post-generation touch-up)
+        if "keyframe_edit_prompt_file" in shot:
+            shot["keyframe_edit_prompt"] = _resolve_file_ref(base_dir, shot["keyframe_edit_prompt_file"])
         # Keyframe passes (multi-pass for > 2 characters)
         if "keyframe_passes" in shot:
             for kp in shot["keyframe_passes"]:

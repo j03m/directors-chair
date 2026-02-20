@@ -79,6 +79,7 @@ def add_ground(mat, size=15):
 
 
 def build_large_figure(name, mat, position, pose="standing"):
+    """Build a large/heavy character from primitives (gorilla-like proportions)."""
     x, y, z = position
 
     if pose == "fallen":
@@ -133,6 +134,7 @@ def build_large_figure(name, mat, position, pose="standing"):
 
 
 def build_regular_male(name, mat, position, pose="standing"):
+    """Build a regular male character from primitives."""
     x, y, z = position
 
     if pose == "fallen":
@@ -182,6 +184,7 @@ def build_regular_male(name, mat, position, pose="standing"):
 
 
 def build_regular_female(name, mat, position, pose="standing"):
+    """Build a regular female character from primitives."""
     x, y, z = position
 
     if pose == "fallen":
@@ -233,30 +236,118 @@ add_light(scene)
 
 # Materials
 ground_mat = make_mat("Ground", (0.2, 0.15, 0.1, 1))
-greasy_mat = make_mat("Greasy", (0.3, 0.4, 0.2, 1))
+cliff_mat = make_mat("Cliff", (0.35, 0.25, 0.15, 1))
+sky_mat = make_mat("Sky", (0.4, 0.55, 0.75, 1))
+cranial_mat = make_mat("Cranial", (0.25, 0.18, 0.1, 1))
+rifle_mat = make_mat("Rifle", (0.12, 0.12, 0.12, 1))
+flash_mat = make_mat("MuzzleFlash", (1.0, 0.85, 0.2, 1))
+flash_mat.use_nodes = True
+bsdf = flash_mat.node_tree.nodes["Principled BSDF"]
+bsdf.inputs["Emission Color"].default_value = (1.0, 0.85, 0.2, 1)
+bsdf.inputs["Emission Strength"].default_value = 15.0
 
-# Ground
-add_ground(ground_mat)
+# Ground plane (far below — this is the base of the cliff)
+add_ground(ground_mat, size=20)
 
-# Desert road suggestion — a lighter strip on the ground
-road_mat = make_mat("Road", (0.3, 0.25, 0.18, 1))
-add_mesh("Road", bpy.ops.mesh.primitive_cube_add, road_mat,
-         (0, 0, 0.01), (2.0, 12.0, 0.01))
+# ── Cliff structure ──────────────────────────────────────────────────────────
+# Large cliff block — the camera looks UP at its edge
+# Cliff top is at z~4, representing a high ledge
+add_mesh("CliffFace", bpy.ops.mesh.primitive_cube_add, cliff_mat,
+         (0, 2, 2.0), (6, 3, 2.0))
 
-# Figure — greasy raider stumbling, grabbing at his neck
-# Use fighting_stance to get arms forward/up toward neck area
-build_regular_male("Greasy", greasy_mat, (0, 0, 0), pose="fighting_stance")
+# Cliff top surface extension
+add_mesh("CliffTop", bpy.ops.mesh.primitive_cube_add, cliff_mat,
+         (0, 4, 3.9), (7, 4, 0.15))
 
-# Tilt the body slightly to convey stumbling
-greasy_body = bpy.data.objects.get("Greasy_Body")
-if greasy_body:
-    greasy_body.rotation_euler.x += math.radians(12)
-    greasy_body.rotation_euler.z += math.radians(8)
+# Rocky texture blocks on cliff face
+add_mesh("Rock1", bpy.ops.mesh.primitive_cube_add, cliff_mat,
+         (-1.5, 0.2, 1.5), (0.8, 0.4, 0.6),
+         rot=(0, 0, math.radians(12)))
+add_mesh("Rock2", bpy.ops.mesh.primitive_cube_add, cliff_mat,
+         (1.2, 0.5, 2.5), (0.6, 0.3, 0.5),
+         rot=(0, 0, math.radians(-8)))
+add_mesh("Rock3", bpy.ops.mesh.primitive_cube_add, cliff_mat,
+         (0.3, 0.1, 0.8), (1.0, 0.5, 0.4),
+         rot=(math.radians(5), 0, math.radians(5)))
 
-# Camera — medium shot, eye level, slightly to the side
-setup_camera(scene, loc=(2.5, -3.0, 1.5), target_loc=(0, 0, 1.1), lens=50)
+# ── Cranial (prone sniper at cliff edge) ─────────────────────────────────────
+# Prone figure on the cliff top, peering over the edge
+# Position on the cliff top surface, near the lip (low y = closer to edge)
+cx, cy, cz = 0, 2.5, 4.05
 
-# Render
+# Prone body — rotated to lie flat, oriented toward camera (toward -y)
+add_mesh("Cranial_Body", bpy.ops.mesh.primitive_cube_add, cranial_mat,
+         (cx, cy + 0.5, cz + 0.25), (0.4, 0.3, 0.6),
+         rot=(math.radians(85), 0, 0))
+
+# Head — peeking over the edge
+add_mesh("Cranial_Head", bpy.ops.mesh.primitive_cube_add, cranial_mat,
+         (cx, cy - 0.3, cz + 0.2), (0.2, 0.18, 0.2),
+         rot=(math.radians(70), 0, 0))
+
+# Arms — extended forward along rifle
+add_mesh("Cranial_ArmL", bpy.ops.mesh.primitive_cylinder_add, cranial_mat,
+         (cx - 0.25, cy - 0.1, cz + 0.18), (0.08, 0.08, 0.4),
+         rot=(math.radians(85), 0, math.radians(-5)))
+add_mesh("Cranial_ArmR", bpy.ops.mesh.primitive_cylinder_add, cranial_mat,
+         (cx + 0.25, cy - 0.1, cz + 0.18), (0.08, 0.08, 0.4),
+         rot=(math.radians(85), 0, math.radians(5)))
+
+# Legs — stretched back on cliff top
+add_mesh("Cranial_LegL", bpy.ops.mesh.primitive_cylinder_add, cranial_mat,
+         (cx - 0.2, cy + 1.3, cz + 0.12), (0.09, 0.09, 0.5),
+         rot=(math.radians(88), 0, math.radians(-3)))
+add_mesh("Cranial_LegR", bpy.ops.mesh.primitive_cylinder_add, cranial_mat,
+         (cx + 0.2, cy + 1.3, cz + 0.12), (0.09, 0.09, 0.5),
+         rot=(math.radians(88), 0, math.radians(3)))
+
+# ── Rifle ────────────────────────────────────────────────────────────────────
+# Long barrel extending over the cliff lip
+add_mesh("Rifle_Barrel", bpy.ops.mesh.primitive_cylinder_add, rifle_mat,
+         (cx, cy - 0.9, cz + 0.15), (0.03, 0.03, 0.7),
+         rot=(math.radians(88), 0, 0))
+
+# Rifle stock (behind the barrel, under the body)
+add_mesh("Rifle_Stock", bpy.ops.mesh.primitive_cube_add, rifle_mat,
+         (cx, cy + 0.3, cz + 0.12), (0.06, 0.04, 0.25),
+         rot=(math.radians(85), 0, 0))
+
+# ── Muzzle flash ─────────────────────────────────────────────────────────────
+# Bright burst at the tip of the rifle barrel
+flash_x, flash_y, flash_z = cx, cy - 1.6, cz + 0.12
+
+add_mesh("Flash_Core", bpy.ops.mesh.primitive_uv_sphere_add, flash_mat,
+         (flash_x, flash_y, flash_z), (0.15, 0.15, 0.15))
+
+# Flash spikes radiating outward
+add_mesh("Flash_Spike1", bpy.ops.mesh.primitive_cone_add, flash_mat,
+         (flash_x, flash_y - 0.25, flash_z), (0.08, 0.08, 0.2),
+         rot=(math.radians(90), 0, 0))
+add_mesh("Flash_Spike2", bpy.ops.mesh.primitive_cone_add, flash_mat,
+         (flash_x - 0.15, flash_y - 0.1, flash_z + 0.1), (0.06, 0.06, 0.15),
+         rot=(math.radians(60), 0, math.radians(-40)))
+add_mesh("Flash_Spike3", bpy.ops.mesh.primitive_cone_add, flash_mat,
+         (flash_x + 0.15, flash_y - 0.1, flash_z + 0.1), (0.06, 0.06, 0.15),
+         rot=(math.radians(60), 0, math.radians(40)))
+add_mesh("Flash_Spike4", bpy.ops.mesh.primitive_cone_add, flash_mat,
+         (flash_x, flash_y - 0.1, flash_z - 0.12), (0.06, 0.06, 0.15),
+         rot=(math.radians(120), 0, 0))
+
+# Add a point light at the muzzle flash for glow
+bpy.ops.object.light_add(type='POINT', location=(flash_x, flash_y, flash_z))
+flash_light = bpy.context.active_object
+flash_light.name = "FlashLight"
+flash_light.data.energy = 500
+flash_light.data.color = (1.0, 0.85, 0.3)
+
+# ── Camera — low angle looking up at cliff edge ─────────────────────────────
+# Camera is below and in front of the cliff, looking up at the prone sniper
+setup_camera(scene,
+             loc=(0, -6, 0.5),
+             target_loc=(0, 1, 4.0),
+             lens=24)
+
+# ── Render ───────────────────────────────────────────────────────────────────
 scene.frame_set(1)
-scene.render.filepath = "/Users/jmordetsky/directors-chair/assets/generated/videos/raider_ambush_v2/layouts/layout_015.png"
+scene.render.filepath = "/Users/jmordetsky/directors-chair/assets/generated/videos/raider_ambush_v2/layouts/layout_017.png"
 bpy.ops.render.render(write_still=True)

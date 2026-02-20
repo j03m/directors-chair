@@ -4,6 +4,36 @@ import subprocess
 from .templates import TEMPLATE_CODE, CHARACTER_COLORS, BODY_TYPE_BUILDERS
 
 
+def _strip_compositing_nodes(script: str) -> str:
+    """Remove Blender scene-level compositing node code that breaks in Blender 5.x.
+
+    Finds lines with scene.use_nodes (not world.use_nodes) and strips from there
+    until scene.frame_set / scene.render.filepath / bpy.ops.render.
+    """
+    import re
+    lines = script.split("\n")
+
+    # Find the start of compositing block: scene.use_nodes (but not world.use_nodes)
+    comp_start = None
+    comp_end = None
+    for i, line in enumerate(lines):
+        stripped = line.strip()
+        if re.search(r'\bscene\.use_nodes\b', stripped) and 'world' not in stripped:
+            comp_start = i
+        if comp_start is not None and comp_end is None:
+            if (stripped.startswith("scene.frame_set") or
+                    stripped.startswith("scene.render.filepath") or
+                    stripped.startswith("bpy.ops.render") or
+                    (stripped.startswith("# ") and "render" in stripped.lower())):
+                comp_end = i
+
+    if comp_start is not None:
+        if comp_end is None:
+            comp_end = len(lines)
+        return "\n".join(lines[:comp_start] + lines[comp_end:])
+    return script
+
+
 def generate_layout(layout_prompt: str, characters: dict, output_path: str) -> bool:
     """Generate a Blender layout frame using Claude Code CLI.
 
@@ -67,7 +97,10 @@ Layout:
 Rules:
 - Output ONLY Python code, nothing else
 - If layout says no characters, skip character placement
-- Use appropriate poses: standing, arms_raised, fighting_stance, fallen, seated"""
+- Use appropriate poses: standing, arms_raised, fighting_stance, fallen, seated
+- NEVER use scene.use_nodes, scene.node_tree, or compositing nodes — they are removed in Blender 5.x
+- NEVER use world.use_nodes or world.node_tree — also removed in Blender 5.x
+- For scope/vignette effects, skip compositing — just render the raw scene"""
 
     console.print("  [dim]Generating Blender script via Claude...[/dim]")
 
@@ -113,6 +146,9 @@ Rules:
             lines = script.split("\n")
             lines = [l for l in lines if not l.strip().startswith("```")]
             script = "\n".join(lines)
+
+    # Strip Blender 5.x incompatible compositing code
+    script = _strip_compositing_nodes(script)
 
     # Save script for Blender to execute
     script_path = output_path.replace(".png", "_layout.py")

@@ -79,6 +79,7 @@ def add_ground(mat, size=15):
 
 
 def build_large_figure(name, mat, position, pose="standing"):
+    """Build a large/heavy character from primitives (gorilla-like proportions)."""
     x, y, z = position
 
     if pose == "fallen":
@@ -133,6 +134,7 @@ def build_large_figure(name, mat, position, pose="standing"):
 
 
 def build_regular_male(name, mat, position, pose="standing"):
+    """Build a regular male character from primitives."""
     x, y, z = position
 
     if pose == "fallen":
@@ -182,6 +184,7 @@ def build_regular_male(name, mat, position, pose="standing"):
 
 
 def build_regular_female(name, mat, position, pose="standing"):
+    """Build a regular female character from primitives."""
     x, y, z = position
 
     if pose == "fallen":
@@ -232,61 +235,26 @@ setup_render(scene)
 add_light(scene)
 
 # Materials
-mat_ground = make_mat("Ground", (0.2, 0.15, 0.1, 1))
-mat_gorilla = make_mat("Gorilla", (0.6, 0.6, 0.65, 1))
-mat_road = make_mat("Road", (0.35, 0.3, 0.25, 1))
-mat_cliff = make_mat("Cliff", (0.3, 0.22, 0.15, 1))
-mat_figure_a = make_mat("FigureA", (0.3, 0.4, 0.2, 1))
-mat_figure_b = make_mat("FigureB", (0.25, 0.18, 0.1, 1))
-mat_figure_c = make_mat("FigureC", (0.5, 0.2, 0.2, 1))
+ground_mat = make_mat("Ground", (0.2, 0.15, 0.1, 1))
+cranial_mat = make_mat("Cranial", (0.25, 0.18, 0.1, 1))
 
-# Ground plane far below (desert floor at z = -12)
-add_mesh("DesertFloor", bpy.ops.mesh.primitive_plane_add, mat_ground,
-         (0, 0, -12), (20, 20, 1))
+# Ground
+add_ground(ground_mat)
 
-# Cliff ledge where the gorilla is prone (z = 0 is cliff top)
-add_mesh("CliffTop", bpy.ops.mesh.primitive_cube_add, mat_cliff,
-         (0, 2, -0.5), (4, 3, 0.5))
+# Character — single figure, close-up of face looking up and to the side, shouting
+# Place cranial at origin, camera extremely close to the head for a face-filling close-up
+build_regular_male("Cranial", cranial_mat, (0, 0, 0), pose="standing")
 
-# Cliff face dropping down
-add_mesh("CliffFace", bpy.ops.mesh.primitive_cube_add, mat_cliff,
-         (0, 3.5, -6), (4, 0.5, 6))
+# Tilt head up and to the side to convey looking up with mouth open in a shout
+head_obj = bpy.data.objects.get("Cranial_Head")
+if head_obj:
+    head_obj.rotation_euler = (math.radians(-20), math.radians(25), math.radians(10))
 
-# Desert road far below
-add_mesh("Road", bpy.ops.mesh.primitive_cube_add, mat_road,
-         (0, 8, -11.9), (8, 0.8, 0.05))
+# Camera — very tight on the face, slightly below and to the side for dramatic close-up
+# Head is at roughly z=1.7, camera close and slightly low for upward-looking drama
+setup_camera(scene, loc=(0.6, -1.2, 1.85), target_loc=(0, 0, 1.75), lens=50)
 
-# ── Characters ───────────────────────────────────────────────────────────────
-
-# Gorilla prone at cliff edge, looking down — large figure in "fallen" pose
-# positioned at cliff top, head toward the edge
-build_large_figure("Gorilla", mat_gorilla, (0, 3.0, 0.0), pose="fallen")
-
-# Tiny figures on the road far below — scaled down to sell the distance
-# Figure collapsing (fallen)
-build_regular_male("DistantFigureA", mat_figure_a, (-1.0, 8.0, -12.0), pose="fallen")
-
-# Two standing figures nearby on the road
-build_regular_male("DistantFigureB", mat_figure_b, (0.5, 8.0, -12.0), pose="standing")
-build_regular_male("DistantFigureC", mat_figure_c, (1.8, 8.0, -12.0), pose="standing")
-
-# Scale distant figures way down to appear far away
-for obj_name in ["DistantFigureA", "DistantFigureB", "DistantFigureC"]:
-    for obj in bpy.data.objects:
-        if obj.name.startswith(obj_name):
-            obj.scale = (obj.scale[0] * 0.18, obj.scale[1] * 0.18, obj.scale[2] * 0.18)
-
-# ── Camera ───────────────────────────────────────────────────────────────────
-
-# Over-the-shoulder of prone gorilla, looking down at the road below
-# Camera sits just behind and above the gorilla, aimed at the distant road
-setup_camera(scene,
-             loc=(0.5, 1.0, 1.8),
-             target_loc=(0, 8, -11.5),
-             lens=32)
-
-# ── Render ───────────────────────────────────────────────────────────────────
-
+# Render
 scene.frame_set(1)
-scene.render.filepath = "/Users/jmordetsky/directors-chair/assets/generated/videos/raider_ambush_v2/layouts/layout_011.png"
+scene.render.filepath = "/Users/jmordetsky/directors-chair/assets/generated/videos/raider_ambush_v2/layouts/layout_012.png"
 bpy.ops.render.render(write_still=True)

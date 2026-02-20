@@ -1,5 +1,5 @@
 Use @Image1 as composition reference. Low angle, ground level at cliff edge.
 
-@Element1 a rugged bearded warrior in tactical vest lies prone at a desert cliff edge on the left with a sniper rifle. He turns his head toward the gorilla, speaking. @Element2 a massive gorilla in viking armor and horned helmet lies prone next to him on the right behind a sniper rifle on bipod. The gorilla glances at the warrior.
+@Element1 a rugged bearded warrior in tactical vest lies prone at a desert cliff edge on the left with a McMillan TAC-338 sniper rifle. He turns his head toward the gorilla, speaking. @Element2 a massive gorilla in viking armor and horned helmet lies prone next to him on the right behind a McMillan TAC-338 sniper rifle on bipod. The gorilla glances at the warrior.
 
 They exchange words — brief, professional. Rocky cliff edge, vast desert landscape far below. Golden hour light. Photorealistic, cinematic.

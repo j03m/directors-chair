@@ -101,7 +101,6 @@ def build_large_figure(name, mat, position, pose="standing"):
              (x, y, z + 1.1), (0.65, 0.45, 0.75))
     add_mesh(f"{name}_Head", bpy.ops.mesh.primitive_uv_sphere_add, mat,
              (x, y, z + 2.2), (0.38, 0.33, 0.33))
-
     add_mesh(f"{name}_LegL", bpy.ops.mesh.primitive_cylinder_add, mat,
              (x - 0.4, y, z + 0.0), (0.16, 0.16, 0.45))
     add_mesh(f"{name}_LegR", bpy.ops.mesh.primitive_cylinder_add, mat,
@@ -156,7 +155,6 @@ def build_regular_male(name, mat, position, pose="standing"):
              (x, y, z + 0.9), (0.4, 0.3, 0.55))
     add_mesh(f"{name}_Head", bpy.ops.mesh.primitive_cube_add, mat,
              (x, y, z + 1.7), (0.2, 0.18, 0.2))
-
     add_mesh(f"{name}_LegL", bpy.ops.mesh.primitive_cylinder_add, mat,
              (x - 0.25, y, z + 0.0), (0.1, 0.1, 0.4))
     add_mesh(f"{name}_LegR", bpy.ops.mesh.primitive_cylinder_add, mat,
@@ -200,7 +198,6 @@ def build_regular_female(name, mat, position, pose="standing"):
              (x, y, z + 0.85), (0.35, 0.25, 0.5))
     add_mesh(f"{name}_Head", bpy.ops.mesh.primitive_uv_sphere_add, mat,
              (x, y, z + 1.55), (0.18, 0.16, 0.18))
-
     add_mesh(f"{name}_LegL", bpy.ops.mesh.primitive_cylinder_add, mat,
              (x - 0.2, y, z + 0.0), (0.09, 0.09, 0.38))
     add_mesh(f"{name}_LegR", bpy.ops.mesh.primitive_cylinder_add, mat,
@@ -227,69 +224,89 @@ def build_regular_female(name, mat, position, pose="standing"):
                  (x + 0.45, y, z + 0.65), (0.08, 0.08, 0.38))
 
 
-# --- Scene Setup ---
+# ── Scene setup ──────────────────────────────────────────────────────────────
+
 clean_scene()
 scene = bpy.context.scene
 setup_render(scene)
 add_light(scene)
 
 # Materials
-ground_mat = make_mat("Ground", (0.2, 0.15, 0.1, 1))
-greasy_mat = make_mat("Greasy", (0.3, 0.4, 0.2, 1))
-truck_mat = make_mat("Truck", (0.35, 0.25, 0.15, 1))
-truck_dark_mat = make_mat("TruckDark", (0.15, 0.1, 0.08, 1))
-dust_mat = make_mat("Dust", (0.6, 0.5, 0.35, 0.6))
+mat_ground = make_mat("Ground", (0.2, 0.15, 0.1, 1))
+mat_road = make_mat("Road", (0.12, 0.1, 0.08, 1))
+mat_truck = make_mat("TruckBody", (0.35, 0.25, 0.15, 1))
+mat_truck_cab = make_mat("TruckCab", (0.28, 0.2, 0.12, 1))
+mat_wheels = make_mat("Wheels", (0.05, 0.05, 0.05, 1))
+mat_windshield = make_mat("Windshield", (0.3, 0.35, 0.4, 1))
+mat_hockey = make_mat("Hockey", (0.2, 0.35, 0.5, 1))
+mat_rifle = make_mat("Rifle", (0.15, 0.12, 0.08, 1))
+mat_dust = make_mat("Dust", (0.5, 0.4, 0.25, 1))
 
 # Ground
-add_ground(ground_mat, size=15)
+add_ground(mat_ground, size=15)
 
-# Desert road - a long flat strip
-road_mat = make_mat("Road", (0.25, 0.2, 0.15, 1))
-add_mesh("Road", bpy.ops.mesh.primitive_cube_add, road_mat,
-         (0, 0, 0.01), (12, 1.5, 0.01))
+# Desert road — a long flat strip
+add_mesh("Road", bpy.ops.mesh.primitive_cube_add, mat_road,
+         (0, 0, 0.01), (12, 2.5, 0.02))
 
-# Truck on the right side of the frame
-add_mesh("TruckBody", bpy.ops.mesh.primitive_cube_add, truck_mat,
-         (3.5, 0.5, 0.8), (1.2, 0.7, 0.6))
-add_mesh("TruckCab", bpy.ops.mesh.primitive_cube_add, truck_dark_mat,
-         (4.8, 0.5, 0.9), (0.5, 0.6, 0.55))
-add_mesh("TruckWheelFL", bpy.ops.mesh.primitive_cylinder_add, truck_dark_mat,
-         (4.5, -0.2, 0.25), (0.25, 0.25, 0.1),
+# ── Cab-over truck on right side ─────────────────────────────────────────────
+truck_x, truck_y = 3.5, 0.5
+
+# Cargo bed (long rectangular box)
+add_mesh("TruckBed", bpy.ops.mesh.primitive_cube_add, mat_truck,
+         (truck_x + 1.5, truck_y, 1.2), (2.0, 1.0, 1.0))
+
+# Cab (flat-front cab-over, sits above front axle)
+add_mesh("TruckCab", bpy.ops.mesh.primitive_cube_add, mat_truck_cab,
+         (truck_x - 0.8, truck_y, 1.3), (0.8, 1.0, 1.1))
+
+# Windshield
+add_mesh("Windshield", bpy.ops.mesh.primitive_cube_add, mat_windshield,
+         (truck_x - 1.55, truck_y, 1.6), (0.05, 0.8, 0.6))
+
+# Wheels
+add_mesh("WheelFL", bpy.ops.mesh.primitive_cylinder_add, mat_wheels,
+         (truck_x - 0.8, truck_y - 1.05, 0.35), (0.35, 0.35, 0.15),
          rot=(math.radians(90), 0, 0))
-add_mesh("TruckWheelFR", bpy.ops.mesh.primitive_cylinder_add, truck_dark_mat,
-         (4.5, 1.2, 0.25), (0.25, 0.25, 0.1),
+add_mesh("WheelFR", bpy.ops.mesh.primitive_cylinder_add, mat_wheels,
+         (truck_x - 0.8, truck_y + 1.05, 0.35), (0.35, 0.35, 0.15),
          rot=(math.radians(90), 0, 0))
-add_mesh("TruckWheelRL", bpy.ops.mesh.primitive_cylinder_add, truck_dark_mat,
-         (2.8, -0.2, 0.25), (0.25, 0.25, 0.1),
+add_mesh("WheelRL", bpy.ops.mesh.primitive_cylinder_add, mat_wheels,
+         (truck_x + 2.5, truck_y - 1.05, 0.35), (0.35, 0.35, 0.15),
          rot=(math.radians(90), 0, 0))
-add_mesh("TruckWheelRR", bpy.ops.mesh.primitive_cylinder_add, truck_dark_mat,
-         (2.8, 1.2, 0.25), (0.25, 0.25, 0.1),
+add_mesh("WheelRR", bpy.ops.mesh.primitive_cylinder_add, mat_wheels,
+         (truck_x + 2.5, truck_y + 1.05, 0.35), (0.35, 0.35, 0.15),
          rot=(math.radians(90), 0, 0))
 
-# Greasy raider sprinting toward the truck — mid-stride, leaning forward, arms pumping
-# Place him left-center, heading right toward the truck
-build_regular_male("Greasy", greasy_mat, (-1.0, 0.3, 0), pose="fighting_stance")
-# Tilt the body forward to show sprinting lean
-greasy_body = bpy.data.objects.get("Greasy_Body")
-if greasy_body:
-    greasy_body.rotation_euler.x += math.radians(-20)
-greasy_head = bpy.data.objects.get("Greasy_Head")
-if greasy_head:
-    greasy_head.rotation_euler.x += math.radians(-15)
-    greasy_head.location.y -= 0.15
+# ── Figure staggering backward from behind truck ─────────────────────────────
+# Positioned just left of the truck cab, leaning/falling backward after being hit
+build_regular_male("hockey", mat_hockey, (truck_x - 2.5, truck_y - 0.3, 0), pose="fallen")
 
-# Dust cloud behind the sprinting figure
-add_mesh("Dust1", bpy.ops.mesh.primitive_uv_sphere_add, dust_mat,
-         (-2.2, 0.2, 0.2), (0.4, 0.3, 0.15))
-add_mesh("Dust2", bpy.ops.mesh.primitive_uv_sphere_add, dust_mat,
-         (-2.6, 0.5, 0.15), (0.35, 0.25, 0.12))
-add_mesh("Dust3", bpy.ops.mesh.primitive_uv_sphere_add, dust_mat,
-         (-2.0, -0.1, 0.1), (0.3, 0.2, 0.1))
+# ── Rifle flying from his hands ──────────────────────────────────────────────
+# Rifle tumbling in the air between the figure and the road
+add_mesh("Rifle_Barrel", bpy.ops.mesh.primitive_cylinder_add, mat_rifle,
+         (truck_x - 3.5, truck_y - 0.8, 0.6), (0.03, 0.03, 0.5),
+         rot=(math.radians(70), math.radians(25), math.radians(-40)))
+add_mesh("Rifle_Stock", bpy.ops.mesh.primitive_cube_add, mat_rifle,
+         (truck_x - 3.2, truck_y - 0.6, 0.85), (0.05, 0.12, 0.15),
+         rot=(math.radians(70), math.radians(25), math.radians(-40)))
 
-# Camera — medium shot from the side, slightly ahead to show the sprint
-setup_camera(scene, loc=(0.5, -5.0, 1.5), target_loc=(0.5, 0.3, 0.9), lens=35)
+# ── Dust clouds for chaos ────────────────────────────────────────────────────
+add_mesh("Dust1", bpy.ops.mesh.primitive_uv_sphere_add, mat_dust,
+         (truck_x - 2.0, truck_y + 0.5, 0.3), (0.6, 0.4, 0.25))
+add_mesh("Dust2", bpy.ops.mesh.primitive_uv_sphere_add, mat_dust,
+         (truck_x - 3.0, truck_y - 1.0, 0.15), (0.5, 0.35, 0.2))
+add_mesh("Dust3", bpy.ops.mesh.primitive_uv_sphere_add, mat_dust,
+         (truck_x - 1.5, truck_y - 0.8, 0.4), (0.4, 0.3, 0.2))
 
-# Render
+# ── Camera — medium shot framing the action ──────────────────────────────────
+# Camera positioned front-left, capturing the truck, falling figure, and flying rifle
+setup_camera(scene,
+             loc=(truck_x - 6.0, truck_y - 5.0, 2.5),
+             target_loc=(truck_x - 1.5, truck_y, 0.8),
+             lens=35)
+
+# ── Render ────────────────────────────────────────────────────────────────────
 scene.frame_set(1)
-scene.render.filepath = "/Users/jmordetsky/directors-chair/assets/generated/videos/raider_ambush_v2/layouts/layout_016.png"
+scene.render.filepath = "/Users/jmordetsky/directors-chair/assets/generated/videos/raider_ambush_v2/layouts/layout_015.png"
 bpy.ops.render.render(write_still=True)

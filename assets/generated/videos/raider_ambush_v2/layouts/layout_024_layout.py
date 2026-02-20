@@ -235,43 +235,25 @@ add_light(scene)
 
 # Materials
 mat_ground = make_mat("Ground", (0.2, 0.15, 0.1, 1))
-mat_heavy = make_mat("Heavy", (0.25, 0.18, 0.1, 1))
+mat_gale = make_mat("Gale", (0.5, 0.2, 0.2, 1))
+mat_cranial = make_mat("Cranial", (0.25, 0.18, 0.1, 1))
+mat_robot = make_mat("Robot", (0.2, 0.35, 0.5, 1))
+mat_gorilla = make_mat("Gorilla", (0.6, 0.6, 0.65, 1))
 
 # Ground
 add_ground(mat_ground)
 
-# Add a desert road feel — lighter strip down the center
-mat_road = make_mat("Road", (0.35, 0.3, 0.22, 1))
-add_mesh("Road", bpy.ops.mesh.primitive_plane_add, mat_road, (0, 0, 0.01), (3, 15, 1))
+# Characters
+# Gale standing center, arms raised (shielding eyes, looking upward)
+build_regular_female("Gale", mat_gale, (0, 0, 0), pose="arms_raised")
 
-# Heavy raider — knocked backwards off his feet, airborne, arms flung wide
-# Using "fallen" pose but elevated off the ground to show airborne moment
-x, y, z = 0, 0, 0
-# Body tilted back dramatically, elevated to show being knocked airborne
-add_mesh("Heavy_Body", bpy.ops.mesh.primitive_cube_add, mat_heavy,
-         (x, y, z + 1.2), (0.65, 0.45, 0.75),
-         rot=(math.radians(-55), 0, math.radians(5)))
-# Head snapping back
-add_mesh("Heavy_Head", bpy.ops.mesh.primitive_uv_sphere_add, mat_heavy,
-         (x + 0.1, y, z + 2.1), (0.38, 0.33, 0.33),
-         rot=(math.radians(-40), 0, 0))
-# Arms flung wide — splayed out to the sides
-add_mesh("Heavy_ArmL", bpy.ops.mesh.primitive_cylinder_add, mat_heavy,
-         (x - 1.1, y + 0.2, z + 1.5), (0.14, 0.14, 0.55),
-         rot=(math.radians(-20), math.radians(70), math.radians(-30)))
-add_mesh("Heavy_ArmR", bpy.ops.mesh.primitive_cylinder_add, mat_heavy,
-         (x + 1.1, y - 0.3, z + 1.6), (0.14, 0.14, 0.55),
-         rot=(math.radians(15), math.radians(-65), math.radians(25)))
-# Legs kicking up — feet leaving the ground
-add_mesh("Heavy_LegL", bpy.ops.mesh.primitive_cylinder_add, mat_heavy,
-         (x - 0.4, y + 0.5, z + 0.4), (0.16, 0.16, 0.5),
-         rot=(math.radians(40), 0, math.radians(-10)))
-add_mesh("Heavy_LegR", bpy.ops.mesh.primitive_cylinder_add, mat_heavy,
-         (x + 0.4, y + 0.3, z + 0.3), (0.16, 0.16, 0.5),
-         rot=(math.radians(50), 0, math.radians(15)))
+# Other figures getting up from the ground around her
+build_regular_male("Cranial", mat_cranial, (-1.8, 0.5, 0), pose="fallen")
+build_regular_male("Robot", mat_robot, (1.6, 0.8, 0), pose="fallen")
+build_large_figure("Gorilla", mat_gorilla, (0.8, -1.5, 0), pose="fallen")
 
-# Camera — medium shot, slightly low angle to emphasize the figure being knocked back
-setup_camera(scene, loc=(3.5, -4, 1.8), target_loc=(0, 0, 1.2), lens=35)
+# Camera — medium shot, eye level
+setup_camera(scene, loc=(0, -4.5, 1.5), target_loc=(0, 0, 1.2), lens=35)
 
 # Render
 scene.frame_set(1)

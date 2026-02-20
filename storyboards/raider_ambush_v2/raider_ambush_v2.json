@@ -64,254 +64,419 @@
     "shots": [
         {
             "name": "wide_establishing",
-            "characters": ["hockey", "goggles", "greasy", "heavy"],
+            "characters": [
+                "hockey",
+                "goggles",
+                "greasy",
+                "heavy",
+                "gale"
+            ],
             "layout_prompt_file": "shot01_layout.txt",
             "keyframe_prompt_file": "shot01_keyframe.txt",
             "beats": [
-                {"prompt_file": "shot01_beat.txt", "duration": "5"}
+                {
+                    "prompt_file": "shot01_beat.txt",
+                    "duration": "5"
+                }
             ]
         },
         {
             "name": "scope_pan_roadblock",
-            "characters": [],
+            "characters": [
+                "hockey",
+                "goggles",
+                "greasy",
+                "heavy",
+                "gale"
+            ],
             "layout_prompt_file": "shot02a_layout.txt",
             "keyframe_prompt_file": "shot02a_keyframe.txt",
             "beats": [
-                {"prompt_file": "shot02a_beat.txt", "duration": "5"}
+                {
+                    "prompt_file": "shot02a_beat.txt",
+                    "duration": "5"
+                }
             ]
         },
         {
             "name": "scope_holdup",
-            "characters": ["hockey", "goggles", "gale", "nomad1"],
+            "characters": [
+                "hockey",
+                "goggles",
+                "gale",
+                "nomad1",
+                "nomad2",
+                "nomad3"
+            ],
             "layout_prompt_file": "shot02b_layout.txt",
             "keyframe_prompt_file": "shot02b_keyframe.txt",
             "beats": [
-                {"prompt_file": "shot02b_beat.txt", "duration": "3"}
+                {
+                    "prompt_file": "shot02b_beat.txt",
+                    "duration": "3"
+                }
             ]
         },
         {
             "name": "hockey_threat",
-            "characters": ["hockey", "gale"],
+            "characters": [
+                "hockey",
+                "gale",
+                "goggles",
+                "nomad1",
+                "nomad2",
+                "nomad3"
+            ],
             "layout_prompt_file": "shot03_layout.txt",
             "keyframe_prompt_file": "shot03_keyframe.txt",
             "beats": [
-                {"prompt_file": "shot03_beat.txt", "duration": "5"}
-            ]
-        },
-        {
-            "name": "hockey_face",
-            "characters": ["hockey"],
-            "layout_prompt_file": "shot04_layout.txt",
-            "keyframe_prompt_file": "shot04_keyframe.txt",
-            "beats": [
-                {"prompt_file": "shot04_beat.txt", "duration": "3"}
+                {
+                    "prompt_file": "shot03_beat.txt",
+                    "duration": "5"
+                }
             ]
         },
         {
             "name": "cliff_exchange",
-            "characters": ["cranial", "gorilla"],
+            "characters": [
+                "cranial",
+                "gorilla"
+            ],
             "layout_prompt_file": "shot05_layout.txt",
             "keyframe_prompt_file": "shot05_keyframe.txt",
             "beats": [
-                {"prompt_file": "shot05_beat.txt", "duration": "5"}
-            ]
-        },
-        {
-            "name": "scope_kneeling",
-            "characters": ["gale", "nomad1", "nomad2", "nomad3"],
-            "layout_prompt_file": "shot06_layout.txt",
-            "keyframe_prompt_file": "shot06_keyframe.txt",
-            "beats": [
-                {"prompt_file": "shot06_beat.txt", "duration": "5"}
-            ]
-        },
-        {
-            "name": "gorilla_boom",
-            "characters": ["gorilla"],
-            "layout_prompt_file": "shot07_layout.txt",
-            "keyframe_prompt_file": "shot07_keyframe.txt",
-            "beats": [
-                {"prompt_file": "shot07_beat.txt", "duration": "3"}
+                {
+                    "prompt_file": "shot05_beat.txt",
+                    "duration": "5"
+                }
             ]
         },
         {
             "name": "scope_on_hockey_head",
-            "characters": ["hockey"],
+            "characters": [
+                "hockey",
+                "gale",
+                "goggles",
+                "nomad1",
+                "nomad2",
+                "nomad3"
+            ],
             "layout_prompt_file": "shot08_layout.txt",
             "keyframe_prompt_file": "shot08_keyframe.txt",
             "beats": [
-                {"prompt_file": "shot08_beat.txt", "duration": "3"}
+                {
+                    "prompt_file": "shot08_beat.txt",
+                    "duration": "3"
+                }
+            ]
+        },
+        {
+            "name": "hockey_face",
+            "characters": [
+                "hockey"
+            ],
+            "layout_prompt_file": "shot04_layout.txt",
+            "keyframe_prompt_file": "shot04_keyframe.txt",
+            "beats": [
+                {
+                    "prompt_file": "shot04_beat.txt",
+                    "duration": "3"
+                }
+            ]
+        },
+        {
+            "name": "gorilla_boom",
+            "characters": [
+                "gorilla"
+            ],
+            "layout_prompt_file": "shot07_layout.txt",
+            "keyframe_prompt_file": "shot07_keyframe.txt",
+            "beats": [
+                {
+                    "prompt_file": "shot07_beat.txt",
+                    "duration": "3"
+                }
             ]
         },
         {
             "name": "gorilla_muzzle_flash",
-            "characters": ["gorilla"],
+            "characters": [
+                "gorilla"
+            ],
             "layout_prompt_file": "shot09_layout.txt",
             "keyframe_prompt_file": "shot09_keyframe.txt",
             "beats": [
-                {"prompt_file": "shot09_beat.txt", "duration": "3"}
+                {
+                    "prompt_file": "shot09_beat.txt",
+                    "duration": "3"
+                }
             ]
         },
         {
             "name": "hockey_headshot",
-            "characters": ["hockey", "gale", "nomad1"],
+            "characters": [
+                "hockey",
+                "gale",
+                "goggles",
+                "nomad1",
+                "nomad2",
+                "nomad3"
+            ],
             "layout_prompt_file": "shot10_layout.txt",
             "keyframe_prompt_file": "shot10_keyframe.txt",
             "beats": [
-                {"prompt_file": "shot10_beat.txt", "duration": "5"}
+                {
+                    "prompt_file": "shot10_beat.txt",
+                    "duration": "5"
+                }
             ]
         },
         {
             "name": "over_shoulder_distance",
-            "characters": ["gorilla"],
+            "characters": [
+                "gorilla",
+                "goggles",
+                "heavy",
+                "gale",
+                "nomad1"
+            ],
             "layout_prompt_file": "shot11_layout.txt",
             "keyframe_prompt_file": "shot11_keyframe.txt",
             "beats": [
-                {"prompt_file": "shot11_beat.txt", "duration": "3"}
+                {
+                    "prompt_file": "shot11_beat.txt",
+                    "duration": "3"
+                }
             ]
         },
         {
             "name": "greasy_recognition",
-            "characters": ["greasy"],
+            "characters": [
+                "greasy"
+            ],
             "layout_prompt_file": "shot12_layout.txt",
             "keyframe_prompt_file": "shot12_keyframe.txt",
             "beats": [
-                {"prompt_file": "shot12_beat.txt", "duration": "3"}
+                {
+                    "prompt_file": "shot12_beat.txt",
+                    "duration": "3"
+                }
             ]
         },
         {
             "name": "raiders_scatter",
-            "characters": ["goggles", "heavy", "gale", "nomad1"],
+            "characters": [
+                "goggles",
+                "heavy"
+            ],
             "layout_prompt_file": "shot13_layout.txt",
             "keyframe_prompt_file": "shot13_keyframe.txt",
             "beats": [
-                {"prompt_file": "shot13_beat.txt", "duration": "3"}
+                {
+                    "prompt_file": "shot13_beat.txt",
+                    "duration": "3"
+                }
             ]
         },
         {
             "name": "cranial_muzzle_flash",
-            "characters": ["cranial"],
+            "characters": [
+                "cranial"
+            ],
             "layout_prompt_file": "shot14_layout.txt",
             "keyframe_prompt_file": "shot14_keyframe.txt",
             "beats": [
-                {"prompt_file": "shot14_beat.txt", "duration": "3"}
+                {
+                    "prompt_file": "shot14_beat.txt",
+                    "duration": "3"
+                }
             ]
         },
         {
             "name": "greasy_neck_shot",
-            "characters": ["greasy"],
+            "characters": [
+                "greasy"
+            ],
             "layout_prompt_file": "shot15_layout.txt",
             "keyframe_prompt_file": "shot15_keyframe.txt",
             "beats": [
-                {"prompt_file": "shot15_beat.txt", "duration": "3"}
-            ]
-        },
-        {
-            "name": "goggles_running",
-            "characters": ["goggles"],
-            "layout_prompt_file": "shot16_layout.txt",
-            "keyframe_prompt_file": "shot16_keyframe.txt",
-            "beats": [
-                {"prompt_file": "shot16_beat.txt", "duration": "3"}
+                {
+                    "prompt_file": "shot15_beat.txt",
+                    "duration": "3"
+                }
             ]
         },
         {
             "name": "gorilla_muzzle_flash_below",
-            "characters": ["gorilla"],
+            "characters": [
+                "gorilla"
+            ],
             "layout_prompt_file": "shot17_layout.txt",
             "keyframe_prompt_file": "shot17_keyframe.txt",
             "beats": [
-                {"prompt_file": "shot17_beat.txt", "duration": "3"}
+                {
+                    "prompt_file": "shot17_beat.txt",
+                    "duration": "3"
+                }
             ]
         },
         {
-            "name": "goggles_leg_shot",
-            "characters": ["goggles"],
+            "name": "goggles_torso_shot",
+            "characters": [
+                "goggles"
+            ],
+            "layout_prompt_file": "shot16_layout.txt",
+            "keyframe_prompt_file": "shot16_keyframe.txt",
+            "beats": [
+                {
+                    "prompt_file": "shot16_beat.txt",
+                    "duration": "3"
+                }
+            ]
+        },
+        {
+            "name": "ak47_on_road",
+            "characters": [],
             "layout_prompt_file": "shot18_layout.txt",
             "keyframe_prompt_file": "shot18_keyframe.txt",
             "beats": [
-                {"prompt_file": "shot18_beat.txt", "duration": "3"}
+                {
+                    "prompt_file": "shot18_beat.txt",
+                    "duration": "3"
+                }
             ]
         },
         {
-            "name": "heavy_running",
-            "characters": ["heavy"],
+            "name": "heavy_fumbling_reload",
+            "characters": [
+                "heavy",
+                "goggles"
+            ],
             "layout_prompt_file": "shot19_layout.txt",
             "keyframe_prompt_file": "shot19_keyframe.txt",
             "beats": [
-                {"prompt_file": "shot19_beat.txt", "duration": "3"}
+                {
+                    "prompt_file": "shot19_beat.txt",
+                    "duration": "3"
+                }
             ]
         },
         {
             "name": "cranial_barks",
-            "characters": ["cranial", "gorilla"],
+            "characters": [
+                "cranial",
+                "gorilla"
+            ],
             "layout_prompt_file": "shot20_layout.txt",
             "keyframe_prompt_file": "shot20_keyframe.txt",
             "beats": [
-                {"prompt_file": "shot20_beat.txt", "duration": "3"}
+                {
+                    "prompt_file": "shot20_beat.txt",
+                    "duration": "3"
+                }
             ]
         },
         {
             "name": "gale_recognition",
-            "characters": ["gale"],
+            "characters": [
+                "gale"
+            ],
             "layout_prompt_file": "shot21_layout.txt",
             "keyframe_prompt_file": "shot21_keyframe.txt",
             "beats": [
-                {"prompt_file": "shot21_beat.txt", "duration": "3"}
+                {
+                    "prompt_file": "shot21_beat.txt",
+                    "duration": "3"
+                }
             ]
         },
         {
             "name": "gale_grabs_gun",
-            "characters": ["gale"],
+            "characters": [
+                "gale"
+            ],
             "layout_prompt_file": "shot22_layout.txt",
             "keyframe_prompt_file": "shot22_keyframe.txt",
             "beats": [
-                {"prompt_file": "shot22_beat.txt", "duration": "5"}
+                {
+                    "prompt_file": "shot22_beat.txt",
+                    "duration": "5"
+                }
             ]
         },
         {
             "name": "gale_aims_heavy",
-            "characters": ["gale", "heavy"],
+            "characters": [
+                "gale",
+                "heavy"
+            ],
             "layout_prompt_file": "shot23_layout.txt",
             "keyframe_prompt_file": "shot23_keyframe.txt",
             "beats": [
-                {"prompt_file": "shot23_beat.txt", "duration": "3"}
+                {
+                    "prompt_file": "shot23_beat.txt",
+                    "duration": "3"
+                }
             ]
         },
         {
             "name": "heavy_knocked_down",
-            "characters": ["heavy"],
+            "characters": [
+                "heavy"
+            ],
             "layout_prompt_file": "shot24_layout.txt",
             "keyframe_prompt_file": "shot24_keyframe.txt",
             "beats": [
-                {"prompt_file": "shot24_beat.txt", "duration": "3"}
+                {
+                    "prompt_file": "shot24_beat.txt",
+                    "duration": "3"
+                }
             ]
         },
         {
             "name": "gale_looks_up",
-            "characters": ["gale", "nomad1"],
+            "characters": [
+                "gale"
+            ],
             "layout_prompt_file": "shot25_layout.txt",
             "keyframe_prompt_file": "shot25_keyframe.txt",
             "beats": [
-                {"prompt_file": "shot25_beat.txt", "duration": "3"}
+                {
+                    "prompt_file": "shot25_beat.txt",
+                    "duration": "3"
+                }
             ]
         },
         {
             "name": "cliff_celebration",
-            "characters": ["cranial", "gorilla", "robot"],
+            "characters": [
+                "cranial",
+                "gorilla",
+                "robot"
+            ],
             "layout_prompt_file": "shot26_layout.txt",
             "keyframe_prompt_file": "shot26_keyframe.txt",
             "beats": [
-                {"prompt_file": "shot26_beat.txt", "duration": "5"}
+                {
+                    "prompt_file": "shot26_beat.txt",
+                    "duration": "5"
+                }
             ]
         },
         {
             "name": "cliff_distance",
-            "characters": ["cranial", "gorilla", "robot"],
+            "characters": [
+                "cranial",
+                "gorilla",
+                "robot"
+            ],
             "layout_prompt_file": "shot27_layout.txt",
             "keyframe_prompt_file": "shot27_keyframe.txt",
             "beats": [
-                {"prompt_file": "shot27_beat.txt", "duration": "3"}
+                {
+                    "prompt_file": "shot27_beat.txt",
+                    "duration": "3"
+                }
             ]
         }
     ]

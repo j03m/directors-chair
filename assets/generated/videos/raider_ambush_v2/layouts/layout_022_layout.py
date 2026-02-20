@@ -101,6 +101,7 @@ def build_large_figure(name, mat, position, pose="standing"):
              (x, y, z + 1.1), (0.65, 0.45, 0.75))
     add_mesh(f"{name}_Head", bpy.ops.mesh.primitive_uv_sphere_add, mat,
              (x, y, z + 2.2), (0.38, 0.33, 0.33))
+
     add_mesh(f"{name}_LegL", bpy.ops.mesh.primitive_cylinder_add, mat,
              (x - 0.4, y, z + 0.0), (0.16, 0.16, 0.45))
     add_mesh(f"{name}_LegR", bpy.ops.mesh.primitive_cylinder_add, mat,
@@ -155,6 +156,7 @@ def build_regular_male(name, mat, position, pose="standing"):
              (x, y, z + 0.9), (0.4, 0.3, 0.55))
     add_mesh(f"{name}_Head", bpy.ops.mesh.primitive_cube_add, mat,
              (x, y, z + 1.7), (0.2, 0.18, 0.2))
+
     add_mesh(f"{name}_LegL", bpy.ops.mesh.primitive_cylinder_add, mat,
              (x - 0.25, y, z + 0.0), (0.1, 0.1, 0.4))
     add_mesh(f"{name}_LegR", bpy.ops.mesh.primitive_cylinder_add, mat,
@@ -198,6 +200,7 @@ def build_regular_female(name, mat, position, pose="standing"):
              (x, y, z + 0.85), (0.35, 0.25, 0.5))
     add_mesh(f"{name}_Head", bpy.ops.mesh.primitive_uv_sphere_add, mat,
              (x, y, z + 1.55), (0.18, 0.16, 0.18))
+
     add_mesh(f"{name}_LegL", bpy.ops.mesh.primitive_cylinder_add, mat,
              (x - 0.2, y, z + 0.0), (0.09, 0.09, 0.38))
     add_mesh(f"{name}_LegR", bpy.ops.mesh.primitive_cylinder_add, mat,
@@ -234,44 +237,49 @@ add_light(scene)
 # Materials
 mat_ground = make_mat("Ground", (0.2, 0.15, 0.1, 1))
 mat_gale = make_mat("Gale", (0.5, 0.2, 0.2, 1))
-mat_debris = make_mat("Debris", (0.35, 0.25, 0.15, 1))
-mat_body1 = make_mat("Body1", (0.3, 0.4, 0.2, 1))
-mat_body2 = make_mat("Body2", (0.25, 0.18, 0.1, 1))
-mat_body3 = make_mat("Body3", (0.2, 0.35, 0.5, 1))
-mat_weapon = make_mat("Weapon", (0.4, 0.4, 0.4, 1))
+mat_heavy = make_mat("Heavy", (0.25, 0.18, 0.1, 1))
+mat_truck = make_mat("Truck", (0.35, 0.25, 0.15, 1))
+mat_road = make_mat("Road", (0.12, 0.1, 0.08, 1))
 
 # Ground
-add_ground(mat_ground)
+add_ground(mat_ground, size=20)
 
-# Gale — center frame, lunging forward in fighting stance (reaching for weapon)
-build_regular_female("Gale", mat_gale, (0, 0, 0), pose="fighting_stance")
+# Desert road strip running from foreground-left to background-right
+add_mesh("Road", bpy.ops.mesh.primitive_cube_add, mat_road,
+         (3, 2, 0.01), (12, 1.2, 0.01),
+         rot=(0, 0, math.radians(25)))
 
-# Weapon on the ground ahead of Gale (she's lunging toward it)
-add_mesh("Weapon", bpy.ops.mesh.primitive_cylinder_add, mat_weapon,
-         (0.8, -0.6, 0.05), (0.04, 0.04, 0.5),
-         rot=(math.radians(90), 0, math.radians(20)))
+# Gale — left foreground, fighting stance (aiming weapon)
+build_regular_female("Gale", mat_gale, (-1.5, -0.5, 0), pose="fighting_stance")
 
-# Dead bodies scattered around
-build_regular_male("Fallen1", mat_body1, (-2.0, 1.5, 0), pose="fallen")
-build_regular_male("Fallen2", mat_body2, (2.5, 0.8, 0), pose="fallen")
-build_regular_male("Fallen3", mat_body3, (-1.5, -1.8, 0), pose="fallen")
+# Weapon — small cylinder extending forward from Gale's right arm
+add_mesh("Gale_Weapon", bpy.ops.mesh.primitive_cylinder_add, mat_truck,
+         (-1.1, -1.0, 1.15), (0.03, 0.03, 0.5),
+         rot=(math.radians(-70), 0, math.radians(10)))
 
-# Debris — scattered chunks on the ground
-add_mesh("Debris1", bpy.ops.mesh.primitive_cube_add, mat_debris,
-         (1.5, 2.0, 0.1), (0.3, 0.2, 0.1),
-         rot=(0, 0, math.radians(35)))
-add_mesh("Debris2", bpy.ops.mesh.primitive_cube_add, mat_debris,
-         (-2.5, -0.5, 0.08), (0.25, 0.15, 0.08),
-         rot=(0, 0, math.radians(-20)))
-add_mesh("Debris3", bpy.ops.mesh.primitive_cylinder_add, mat_debris,
-         (3.0, -1.5, 0.05), (0.08, 0.08, 0.4),
-         rot=(math.radians(88), 0, math.radians(50)))
-add_mesh("Debris4", bpy.ops.mesh.primitive_cube_add, mat_debris,
-         (-0.8, 2.5, 0.06), (0.2, 0.12, 0.06),
-         rot=(0, 0, math.radians(60)))
+# Heavy — distant right, standing near truck
+build_large_figure("Heavy", mat_heavy, (8, 6, 0), pose="standing")
 
-# Camera — eye level medium shot, facing Gale from the front-side
-setup_camera(scene, loc=(0, -4.5, 1.2), target_loc=(0, 0, 0.9), lens=35)
+# Truck — simple box shapes near Heavy
+add_mesh("Truck_Cab", bpy.ops.mesh.primitive_cube_add, mat_truck,
+         (9.5, 6.5, 1.0), (1.0, 0.8, 0.9))
+add_mesh("Truck_Bed", bpy.ops.mesh.primitive_cube_add, mat_truck,
+         (11.5, 6.5, 0.7), (1.5, 0.8, 0.6))
+add_mesh("Truck_WheelFL", bpy.ops.mesh.primitive_cylinder_add, mat_ground,
+         (8.8, 5.6, 0.3), (0.3, 0.3, 0.15),
+         rot=(math.radians(90), 0, 0))
+add_mesh("Truck_WheelFR", bpy.ops.mesh.primitive_cylinder_add, mat_ground,
+         (8.8, 7.4, 0.3), (0.3, 0.3, 0.15),
+         rot=(math.radians(90), 0, 0))
+add_mesh("Truck_WheelRL", bpy.ops.mesh.primitive_cylinder_add, mat_ground,
+         (12.0, 5.6, 0.3), (0.3, 0.3, 0.15),
+         rot=(math.radians(90), 0, 0))
+add_mesh("Truck_WheelRR", bpy.ops.mesh.primitive_cylinder_add, mat_ground,
+         (12.0, 7.4, 0.3), (0.3, 0.3, 0.15),
+         rot=(math.radians(90), 0, 0))
+
+# Camera — over Gale's right shoulder, looking toward Heavy
+setup_camera(scene, loc=(-1.0, -1.8, 1.6), target_loc=(8, 6, 1.0), lens=35)
 
 # Render
 scene.frame_set(1)

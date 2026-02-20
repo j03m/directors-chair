@@ -79,6 +79,7 @@ def add_ground(mat, size=15):
 
 
 def build_large_figure(name, mat, position, pose="standing"):
+    """Build a large/heavy character from primitives (gorilla-like proportions)."""
     x, y, z = position
 
     if pose == "fallen":
@@ -133,6 +134,7 @@ def build_large_figure(name, mat, position, pose="standing"):
 
 
 def build_regular_male(name, mat, position, pose="standing"):
+    """Build a regular male character from primitives."""
     x, y, z = position
 
     if pose == "fallen":
@@ -182,6 +184,7 @@ def build_regular_male(name, mat, position, pose="standing"):
 
 
 def build_regular_female(name, mat, position, pose="standing"):
+    """Build a regular female character from primitives."""
     x, y, z = position
 
     if pose == "fallen":
@@ -224,32 +227,80 @@ def build_regular_female(name, mat, position, pose="standing"):
                  (x + 0.45, y, z + 0.65), (0.08, 0.08, 0.38))
 
 
-# --- Scene Setup ---
+# ── Scene Setup ──────────────────────────────────────────────────────────────
+
 clean_scene()
 scene = bpy.context.scene
 setup_render(scene)
 add_light(scene)
 
 # Materials
-ground_mat = make_mat("Ground", (0.2, 0.15, 0.1, 1))
-cranial_mat = make_mat("Cranial", (0.25, 0.18, 0.1, 1))
+mat_ground = make_mat("Ground", (0.2, 0.15, 0.1, 1))
+mat_heavy = make_mat("Heavy", (0.25, 0.18, 0.1, 1))
+mat_fallen = make_mat("Fallen", (0.3, 0.25, 0.15, 1))
+mat_truck = make_mat("Truck", (0.35, 0.3, 0.25, 1))
+mat_truck_dark = make_mat("TruckDark", (0.15, 0.12, 0.1, 1))
+mat_road = make_mat("Road", (0.12, 0.1, 0.08, 1))
+mat_rifle = make_mat("Rifle", (0.1, 0.1, 0.1, 1))
 
 # Ground
-add_ground(ground_mat)
+add_ground(mat_ground)
 
-# Desert road suggestion — a lighter strip for the road surface
-road_mat = make_mat("Road", (0.35, 0.28, 0.2, 1))
-add_mesh("Road", bpy.ops.mesh.primitive_cube_add, road_mat,
-         (0, 0, 0.01), (2.0, 12.0, 0.01))
+# Desert road — long dark strip on the ground
+add_mesh("Road", bpy.ops.mesh.primitive_cube_add, mat_road,
+         (0, 0, 0.01), (2.0, 15.0, 0.01))
 
-# Cranial — stumbling, grabbing at his leg — use fighting_stance with a forward lean
-# Place him center frame, slightly off-center for visual interest
-build_regular_male("Cranial", cranial_mat, (0.3, 0, 0), pose="fighting_stance")
+# ── Cab-Over Truck ───────────────────────────────────────────────────────────
+# Truck positioned at center-right, heavy crouches behind it on the near side
 
-# Camera at eye level for medium shot — close enough to see the stumble
-setup_camera(scene, loc=(0.3, -3.5, 1.5), target_loc=(0.3, 0, 1.0), lens=50)
+# Truck cab (boxy cab-over style)
+add_mesh("TruckCab", bpy.ops.mesh.primitive_cube_add, mat_truck,
+         (1.5, 1.0, 1.2), (1.0, 0.8, 1.2))
 
-# Render
+# Truck cab roof
+add_mesh("TruckCabRoof", bpy.ops.mesh.primitive_cube_add, mat_truck_dark,
+         (1.5, 1.0, 2.45), (1.05, 0.85, 0.05))
+
+# Truck bed / cargo area behind cab
+add_mesh("TruckBed", bpy.ops.mesh.primitive_cube_add, mat_truck_dark,
+         (1.5, 3.5, 0.9), (1.1, 1.8, 0.9))
+
+# Truck wheels (cylinders on sides)
+add_mesh("WheelFL", bpy.ops.mesh.primitive_cylinder_add, mat_truck_dark,
+         (0.4, 0.4, 0.35), (0.35, 0.35, 0.12),
+         rot=(math.radians(90), math.radians(90), 0))
+add_mesh("WheelFR", bpy.ops.mesh.primitive_cylinder_add, mat_truck_dark,
+         (2.6, 0.4, 0.35), (0.35, 0.35, 0.12),
+         rot=(math.radians(90), math.radians(90), 0))
+add_mesh("WheelRL", bpy.ops.mesh.primitive_cylinder_add, mat_truck_dark,
+         (0.4, 3.8, 0.35), (0.35, 0.35, 0.12),
+         rot=(math.radians(90), math.radians(90), 0))
+add_mesh("WheelRR", bpy.ops.mesh.primitive_cylinder_add, mat_truck_dark,
+         (2.6, 3.8, 0.35), (0.35, 0.35, 0.12),
+         rot=(math.radians(90), math.radians(90), 0))
+
+# ── Characters ───────────────────────────────────────────────────────────────
+
+# Heavy — crouched behind the truck cab (fighting_stance suggests low, tense posture)
+# Positioned on the near side of the truck, partially sheltered
+build_large_figure("Heavy", mat_heavy, (0.0, 1.5, 0.0), pose="fighting_stance")
+
+# Rifle in heavy's hands — a simple cylinder angled forward
+add_mesh("Rifle", bpy.ops.mesh.primitive_cylinder_add, mat_rifle,
+         (0.6, 1.0, 1.4), (0.04, 0.04, 0.55),
+         rot=(math.radians(-60), math.radians(10), math.radians(15)))
+
+# Fallen figure slumped against the truck nearby
+build_regular_male("FallenFigure", mat_fallen, (2.0, 2.5, 0.0), pose="fallen")
+
+# ── Camera ───────────────────────────────────────────────────────────────────
+# Medium shot — camera close, slightly elevated, looking at the heavy figure behind the truck
+setup_camera(scene,
+             loc=(-3.5, -2.0, 2.5),
+             target_loc=(0.5, 1.5, 1.2),
+             lens=35)
+
+# ── Render ───────────────────────────────────────────────────────────────────
 scene.frame_set(1)
 scene.render.filepath = "/Users/jmordetsky/directors-chair/assets/generated/videos/raider_ambush_v2/layouts/layout_018.png"
 bpy.ops.render.render(write_still=True)

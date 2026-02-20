@@ -1,5 +1,5 @@
 Use @Image1 as composition reference. Over the shoulder, looking down from cliff, wide depth.
 
-Over @Element1 a massive gorilla in viking armor and horned helmet's shoulder — he lies prone at the cliff edge, rifle barrel visible. Looking down at the desert road far below. On the road, tiny figures are visible — one figure is collapsing to the ground while others scatter in panic. The distance between the cliff and the road is vast. Smoke or dust rises from the road.
+Over @Element1 a massive gorilla in viking armor and horned helmet's shoulder — he lies prone at the cliff edge, rifle barrel visible. Looking down at the desert road far below. On the road, the cab-over box truck sits stopped on the road. Around the truck, tiny figures scatter in panic — @Element2 a raider in motorcycle goggles and spiked leather jacket runs for cover, @Element3 a heavyset raider in an executioner hood ducks behind the truck, @Element4 a lean woman with blonde war hawk hair sprints away from the collapsing body, @Element5 a civilian man in a denim jacket crouches near the truck. One figure — the hockey-masked raider — is collapsing to the ground, hit. The distance between the cliff and the road is vast. Dust and chaos on the road below.
 
-Cliff edge, massive depth, desert landscape. Photorealistic, cinematic. The sniper's view of the aftermath below.
+Cliff edge, massive depth, desert landscape. Cab-over truck on the road below grounds the scene. Photorealistic, cinematic. The sniper's view of the aftermath below.

@@ -11,7 +11,6 @@ def clean_scene():
 def make_mat(name, color):
     """Create a Principled BSDF material with the given RGBA color."""
     mat = bpy.data.materials.new(name)
-    mat.use_nodes = True
     bsdf = mat.node_tree.nodes["Principled BSDF"]
     bsdf.inputs["Base Color"].default_value = color
     bsdf.inputs["Roughness"].default_value = 0.8
@@ -38,7 +37,6 @@ def setup_render(scene, width=1280, height=720):
     scene.render.resolution_percentage = 100
     scene.render.image_settings.file_format = 'PNG'
     scene.world = bpy.data.worlds.new("World")
-    scene.world.use_nodes = True
     bg = scene.world.node_tree.nodes["Background"]
     bg.inputs["Color"].default_value = (0.15, 0.12, 0.08, 1)
     bg.inputs["Strength"].default_value = 1.0
@@ -227,7 +225,10 @@ def build_regular_female(name, mat, position, pose="standing"):
                  (x + 0.45, y, z + 0.65), (0.08, 0.08, 0.38))
 
 
-# --- Scene Setup ---
+# ============================================================
+# SCENE SETUP
+# ============================================================
+
 clean_scene()
 scene = bpy.context.scene
 setup_render(scene)
@@ -236,69 +237,103 @@ add_light(scene)
 # Materials
 mat_ground = make_mat("Ground", (0.2, 0.15, 0.1, 1))
 mat_heavy = make_mat("Heavy", (0.25, 0.18, 0.1, 1))
-mat_scope = make_mat("Scope", (0.1, 0.1, 0.1, 1))
-mat_skin = make_mat("Skin", (0.55, 0.4, 0.3, 1))
-mat_eye = make_mat("Eye", (0.9, 0.85, 0.7, 1))
-mat_pupil = make_mat("Pupil", (0.15, 0.1, 0.05, 1))
-mat_hood = make_mat("Hood", (0.18, 0.12, 0.08, 1))
+mat_nomad1 = make_mat("Nomad1", (0.3, 0.4, 0.2, 1))
+mat_nomad2 = make_mat("Nomad2", (0.25, 0.18, 0.1, 1))
+mat_nomad3 = make_mat("Nomad3", (0.6, 0.6, 0.65, 1))
+mat_scope = make_mat("ScopeBlack", (0.0, 0.0, 0.0, 1))
+mat_crosshair = make_mat("Crosshair", (0.05, 0.05, 0.05, 1))
 
 # Ground
 add_ground(mat_ground)
 
-# Extreme close-up of the heavy raider's face looking through a sniper scope.
-# We build just the head and scope at origin, camera very close in front.
+# Heavy raider — standing center, dominant, looming over kneeling figures
+build_large_figure("Heavy", mat_heavy, (0, 0, 0), pose="standing")
 
-# Large head (heavy raider - executioner hood)
-add_mesh("Heavy_Head", bpy.ops.mesh.primitive_uv_sphere_add, mat_hood,
-         (0, 0, 0), (0.55, 0.5, 0.55))
+# Kneeling nomads at his feet — use "seated" pose as proxy for kneeling
+# Arranged in a row below the heavy raider
+build_regular_male("Nomad1", mat_nomad1, (-1.2, 0.5, 0), pose="seated")
+build_regular_male("Nomad2", mat_nomad2, (0, 0.8, 0), pose="seated")
+build_regular_male("Nomad3", mat_nomad3, (1.2, 0.5, 0), pose="seated")
 
-# Face area - slightly lighter patch on front of head
-add_mesh("Heavy_Face", bpy.ops.mesh.primitive_uv_sphere_add, mat_skin,
-         (0, -0.35, -0.05), (0.35, 0.15, 0.4))
+# ============================================================
+# SNIPER SCOPE VIGNETTE — black ring with crosshairs
+# ============================================================
 
-# Right eye (the one pressed to scope) - squinting
-add_mesh("Heavy_EyeR", bpy.ops.mesh.primitive_uv_sphere_add, mat_eye,
-         (0.15, -0.45, 0.05), (0.08, 0.04, 0.04))
-add_mesh("Heavy_PupilR", bpy.ops.mesh.primitive_uv_sphere_add, mat_pupil,
-         (0.15, -0.48, 0.05), (0.04, 0.03, 0.03))
+# Large black torus to create circular scope vignette framing the scene
+# Placed close to camera to act as a mask
+bpy.ops.mesh.primitive_torus_add(
+    major_radius=1.8,
+    minor_radius=1.4,
+    location=(0, -6.5, 1.5),
+    rotation=(math.radians(90), 0, 0)
+)
+scope_ring = bpy.context.active_object
+scope_ring.name = "ScopeRing"
+scope_ring.scale = (1.0, 1.0, 0.6)
+scope_ring.data.materials.append(mat_scope)
 
-# Left eye - open, intense
-add_mesh("Heavy_EyeL", bpy.ops.mesh.primitive_uv_sphere_add, mat_eye,
-         (-0.15, -0.45, 0.05), (0.09, 0.05, 0.06))
-add_mesh("Heavy_PupilL", bpy.ops.mesh.primitive_uv_sphere_add, mat_pupil,
-         (-0.15, -0.48, 0.05), (0.05, 0.04, 0.04))
+# Crosshair — vertical line
+bpy.ops.mesh.primitive_cube_add(location=(0, -6.4, 1.5))
+ch_v = bpy.context.active_object
+ch_v.name = "CrosshairV"
+ch_v.scale = (0.008, 0.01, 1.6)
+ch_v.data.materials.append(mat_crosshair)
 
-# Brow ridge
-add_mesh("Heavy_Brow", bpy.ops.mesh.primitive_cube_add, mat_hood,
-         (0, -0.4, 0.15), (0.35, 0.08, 0.05))
+# Crosshair — horizontal line
+bpy.ops.mesh.primitive_cube_add(location=(0, -6.4, 1.5))
+ch_h = bpy.context.active_object
+ch_h.name = "CrosshairH"
+ch_h.scale = (1.6, 0.01, 0.008)
+ch_h.data.materials.append(mat_crosshair)
 
-# Nose
-add_mesh("Heavy_Nose", bpy.ops.mesh.primitive_cube_add, mat_skin,
-         (0, -0.5, -0.08), (0.06, 0.08, 0.1))
+# Small center dot at crosshair intersection (aimed at heavy's head)
+bpy.ops.mesh.primitive_uv_sphere_add(location=(0, -6.4, 1.5))
+ch_dot = bpy.context.active_object
+ch_dot.name = "CrosshairDot"
+ch_dot.scale = (0.025, 0.01, 0.025)
+ch_dot.data.materials.append(mat_crosshair)
 
-# Sniper scope - long cylinder extending from right eye outward
-add_mesh("Scope_Main", bpy.ops.mesh.primitive_cylinder_add, mat_scope,
-         (0.15, -0.9, 0.05), (0.08, 0.08, 0.45),
-         rot=(math.radians(90), 0, 0))
+# Black corner panels to fill out rectangular frame to circular scope
+# Top panel
+bpy.ops.mesh.primitive_cube_add(location=(0, -6.6, 3.2))
+panel_top = bpy.context.active_object
+panel_top.name = "VignetteTop"
+panel_top.scale = (3, 0.01, 1.0)
+panel_top.data.materials.append(mat_scope)
 
-# Scope eyepiece (wider ring where eye meets scope)
-add_mesh("Scope_Eyepiece", bpy.ops.mesh.primitive_cylinder_add, mat_scope,
-         (0.15, -0.55, 0.05), (0.1, 0.1, 0.05),
-         rot=(math.radians(90), 0, 0))
+# Bottom panel
+bpy.ops.mesh.primitive_cube_add(location=(0, -6.6, -0.2))
+panel_bot = bpy.context.active_object
+panel_bot.name = "VignetteBottom"
+panel_bot.scale = (3, 0.01, 1.0)
+panel_bot.data.materials.append(mat_scope)
 
-# Scope front lens ring
-add_mesh("Scope_FrontRing", bpy.ops.mesh.primitive_cylinder_add, mat_scope,
-         (0.15, -1.25, 0.05), (0.1, 0.1, 0.03),
-         rot=(math.radians(90), 0, 0))
+# Left panel
+bpy.ops.mesh.primitive_cube_add(location=(-2.8, -6.6, 1.5))
+panel_left = bpy.context.active_object
+panel_left.name = "VignetteLeft"
+panel_left.scale = (1.0, 0.01, 3)
+panel_left.data.materials.append(mat_scope)
 
-# Scope adjustment knob on top
-add_mesh("Scope_Knob", bpy.ops.mesh.primitive_cylinder_add, mat_scope,
-         (0.15, -0.85, 0.15), (0.03, 0.03, 0.06))
+# Right panel
+bpy.ops.mesh.primitive_cube_add(location=(2.8, -6.6, 1.5))
+panel_right = bpy.context.active_object
+panel_right.name = "VignetteRight"
+panel_right.scale = (1.0, 0.01, 3)
+panel_right.data.materials.append(mat_scope)
 
-# Camera: extreme close-up, directly in front at face level
-# Very tight lens to fill frame with face and scope
-setup_camera(scene, loc=(0, -2.0, 0.0), target_loc=(0, 0, 0.0), lens=65)
+# ============================================================
+# CAMERA — positioned behind scope elements, looking through at scene
+# ============================================================
+
+# Camera straight on, looking through scope at the heavy raider
+# Crosshair centered on heavy's head (z ~2.2)
+setup_camera(scene, loc=(0, -8, 1.5), target_loc=(0, 0, 1.5), lens=35)
+
+# ============================================================
+# RENDER
+# ============================================================
 
 scene.frame_set(1)
-scene.render.filepath = "/Users/jmordetsky/directors-chair/assets/generated/videos/raider_ambush_v2/layouts/layout_007.png"
+scene.render.filepath = "/Users/jmordetsky/directors-chair/assets/generated/videos/raider_ambush_v2/layouts/layout_008.png"
 bpy.ops.render.render(write_still=True)

@@ -79,6 +79,7 @@ def add_ground(mat, size=15):
 
 
 def build_large_figure(name, mat, position, pose="standing"):
+    """Build a large/heavy character from primitives (gorilla-like proportions)."""
     x, y, z = position
 
     if pose == "fallen":
@@ -100,7 +101,6 @@ def build_large_figure(name, mat, position, pose="standing"):
              (x, y, z + 1.1), (0.65, 0.45, 0.75))
     add_mesh(f"{name}_Head", bpy.ops.mesh.primitive_uv_sphere_add, mat,
              (x, y, z + 2.2), (0.38, 0.33, 0.33))
-
     add_mesh(f"{name}_LegL", bpy.ops.mesh.primitive_cylinder_add, mat,
              (x - 0.4, y, z + 0.0), (0.16, 0.16, 0.45))
     add_mesh(f"{name}_LegR", bpy.ops.mesh.primitive_cylinder_add, mat,
@@ -133,6 +133,7 @@ def build_large_figure(name, mat, position, pose="standing"):
 
 
 def build_regular_male(name, mat, position, pose="standing"):
+    """Build a regular male character from primitives."""
     x, y, z = position
 
     if pose == "fallen":
@@ -154,7 +155,6 @@ def build_regular_male(name, mat, position, pose="standing"):
              (x, y, z + 0.9), (0.4, 0.3, 0.55))
     add_mesh(f"{name}_Head", bpy.ops.mesh.primitive_cube_add, mat,
              (x, y, z + 1.7), (0.2, 0.18, 0.2))
-
     add_mesh(f"{name}_LegL", bpy.ops.mesh.primitive_cylinder_add, mat,
              (x - 0.25, y, z + 0.0), (0.1, 0.1, 0.4))
     add_mesh(f"{name}_LegR", bpy.ops.mesh.primitive_cylinder_add, mat,
@@ -182,6 +182,7 @@ def build_regular_male(name, mat, position, pose="standing"):
 
 
 def build_regular_female(name, mat, position, pose="standing"):
+    """Build a regular female character from primitives."""
     x, y, z = position
 
     if pose == "fallen":
@@ -197,7 +198,6 @@ def build_regular_female(name, mat, position, pose="standing"):
              (x, y, z + 0.85), (0.35, 0.25, 0.5))
     add_mesh(f"{name}_Head", bpy.ops.mesh.primitive_uv_sphere_add, mat,
              (x, y, z + 1.55), (0.18, 0.16, 0.18))
-
     add_mesh(f"{name}_LegL", bpy.ops.mesh.primitive_cylinder_add, mat,
              (x - 0.2, y, z + 0.0), (0.09, 0.09, 0.38))
     add_mesh(f"{name}_LegR", bpy.ops.mesh.primitive_cylinder_add, mat,
@@ -224,58 +224,86 @@ def build_regular_female(name, mat, position, pose="standing"):
                  (x + 0.45, y, z + 0.65), (0.08, 0.08, 0.38))
 
 
-# --- Scene Setup ---
+# ── Scene Setup ──────────────────────────────────────────────
 clean_scene()
 scene = bpy.context.scene
 setup_render(scene)
 add_light(scene)
 
-# Materials
-mat_ground = make_mat("Ground", (0.2, 0.15, 0.1, 1))
-mat_gale = make_mat("Gale", (0.5, 0.2, 0.2, 1))
-mat_heavy = make_mat("Heavy", (0.25, 0.18, 0.1, 1))
-mat_truck = make_mat("Truck", (0.35, 0.25, 0.15, 1))
-mat_road = make_mat("Road", (0.12, 0.1, 0.08, 1))
+# ── Materials ────────────────────────────────────────────────
+ground_mat = make_mat("Ground", (0.2, 0.15, 0.1, 1))
+road_mat = make_mat("Road", (0.12, 0.1, 0.08, 1))
+heavy_mat = make_mat("Heavy", (0.25, 0.18, 0.1, 1))
+truck_body_mat = make_mat("TruckBody", (0.35, 0.28, 0.2, 1))
+truck_cab_mat = make_mat("TruckCab", (0.4, 0.32, 0.22, 1))
+truck_dark_mat = make_mat("TruckDark", (0.1, 0.08, 0.06, 1))
+windshield_mat = make_mat("Windshield", (0.25, 0.35, 0.45, 1))
+headlight_mat = make_mat("Headlight", (0.9, 0.85, 0.6, 1))
 
-# Ground
-add_ground(mat_ground, size=20)
+# ── Ground + Road ────────────────────────────────────────────
+add_ground(ground_mat, size=20)
+# Desert road strip running along Y axis
+add_mesh("Road", bpy.ops.mesh.primitive_cube_add, road_mat,
+         (0, 0, 0.01), (2.5, 20, 0.01))
+# Road edge markings
+road_edge_mat = make_mat("RoadEdge", (0.25, 0.2, 0.15, 1))
+add_mesh("RoadEdgeL", bpy.ops.mesh.primitive_cube_add, road_edge_mat,
+         (-2.5, 0, 0.02), (0.05, 20, 0.01))
+add_mesh("RoadEdgeR", bpy.ops.mesh.primitive_cube_add, road_edge_mat,
+         (2.5, 0, 0.02), (0.05, 20, 0.01))
 
-# Desert road running left-to-right through the scene
-add_mesh("Road", bpy.ops.mesh.primitive_cube_add, mat_road,
-         (0, 0, 0.01), (20, 1.5, 0.02))
+# ── Heavy Character — knocked backwards, airborne ───────────
+# Elevated z=0.6 to convey being airborne off his feet
+build_large_figure("Heavy", heavy_mat, (0, -0.5, 0.6), pose="fallen")
 
-# Gale — standing on the left, facing right, aiming weapon (fighting stance)
-build_regular_female("Gale", mat_gale, (-3, -0.5, 0), pose="fighting_stance")
+# ── Cab-Over Truck — behind the heavy figure ─────────────────
+tx, ty = 0, 4.5
+# Cab (flat-front cab-over design)
+add_mesh("TruckCab", bpy.ops.mesh.primitive_cube_add, truck_cab_mat,
+         (tx, ty, 1.4), (1.1, 0.9, 1.1))
+# Windshield (angled glass on front of cab)
+add_mesh("Windshield", bpy.ops.mesh.primitive_cube_add, windshield_mat,
+         (tx, ty - 0.85, 1.8), (0.85, 0.05, 0.5),
+         rot=(math.radians(10), 0, 0))
+# Cargo bed / flatbed behind cab
+add_mesh("TruckBed", bpy.ops.mesh.primitive_cube_add, truck_body_mat,
+         (tx, ty + 2.5, 1.0), (1.15, 2.0, 0.7))
+# Bed side rails
+add_mesh("RailL", bpy.ops.mesh.primitive_cube_add, truck_dark_mat,
+         (tx - 1.15, ty + 2.5, 1.5), (0.05, 2.0, 0.2))
+add_mesh("RailR", bpy.ops.mesh.primitive_cube_add, truck_dark_mat,
+         (tx + 1.15, ty + 2.5, 1.5), (0.05, 2.0, 0.2))
+# Front bumper / bull bar
+add_mesh("Bumper", bpy.ops.mesh.primitive_cube_add, truck_dark_mat,
+         (tx, ty - 1.0, 0.55), (1.2, 0.12, 0.35))
+# Headlights
+add_mesh("HeadlightL", bpy.ops.mesh.primitive_cube_add, headlight_mat,
+         (tx - 0.7, ty - 0.95, 1.1), (0.2, 0.06, 0.15))
+add_mesh("HeadlightR", bpy.ops.mesh.primitive_cube_add, headlight_mat,
+         (tx + 0.7, ty - 0.95, 1.1), (0.2, 0.06, 0.15))
+# Wheels — front pair
+add_mesh("WheelFL", bpy.ops.mesh.primitive_cylinder_add, truck_dark_mat,
+         (tx - 1.2, ty - 0.3, 0.35), (0.35, 0.35, 0.18),
+         rot=(0, math.radians(90), 0))
+add_mesh("WheelFR", bpy.ops.mesh.primitive_cylinder_add, truck_dark_mat,
+         (tx + 1.2, ty - 0.3, 0.35), (0.35, 0.35, 0.18),
+         rot=(0, math.radians(90), 0))
+# Wheels — rear pair
+add_mesh("WheelRL", bpy.ops.mesh.primitive_cylinder_add, truck_dark_mat,
+         (tx - 1.2, ty + 3.5, 0.35), (0.35, 0.35, 0.18),
+         rot=(0, math.radians(90), 0))
+add_mesh("WheelRR", bpy.ops.mesh.primitive_cylinder_add, truck_dark_mat,
+         (tx + 1.2, ty + 3.5, 0.35), (0.35, 0.35, 0.18),
+         rot=(0, math.radians(90), 0))
+# Exhaust stack on cab
+add_mesh("Exhaust", bpy.ops.mesh.primitive_cylinder_add, truck_dark_mat,
+         (tx + 0.9, ty + 0.3, 2.5), (0.08, 0.08, 0.6))
 
-# Heavy raider — standing far right near the truck, the distant target
-build_large_figure("Heavy", mat_heavy, (8, 0.5, 0), pose="standing")
+# ── Camera — medium shot from front-side ─────────────────────
+# Positioned to frame the heavy figure mid-air with truck visible behind
+setup_camera(scene, (4.5, -3.5, 2.0), (0, 0.5, 1.0), lens=32)
 
-# Truck near heavy raider — simple box shape
-add_mesh("Truck_Body", bpy.ops.mesh.primitive_cube_add, mat_truck,
-         (9.5, 1.5, 0.8), (1.5, 0.8, 0.8))
-add_mesh("Truck_Cab", bpy.ops.mesh.primitive_cube_add, mat_truck,
-         (8.0, 1.5, 0.9), (0.7, 0.7, 0.7))
-add_mesh("Truck_WheelFL", bpy.ops.mesh.primitive_cylinder_add, mat_ground,
-         (8.5, 0.6, 0.25), (0.25, 0.25, 0.15),
-         rot=(math.radians(90), 0, 0))
-add_mesh("Truck_WheelFR", bpy.ops.mesh.primitive_cylinder_add, mat_ground,
-         (8.5, 2.4, 0.25), (0.25, 0.25, 0.15),
-         rot=(math.radians(90), 0, 0))
-add_mesh("Truck_WheelRL", bpy.ops.mesh.primitive_cylinder_add, mat_ground,
-         (10.2, 0.6, 0.25), (0.25, 0.25, 0.15),
-         rot=(math.radians(90), 0, 0))
-add_mesh("Truck_WheelRR", bpy.ops.mesh.primitive_cylinder_add, mat_ground,
-         (10.2, 2.4, 0.25), (0.25, 0.25, 0.15),
-         rot=(math.radians(90), 0, 0))
-
-# Camera — over Gale's right shoulder, looking toward the heavy raider
-# Positioned just behind and above Gale's shoulder, aiming at the distant figure
-setup_camera(scene,
-             loc=(-3.8, -1.8, 1.8),
-             target_loc=(8, 0.5, 1.0),
-             lens=35)
-
-# Render
+# ── Render ───────────────────────────────────────────────────
 scene.frame_set(1)
 scene.render.filepath = "/Users/jmordetsky/directors-chair/assets/generated/videos/raider_ambush_v2/layouts/layout_023.png"
 bpy.ops.render.render(write_still=True)

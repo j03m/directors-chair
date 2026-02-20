@@ -1,5 +1,7 @@
-Use @Image1 as composition reference. Through a circular sniper scope vignette, black around the edges.
+Use @Image1 as composition reference. Through a circular sniper scope vignette, black around the edges. Desaturated color palette: sandy tans, dusty greys, rusted iron.
 
-View through a rifle scope. The crosshair is centered directly on the head of @Element1 a raider in a cracked hockey mask with makeshift sheet metal armor. He stands tall, oblivious, looking down at hostages at his feet. The crosshair sits right on his hockey mask. He has no idea what's about to happen.
+View through a rifle scope looking down at the hostage scene. @Element1 a raider in a cracked white hockey mask with sheet metal armor has grabbed @Element2 a lean woman with blonde war hawk hair by her hair, pulling her head back violently. He grips her hair with one hand, yanking her head backwards. The sniper crosshair is centered on HIS head — the hockey mask raider's head, NOT the woman's. Beside them, three civilian men kneel in a row with hands behind their heads: @Element4 a man in a denim jacket, @Element5 a man in a mechanic jumpsuit, @Element6 a man in a military field jacket and keffiyeh.
 
-Through the scope, desert road. Harsh light. Photorealistic, cinematic. The moment before the trigger pull. Sniper POV.
+@Element3 a raider in motorcycle goggles and spiked leather jacket stands guard behind the kneeling hostages with an AK-47. The white cab-over box truck is in the background.
+
+The sniper crosshair sits perfectly on hockey mask's head — a headshot lined up. He is oblivious, focused on the woman. Through the scope, desert road, harsh light. Photorealistic, cinematic. The moment before the trigger pull.

@@ -235,23 +235,58 @@ setup_render(scene)
 add_light(scene)
 
 # Materials
-ground_mat = make_mat("Ground", (0.2, 0.15, 0.1, 1))
-gale_mat = make_mat("Gale", (0.5, 0.2, 0.2, 1))
+mat_ground = make_mat("DesertGround", (0.2, 0.15, 0.1, 1))
+mat_gale = make_mat("Gale", (0.5, 0.2, 0.2, 1))
+mat_road = make_mat("Road", (0.12, 0.1, 0.08, 1))
+mat_truck_body = make_mat("TruckBody", (0.35, 0.25, 0.15, 1))
+mat_truck_cab = make_mat("TruckCab", (0.3, 0.2, 0.12, 1))
+mat_truck_wheel = make_mat("TruckWheel", (0.05, 0.05, 0.05, 1))
+mat_truck_window = make_mat("TruckWindow", (0.15, 0.2, 0.3, 1))
+mat_rifle = make_mat("Rifle", (0.08, 0.06, 0.04, 1))
 
 # Ground
-add_ground(ground_mat)
+add_ground(mat_ground, size=15)
 
-# Gale — fallen on the ground, close-up framing
-# She lies face-down/side, head turned, at ground level near origin
-build_regular_female("Gale", gale_mat, (0, 0, 0), pose="fallen")
+# Desert road surface
+add_mesh("Road", bpy.ops.mesh.primitive_cube_add, mat_road,
+         (0, 0, 0.01), (2.0, 15.0, 0.01))
 
-# Camera — extreme close-up at ground level, very close to her face
-# Head is at approximately (0.7, -0.3, 0.15) in fallen pose
-# Camera low to the ground, close in, tight lens for intimate close-up
-setup_camera(scene,
-             loc=(1.8, -1.2, 0.25),
-             target_loc=(0.7, -0.3, 0.15),
-             lens=50)
+# Gale — bent down, using fighting_stance as closest approximation
+# Position her center-frame, slightly left
+build_regular_female("Gale", mat_gale, (0.0, 0.0, 0.0), pose="fighting_stance")
+
+# Rifle on the ground near Gale's feet
+add_mesh("Rifle", bpy.ops.mesh.primitive_cylinder_add, mat_rifle,
+         (0.3, -0.2, 0.05), (0.03, 0.03, 0.5),
+         rot=(math.radians(90), 0, math.radians(15)))
+
+# Cab-over truck in background
+# Main cargo box
+add_mesh("Truck_Cargo", bpy.ops.mesh.primitive_cube_add, mat_truck_body,
+         (0.5, 5.0, 1.2), (1.2, 2.0, 1.2))
+# Cab section (over front axle — cab-over style)
+add_mesh("Truck_Cab", bpy.ops.mesh.primitive_cube_add, mat_truck_cab,
+         (0.5, 3.0, 1.3), (1.0, 0.8, 1.0))
+# Windshield
+add_mesh("Truck_Windshield", bpy.ops.mesh.primitive_cube_add, mat_truck_window,
+         (0.5, 2.2, 1.6), (0.85, 0.05, 0.5))
+# Wheels — front pair
+add_mesh("Truck_WheelFL", bpy.ops.mesh.primitive_cylinder_add, mat_truck_wheel,
+         (-0.7, 2.8, 0.3), (0.3, 0.3, 0.12),
+         rot=(math.radians(90), math.radians(90), 0))
+add_mesh("Truck_WheelFR", bpy.ops.mesh.primitive_cylinder_add, mat_truck_wheel,
+         (1.7, 2.8, 0.3), (0.3, 0.3, 0.12),
+         rot=(math.radians(90), math.radians(90), 0))
+# Wheels — rear pair
+add_mesh("Truck_WheelRL", bpy.ops.mesh.primitive_cylinder_add, mat_truck_wheel,
+         (-0.7, 5.5, 0.3), (0.3, 0.3, 0.12),
+         rot=(math.radians(90), math.radians(90), 0))
+add_mesh("Truck_WheelRR", bpy.ops.mesh.primitive_cylinder_add, mat_truck_wheel,
+         (1.7, 5.5, 0.3), (0.3, 0.3, 0.12),
+         rot=(math.radians(90), math.radians(90), 0))
+
+# Camera — medium shot, eye level (~1.2m height), facing Gale
+setup_camera(scene, loc=(0.0, -4.5, 1.2), target_loc=(0.0, 0.0, 0.9), lens=35)
 
 # Render
 scene.frame_set(1)

@@ -79,9 +79,18 @@ def add_ground(mat, size=15):
 
 
 def build_large_figure(name, mat, position, pose="standing"):
+    """Build a large/heavy character from primitives (gorilla-like proportions).
+
+    Args:
+        name: Character name prefix for objects
+        mat: Blender material to apply
+        position: (x, y, z) base position — z is ground level
+        pose: one of "standing", "arms_raised", "fighting_stance", "fallen", "seated"
+    """
     x, y, z = position
 
     if pose == "fallen":
+        # Toppled sideways on ground
         add_mesh(f"{name}_Body", bpy.ops.mesh.primitive_cube_add, mat,
                  (x, y, z + 0.3), (0.6, 0.4, 0.7),
                  rot=(math.radians(75), 0, math.radians(10)))
@@ -96,11 +105,13 @@ def build_large_figure(name, mat, position, pose="standing"):
                  rot=(math.radians(85), 0, math.radians(-30)))
         return
 
+    # Upright poses
     add_mesh(f"{name}_Body", bpy.ops.mesh.primitive_cube_add, mat,
              (x, y, z + 1.1), (0.65, 0.45, 0.75))
     add_mesh(f"{name}_Head", bpy.ops.mesh.primitive_uv_sphere_add, mat,
              (x, y, z + 2.2), (0.38, 0.33, 0.33))
 
+    # Legs (always planted)
     add_mesh(f"{name}_LegL", bpy.ops.mesh.primitive_cylinder_add, mat,
              (x - 0.4, y, z + 0.0), (0.16, 0.16, 0.45))
     add_mesh(f"{name}_LegR", bpy.ops.mesh.primitive_cylinder_add, mat,
@@ -125,7 +136,7 @@ def build_large_figure(name, mat, position, pose="standing"):
                  (x - 0.7, y, z + 0.85), (0.14, 0.14, 0.5))
         add_mesh(f"{name}_ArmR", bpy.ops.mesh.primitive_cylinder_add, mat,
                  (x + 0.7, y, z + 0.85), (0.14, 0.14, 0.5))
-    else:
+    else:  # standing
         add_mesh(f"{name}_ArmL", bpy.ops.mesh.primitive_cylinder_add, mat,
                  (x - 0.7, y, z + 0.85), (0.14, 0.14, 0.5))
         add_mesh(f"{name}_ArmR", bpy.ops.mesh.primitive_cylinder_add, mat,
@@ -133,6 +144,14 @@ def build_large_figure(name, mat, position, pose="standing"):
 
 
 def build_regular_male(name, mat, position, pose="standing"):
+    """Build a regular male character from primitives.
+
+    Args:
+        name: Character name prefix for objects
+        mat: Blender material to apply
+        position: (x, y, z) base position — z is ground level
+        pose: one of "standing", "arms_raised", "fighting_stance", "fallen", "seated"
+    """
     x, y, z = position
 
     if pose == "fallen":
@@ -150,11 +169,13 @@ def build_regular_male(name, mat, position, pose="standing"):
                  rot=(math.radians(85), 0, math.radians(-25)))
         return
 
+    # Upright poses
     add_mesh(f"{name}_Body", bpy.ops.mesh.primitive_cube_add, mat,
              (x, y, z + 0.9), (0.4, 0.3, 0.55))
     add_mesh(f"{name}_Head", bpy.ops.mesh.primitive_cube_add, mat,
              (x, y, z + 1.7), (0.2, 0.18, 0.2))
 
+    # Legs
     add_mesh(f"{name}_LegL", bpy.ops.mesh.primitive_cylinder_add, mat,
              (x - 0.25, y, z + 0.0), (0.1, 0.1, 0.4))
     add_mesh(f"{name}_LegR", bpy.ops.mesh.primitive_cylinder_add, mat,
@@ -174,7 +195,7 @@ def build_regular_male(name, mat, position, pose="standing"):
         add_mesh(f"{name}_ArmR", bpy.ops.mesh.primitive_cylinder_add, mat,
                  (x + 0.5, y - 0.3, z + 1.2), (0.1, 0.1, 0.35),
                  rot=(math.radians(-50), 0, math.radians(10)))
-    else:
+    else:  # standing, seated
         add_mesh(f"{name}_ArmL", bpy.ops.mesh.primitive_cylinder_add, mat,
                  (x - 0.5, y, z + 0.7), (0.1, 0.1, 0.4))
         add_mesh(f"{name}_ArmR", bpy.ops.mesh.primitive_cylinder_add, mat,
@@ -182,6 +203,14 @@ def build_regular_male(name, mat, position, pose="standing"):
 
 
 def build_regular_female(name, mat, position, pose="standing"):
+    """Build a regular female character from primitives.
+
+    Args:
+        name: Character name prefix for objects
+        mat: Blender material to apply
+        position: (x, y, z) base position — z is ground level
+        pose: one of "standing", "arms_raised", "fighting_stance", "fallen", "seated"
+    """
     x, y, z = position
 
     if pose == "fallen":
@@ -193,11 +222,13 @@ def build_regular_female(name, mat, position, pose="standing"):
                  rot=(math.radians(40), math.radians(30), 0))
         return
 
+    # Upright poses — slightly narrower/shorter than male
     add_mesh(f"{name}_Body", bpy.ops.mesh.primitive_cube_add, mat,
              (x, y, z + 0.85), (0.35, 0.25, 0.5))
     add_mesh(f"{name}_Head", bpy.ops.mesh.primitive_uv_sphere_add, mat,
              (x, y, z + 1.55), (0.18, 0.16, 0.18))
 
+    # Legs
     add_mesh(f"{name}_LegL", bpy.ops.mesh.primitive_cylinder_add, mat,
              (x - 0.2, y, z + 0.0), (0.09, 0.09, 0.38))
     add_mesh(f"{name}_LegR", bpy.ops.mesh.primitive_cylinder_add, mat,
@@ -217,14 +248,14 @@ def build_regular_female(name, mat, position, pose="standing"):
         add_mesh(f"{name}_ArmR", bpy.ops.mesh.primitive_cylinder_add, mat,
                  (x + 0.45, y - 0.25, z + 1.1), (0.08, 0.08, 0.32),
                  rot=(math.radians(-50), 0, math.radians(10)))
-    else:
+    else:  # standing, seated
         add_mesh(f"{name}_ArmL", bpy.ops.mesh.primitive_cylinder_add, mat,
                  (x - 0.45, y, z + 0.65), (0.08, 0.08, 0.38))
         add_mesh(f"{name}_ArmR", bpy.ops.mesh.primitive_cylinder_add, mat,
                  (x + 0.45, y, z + 0.65), (0.08, 0.08, 0.38))
 
 
-# --- Build the scene ---
+# === SCENE SETUP ===
 
 clean_scene()
 scene = bpy.context.scene
@@ -233,47 +264,84 @@ add_light(scene)
 
 # Materials
 mat_ground = make_mat("Ground", (0.2, 0.15, 0.1, 1))
-mat_cranial = make_mat("Cranial", (0.25, 0.18, 0.1, 1))
-mat_gorilla = make_mat("Gorilla", (0.6, 0.6, 0.65, 1))
+mat_gale = make_mat("Gale", (0.5, 0.2, 0.2, 1))
+mat_truck_body = make_mat("TruckBody", (0.35, 0.25, 0.15, 1))
+mat_truck_cab = make_mat("TruckCab", (0.3, 0.22, 0.12, 1))
+mat_truck_wheel = make_mat("TruckWheel", (0.08, 0.08, 0.08, 1))
+mat_truck_bumper = make_mat("TruckBumper", (0.15, 0.15, 0.15, 1))
+mat_road = make_mat("Road", (0.12, 0.1, 0.08, 1))
 
-# Ground — cliff edge
-add_ground(mat_ground, size=15)
+# Ground
+add_ground(mat_ground)
 
-# Cliff edge ledge — a raised slab the figures lie on, looking over
-mat_cliff = make_mat("Cliff", (0.3, 0.22, 0.14, 1))
-add_mesh("CliffEdge", bpy.ops.mesh.primitive_cube_add, mat_cliff,
-         (0, 2, 0.15), (4, 1.5, 0.15))
+# Desert road surface
+add_mesh("Road", bpy.ops.mesh.primitive_cube_add, mat_road,
+         (0, 0, 0.01), (3, 12, 0.01))
 
-# Two figures lying prone side by side at cliff edge
-# "Fallen" pose approximates prone/lying flat
-# Left figure (Cranial) — turned toward the right figure, commanding
-build_regular_male("Cranial", mat_cranial, (-1.2, 2.0, 0.3), pose="fallen")
+# === GALE — fallen on the ground, pushing up, looking to the side ===
+build_regular_female("Gale", mat_gale, (0, 0, 0), pose="fallen")
 
-# Right figure (Gorilla) — prone beside Cranial
-build_large_figure("Gorilla", mat_gorilla, (1.2, 2.0, 0.3), pose="fallen")
+# Add her arms in a pushing-up position (the fallen pose only has body+head)
+add_mesh("Gale_ArmL", bpy.ops.mesh.primitive_cylinder_add, mat_gale,
+         (-0.4, 0.2, 0.12), (0.08, 0.08, 0.35),
+         rot=(math.radians(60), 0, math.radians(-20)))
+add_mesh("Gale_ArmR", bpy.ops.mesh.primitive_cylinder_add, mat_gale,
+         (0.4, 0.2, 0.12), (0.08, 0.08, 0.35),
+         rot=(math.radians(60), 0, math.radians(20)))
+# Legs sprawled behind
+add_mesh("Gale_LegL", bpy.ops.mesh.primitive_cylinder_add, mat_gale,
+         (-0.3, -0.5, 0.06), (0.09, 0.09, 0.42),
+         rot=(math.radians(88), 0, math.radians(-10)))
+add_mesh("Gale_LegR", bpy.ops.mesh.primitive_cylinder_add, mat_gale,
+         (0.25, -0.6, 0.06), (0.09, 0.09, 0.42),
+         rot=(math.radians(85), 0, math.radians(15)))
 
-# Rotate Cranial's head to face right (toward Gorilla) — override head rotation
-cranial_head = bpy.data.objects.get("Cranial_Head")
-if cranial_head:
-    cranial_head.rotation_euler = (math.radians(30), math.radians(-40), math.radians(50))
+# === CAB-OVER TRUCK behind Gale ===
+tx, ty, tz = 0, 3.0, 0
 
-# Desert landscape beyond cliff — distant sandy terrain below
-mat_desert = make_mat("Desert", (0.7, 0.55, 0.3, 1))
-add_mesh("DesertFloor", bpy.ops.mesh.primitive_plane_add, mat_desert,
-         (0, 8, -2), (20, 15, 1))
+# Cab (tall box, cab-over style — cab sits above front axle)
+add_mesh("Truck_Cab", bpy.ops.mesh.primitive_cube_add, mat_truck_cab,
+         (tx, ty - 0.5, tz + 1.8), (1.2, 0.8, 1.0))
 
-# Distant rocky formations
-mat_rock = make_mat("Rock", (0.4, 0.3, 0.2, 1))
-add_mesh("Rock1", bpy.ops.mesh.primitive_cube_add, mat_rock,
-         (-5, 14, -1), (1.5, 1, 2))
-add_mesh("Rock2", bpy.ops.mesh.primitive_cube_add, mat_rock,
-         (4, 16, -0.5), (1, 0.8, 1.5))
-add_mesh("Rock3", bpy.ops.mesh.primitive_cone_add, mat_rock,
-         (0, 18, -0.5), (2, 2, 3))
+# Windshield area (slightly darker inset)
+add_mesh("Truck_Windshield", bpy.ops.mesh.primitive_cube_add, mat_truck_bumper,
+         (tx, ty - 1.35, tz + 2.0), (0.95, 0.02, 0.5))
 
-# Camera — low angle, ground level, looking at the two prone figures
-setup_camera(scene, loc=(0, -2.5, 0.5), target_loc=(0, 2.0, 0.4), lens=28)
+# Cargo bed (longer, lower box behind cab)
+add_mesh("Truck_Bed", bpy.ops.mesh.primitive_cube_add, mat_truck_body,
+         (tx, ty + 1.8, tz + 1.3), (1.3, 2.0, 0.7))
 
+# Front bumper
+add_mesh("Truck_Bumper", bpy.ops.mesh.primitive_cube_add, mat_truck_bumper,
+         (tx, ty - 1.3, tz + 0.5), (1.3, 0.15, 0.25))
+
+# Undercarriage
+add_mesh("Truck_Under", bpy.ops.mesh.primitive_cube_add, mat_truck_bumper,
+         (tx, ty + 0.8, tz + 0.35), (1.0, 2.8, 0.2))
+
+# Wheels — front pair
+add_mesh("Truck_WheelFL", bpy.ops.mesh.primitive_cylinder_add, mat_truck_wheel,
+         (tx - 1.25, ty - 0.6, tz + 0.35), (0.35, 0.35, 0.15),
+         rot=(0, math.radians(90), 0))
+add_mesh("Truck_WheelFR", bpy.ops.mesh.primitive_cylinder_add, mat_truck_wheel,
+         (tx + 1.25, ty - 0.6, tz + 0.35), (0.35, 0.35, 0.15),
+         rot=(0, math.radians(90), 0))
+
+# Wheels — rear pair
+add_mesh("Truck_WheelRL", bpy.ops.mesh.primitive_cylinder_add, mat_truck_wheel,
+         (tx - 1.25, ty + 2.5, tz + 0.35), (0.35, 0.35, 0.15),
+         rot=(0, math.radians(90), 0))
+add_mesh("Truck_WheelRR", bpy.ops.mesh.primitive_cylinder_add, mat_truck_wheel,
+         (tx + 1.25, ty + 2.5, tz + 0.35), (0.35, 0.35, 0.15),
+         rot=(0, math.radians(90), 0))
+
+# === CAMERA — low angle, ground level, looking up at Gale and truck ===
+setup_camera(scene,
+             loc=(1.5, -4.0, 0.35),
+             target_loc=(0, 0.5, 0.4),
+             lens=24)
+
+# === RENDER ===
 scene.frame_set(1)
 scene.render.filepath = "/Users/jmordetsky/directors-chair/assets/generated/videos/raider_ambush_v2/layouts/layout_020.png"
 bpy.ops.render.render(write_still=True)

@@ -79,7 +79,6 @@ def add_ground(mat, size=15):
 
 
 def build_large_figure(name, mat, position, pose="standing"):
-    """Build a large/heavy character from primitives (gorilla-like proportions)."""
     x, y, z = position
 
     if pose == "fallen":
@@ -134,7 +133,6 @@ def build_large_figure(name, mat, position, pose="standing"):
 
 
 def build_regular_male(name, mat, position, pose="standing"):
-    """Build a regular male character from primitives."""
     x, y, z = position
 
     if pose == "fallen":
@@ -184,7 +182,6 @@ def build_regular_male(name, mat, position, pose="standing"):
 
 
 def build_regular_female(name, mat, position, pose="standing"):
-    """Build a regular female character from primitives."""
     x, y, z = position
 
     if pose == "fallen":
@@ -235,26 +232,83 @@ setup_render(scene)
 add_light(scene)
 
 # Materials
-ground_mat = make_mat("Ground", (0.2, 0.15, 0.1, 1))
-cranial_mat = make_mat("Cranial", (0.25, 0.18, 0.1, 1))
+mat_ground = make_mat("Ground", (0.2, 0.15, 0.1, 1))
+mat_truck = make_mat("Truck", (0.35, 0.3, 0.25, 1))
+mat_truck_cab = make_mat("TruckCab", (0.28, 0.24, 0.2, 1))
+mat_truck_wheel = make_mat("TruckWheel", (0.08, 0.08, 0.08, 1))
+mat_road = make_mat("Road", (0.12, 0.1, 0.08, 1))
+mat_cliff = make_mat("Cliff", (0.35, 0.25, 0.15, 1))
+mat_dust = make_mat("Dust", (0.6, 0.5, 0.35, 0.4))
+mat_figure1 = make_mat("Figure1", (0.25, 0.18, 0.1, 1))
+mat_figure2 = make_mat("Figure2", (0.2, 0.35, 0.5, 1))
 
 # Ground
-add_ground(ground_mat)
+add_ground(mat_ground, size=20)
 
-# Character — single figure, close-up of face looking up and to the side, shouting
-# Place cranial at origin, camera extremely close to the head for a face-filling close-up
-build_regular_male("Cranial", cranial_mat, (0, 0, 0), pose="standing")
+# Desert road — dark strip on the ground
+add_mesh("Road", bpy.ops.mesh.primitive_cube_add, mat_road,
+         (0, 0, 0.01), (2.5, 20, 0.01))
 
-# Tilt head up and to the side to convey looking up with mouth open in a shout
-head_obj = bpy.data.objects.get("Cranial_Head")
-if head_obj:
-    head_obj.rotation_euler = (math.radians(-20), math.radians(25), math.radians(10))
+# ── Cab-Over Truck (center of scene) ────────────────────────────────────────
 
-# Camera — very tight on the face, slightly below and to the side for dramatic close-up
-# Head is at roughly z=1.7, camera close and slightly low for upward-looking drama
-setup_camera(scene, loc=(0.6, -1.2, 1.85), target_loc=(0, 0, 1.75), lens=50)
+# Truck cargo body
+add_mesh("TruckCargo", bpy.ops.mesh.primitive_cube_add, mat_truck,
+         (0, 1.0, 1.2), (1.2, 2.5, 1.2))
 
-# Render
+# Truck cab (flat front, cab-over style)
+add_mesh("TruckCab", bpy.ops.mesh.primitive_cube_add, mat_truck_cab,
+         (0, -1.8, 1.0), (1.1, 0.8, 1.0))
+
+# Wheels — left side
+add_mesh("WheelFL", bpy.ops.mesh.primitive_cylinder_add, mat_truck_wheel,
+         (-1.3, -1.5, 0.3), (0.3, 0.3, 0.15),
+         rot=(0, math.radians(90), 0))
+add_mesh("WheelRL", bpy.ops.mesh.primitive_cylinder_add, mat_truck_wheel,
+         (-1.3, 1.5, 0.3), (0.3, 0.3, 0.15),
+         rot=(0, math.radians(90), 0))
+
+# Wheels — right side
+add_mesh("WheelFR", bpy.ops.mesh.primitive_cylinder_add, mat_truck_wheel,
+         (1.3, -1.5, 0.3), (0.3, 0.3, 0.15),
+         rot=(0, math.radians(90), 0))
+add_mesh("WheelRR", bpy.ops.mesh.primitive_cylinder_add, mat_truck_wheel,
+         (1.3, 1.5, 0.3), (0.3, 0.3, 0.15),
+         rot=(0, math.radians(90), 0))
+
+# ── Cliff in background ─────────────────────────────────────────────────────
+
+add_mesh("Cliff", bpy.ops.mesh.primitive_cube_add, mat_cliff,
+         (0, 12, 3.0), (10, 2, 3))
+add_mesh("CliffTop", bpy.ops.mesh.primitive_cube_add, mat_cliff,
+         (2, 12, 5.5), (4, 1.8, 0.8))
+add_mesh("CliffRock", bpy.ops.mesh.primitive_cube_add, mat_cliff,
+         (-3, 11, 4.5), (3, 1.5, 1.2),
+         rot=(0, 0, math.radians(5)))
+
+# ── Two Figures Crouched Behind Truck ────────────────────────────────────────
+
+# Figure 1 — left side of truck, crouching (fighting_stance simulates crouch)
+# Arms angled upward as if firing toward the cliff
+build_regular_male("Figure1", mat_figure1, (-2.0, 0.0, 0), pose="fighting_stance")
+
+# Figure 2 — right side of truck, crouching
+build_regular_male("Figure2", mat_figure2, (2.0, 0.0, 0), pose="fighting_stance")
+
+# ── Dust Clouds ──────────────────────────────────────────────────────────────
+
+add_mesh("Dust1", bpy.ops.mesh.primitive_uv_sphere_add, mat_dust,
+         (-1.5, 2.0, 0.5), (1.0, 0.8, 0.5))
+add_mesh("Dust2", bpy.ops.mesh.primitive_uv_sphere_add, mat_dust,
+         (1.8, -0.5, 0.4), (0.7, 0.6, 0.4))
+add_mesh("Dust3", bpy.ops.mesh.primitive_uv_sphere_add, mat_dust,
+         (0, 3.0, 0.8), (1.2, 1.0, 0.6))
+
+# ── Camera — Wide Shot ───────────────────────────────────────────────────────
+
+setup_camera(scene, loc=(10, -12, 5), target_loc=(0, 0.5, 1.2), lens=24)
+
+# ── Render ───────────────────────────────────────────────────────────────────
+
 scene.frame_set(1)
 scene.render.filepath = "/Users/jmordetsky/directors-chair/assets/generated/videos/raider_ambush_v2/layouts/layout_012.png"
 bpy.ops.render.render(write_still=True)

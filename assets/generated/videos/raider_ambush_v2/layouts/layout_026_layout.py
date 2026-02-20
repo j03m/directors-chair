@@ -79,7 +79,6 @@ def add_ground(mat, size=15):
 
 
 def build_large_figure(name, mat, position, pose="standing"):
-    """Build a large/heavy character from primitives (gorilla-like proportions)."""
     x, y, z = position
 
     if pose == "fallen":
@@ -134,7 +133,6 @@ def build_large_figure(name, mat, position, pose="standing"):
 
 
 def build_regular_male(name, mat, position, pose="standing"):
-    """Build a regular male character from primitives."""
     x, y, z = position
 
     if pose == "fallen":
@@ -184,7 +182,6 @@ def build_regular_male(name, mat, position, pose="standing"):
 
 
 def build_regular_female(name, mat, position, pose="standing"):
-    """Build a regular female character from primitives."""
     x, y, z = position
 
     if pose == "fallen":
@@ -227,7 +224,7 @@ def build_regular_female(name, mat, position, pose="standing"):
                  (x + 0.45, y, z + 0.65), (0.08, 0.08, 0.38))
 
 
-# --- Scene Setup ---
+# === SCENE SETUP ===
 clean_scene()
 scene = bpy.context.scene
 setup_render(scene)
@@ -235,34 +232,43 @@ add_light(scene)
 
 # Materials
 mat_ground = make_mat("Ground", (0.2, 0.15, 0.1, 1))
-mat_gorilla = make_mat("Gorilla", (0.6, 0.6, 0.65, 1))
-mat_cranial = make_mat("Cranial", (0.25, 0.18, 0.1, 1))
-mat_robot = make_mat("Robot", (0.2, 0.35, 0.5, 1))
+mat_cliff = make_mat("Cliff", (0.35, 0.25, 0.15, 1))
+mat_cliff_dark = make_mat("CliffDark", (0.25, 0.18, 0.1, 1))
+mat_silhouette = make_mat("Silhouette", (0.05, 0.04, 0.03, 1))
 
-# Ground
-add_ground(mat_ground)
+# Ground plane (desert floor far below)
+add_ground(mat_ground, size=30)
 
-# Cliff edge suggestion — a raised slab behind the figures
-mat_cliff = make_mat("Cliff", (0.3, 0.22, 0.15, 1))
-add_mesh("CliffEdge", bpy.ops.mesh.primitive_cube_add, mat_cliff,
-         (0, 2.0, -0.3), (4, 1.5, 0.3))
+# Massive cliff structure — tall vertical wall
+add_mesh("CliffBase", bpy.ops.mesh.primitive_cube_add, mat_cliff,
+         (0, 8, 5), (6, 3, 5))
+add_mesh("CliffMid", bpy.ops.mesh.primitive_cube_add, mat_cliff_dark,
+         (1, 9, 12), (5, 2.5, 3))
+add_mesh("CliffTop", bpy.ops.mesh.primitive_cube_add, mat_cliff,
+         (0, 10, 17), (7, 2, 2))
+add_mesh("CliffLedge", bpy.ops.mesh.primitive_cube_add, mat_cliff_dark,
+         (-2, 7, 8), (3, 2, 4))
+add_mesh("CliffSpire", bpy.ops.mesh.primitive_cube_add, mat_cliff,
+         (3, 11, 14), (2, 1.5, 5))
 
-# Characters — prone large figure (gorilla) and prone regular male (cranial) side by side,
-# turned toward each other; standing regular male (robot) just behind them
+# Three tiny silhouetted figures at the top edge of the cliff
+# They should be very small — this is a very wide shot, figures are distant
+build_regular_male("Figure1", mat_silhouette, (-1.5, 10, 19), pose="standing")
+build_regular_male("Figure2", mat_silhouette, (0, 10, 19), pose="standing")
+build_regular_male("Figure3", mat_silhouette, (1.5, 10, 19), pose="standing")
 
-# Gorilla — prone (fallen), head turned right toward Cranial
-build_large_figure("Gorilla", mat_gorilla, (-1.0, 0.0, 0.0), pose="fallen")
+# Scale figures down to appear tiny and distant on the cliff edge
+for suffix in ["_Body", "_Head", "_LegL", "_LegR", "_ArmL", "_ArmR"]:
+    for fig_name in ["Figure1", "Figure2", "Figure3"]:
+        obj_name = f"{fig_name}{suffix}"
+        if obj_name in bpy.data.objects:
+            obj = bpy.data.objects[obj_name]
+            obj.scale = tuple(s * 0.35 for s in obj.scale)
 
-# Cranial — prone (fallen), positioned to the right, head turned left toward Gorilla
-build_regular_male("Cranial", mat_cranial, (1.0, 0.0, 0.0), pose="fallen")
-
-# Robot — standing behind the two prone figures
-build_regular_male("Robot", mat_robot, (0.0, 1.5, 0.0), pose="standing")
-
-# Camera — slightly above, medium shot framing all three at the cliff edge
-setup_camera(scene, loc=(0.0, -4.5, 3.5), target_loc=(0.0, 0.5, 0.5), lens=32)
+# Camera far below and far away, looking up at the cliff top
+setup_camera(scene, loc=(0, -25, 3), target_loc=(0, 10, 16), lens=24)
 
 # Render
 scene.frame_set(1)
-scene.render.filepath = "/Users/jmordetsky/directors-chair/assets/generated/videos/raider_ambush_v2/layouts/layout_026.png"
+scene.render.filepath = "/Users/jmordetsky/directors-chair/assets/generated/videos/raider_ambush_v2/layouts/layout_027.png"
 bpy.ops.render.render(write_still=True)

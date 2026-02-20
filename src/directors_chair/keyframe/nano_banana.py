@@ -174,3 +174,109 @@ def generate_keyframe_nano_banana(
         console.print(f"  [yellow]Review variants and rename your pick to {os.path.basename(output_path)}[/yellow]")
 
     return True
+
+
+def edit_keyframe(
+    prompt: str,
+    keyframe_path: str,
+    output_path: str,
+    kling_params: Optional[Dict[str, Any]] = None,
+    characters: Optional[Dict[str, Dict[str, Any]]] = None,
+) -> bool:
+    """Edit an existing keyframe via Gemini 3 Pro image editing.
+
+    Sends the generated keyframe back to Gemini with an edit prompt
+    for post-generation touch-ups (camera adjustments, removing artifacts, etc).
+
+    Args:
+        prompt: Edit instruction (e.g. "Pull the camera back 500 yards")
+        keyframe_path: Path to the existing keyframe PNG to edit
+        output_path: Where to save the edited keyframe PNG
+        kling_params: Optional dict with aspect_ratio, resolution
+        characters: Optional dict of character name -> {reference_image, ...} for reference
+    """
+    from directors_chair.cli.utils import console
+
+    params = kling_params or {}
+    aspect_ratio = params.get("aspect_ratio", "16:9")
+    resolution = params.get("resolution", "2K")
+
+    # Upload the existing keyframe
+    with console.status("[cyan]Uploading keyframe for editing...[/cyan]"):
+        keyframe_url = fal_client.upload_file(keyframe_path)
+    console.print(f"  [dim]keyframe: uploaded[/dim]")
+
+    # Build image_urls: keyframe first, then character references
+    image_urls = [keyframe_url]
+    if characters:
+        for char_name, char_info in characters.items():
+            ref_path = char_info.get("reference_image", "")
+            if ref_path and os.path.exists(ref_path):
+                char_url = fal_client.upload_file(ref_path)
+                image_urls.append(char_url)
+                console.print(f"  [dim]{char_name}: uploaded[/dim]")
+
+    console.print(f"  [dim]Images: {len(image_urls)} (1 keyframe + {len(image_urls) - 1} character refs)[/dim]")
+
+    full_prompt = (
+        f"Edit this image (image 1). {prompt}"
+    )
+
+    console.print(f"  [dim]Edit prompt: {full_prompt[:80]}...[/dim]")
+
+    # Submit to Gemini 3 Pro edit (with retry on 500 errors)
+    max_retries = 3
+    result = None
+    for attempt in range(max_retries):
+        try:
+            with console.status("[cyan]Editing keyframe via Gemini 3 Pro...[/cyan]") as status:
+                handler = fal_client.submit(
+                    "fal-ai/nano-banana-pro/edit",
+                    arguments={
+                        "prompt": full_prompt,
+                        "image_urls": image_urls,
+                        "aspect_ratio": aspect_ratio,
+                        "resolution": resolution,
+                        "output_format": "png",
+                        "num_images": 1,
+                    },
+                )
+                for event in handler.iter_events(with_logs=True):
+                    if isinstance(event, fal_client.InProgress):
+                        if event.logs:
+                            for log in event.logs:
+                                msg = log.get('message', '') if isinstance(log, dict) else str(log)
+                                console.print(f"  [dim]  gemini: {msg}[/dim]")
+                                status.update(f"[cyan]{msg}[/cyan]")
+                result = handler.get()
+                break  # Success
+        except Exception as e:
+            err_str = str(e)
+            if "422" in err_str or "no_media_generated" in err_str:
+                console.print(f"  [red]Content filter rejected edit prompt (422). Skipping edit.[/red]")
+                return False
+            elif "500" in err_str or "downstream_service_error" in err_str:
+                if attempt < max_retries - 1:
+                    wait = 10 * (attempt + 1)
+                    console.print(f"  [yellow]Server error (attempt {attempt + 1}/{max_retries}), retrying in {wait}s...[/yellow]")
+                    time.sleep(wait)
+                else:
+                    console.print(f"  [red]Server error after {max_retries} attempts, giving up.[/red]")
+                    raise
+            else:
+                raise
+
+    images = result.get("images", [])
+    if not images or not images[0].get("url"):
+        console.print(f"[red]Keyframe edit failed — no image in response.[/red]")
+        return False
+
+    image_url = images[0]["url"]
+    resp = requests.get(image_url)
+    resp.raise_for_status()
+    img = Image.open(io.BytesIO(resp.content))
+    img.save(output_path)
+    size_kb = os.path.getsize(output_path) // 1024
+    console.print(f"  [green]Edited keyframe saved: {os.path.basename(output_path)} ({size_kb}KB)[/green]")
+
+    return True

@@ -1,5 +1,5 @@
-Use @Image1 as composition reference. Medium shot, desert road, action scene.
+Use @Image1 as composition reference. Medium shot, desert road, action scene. Desaturated color palette: sandy tans, dusty greys, rusted iron.
 
-@Element1 a very thin, emaciated young man with dark greasy unwashed hair hanging in his face. He wears a baggy oversized grey t-shirt that hangs off his scrawny bony frame, and dirty cargo pants. He stumbles forward on a desert road, off balance, eyes wide with shock and pain. He clutches at his neck with one hand. His other hand drops a crude makeshift weapon. He is mid-fall, lurching to one side. Dust kicks up around his feet. He is sickly-looking, pale, underfed.
+@Element1 a very thin, emaciated young man with dark greasy unwashed hair hanging in his face. He wears a baggy oversized grey t-shirt that hangs off his scrawny bony frame, and dirty cargo pants. He is stumbling forward on a desert road, off balance, eyes wide with shock — he has been hit and is falling. He clutches at his neck with one hand. His other hand drops an AK-47 assault rifle. He is mid-fall, lurching to one side. Dust kicks up around his feet. He is sickly-looking, pale, underfed.
 
-Desert road, harsh light. Photorealistic, cinematic. Skinny dark-haired young raider.
+Desert road, harsh light, open empty road stretching into the distance. Photorealistic, cinematic.

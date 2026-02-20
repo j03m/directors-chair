@@ -227,62 +227,79 @@ def build_regular_female(name, mat, position, pose="standing"):
                  (x + 0.45, y, z + 0.65), (0.08, 0.08, 0.38))
 
 
-# ── Scene Setup ──────────────────────────────────────────────────────────────
-
+# ── Scene Setup ──────────────────────────────────────────────
 clean_scene()
 scene = bpy.context.scene
 setup_render(scene)
 add_light(scene)
 
-# Materials
-mat_ground = make_mat("Ground", (0.2, 0.15, 0.1, 1))
-mat_standing = make_mat("StandingFigure", (0.25, 0.18, 0.1, 1))
-mat_kneeling = make_mat("KneelingFigure", (0.5, 0.2, 0.2, 1))
-mat_blade = make_mat("Blade", (0.7, 0.7, 0.72, 1))
+# ── Materials ────────────────────────────────────────────────
+ground_mat = make_mat("Ground", (0.2, 0.15, 0.1, 1))
+road_mat = make_mat("Road", (0.12, 0.1, 0.08, 1))
+truck_mat = make_mat("Truck", (0.45, 0.38, 0.28, 1))
+truck_cab_mat = make_mat("TruckCab", (0.35, 0.28, 0.2, 1))
+wheel_mat = make_mat("Wheel", (0.05, 0.05, 0.05, 1))
+blade_mat = make_mat("Blade", (0.7, 0.7, 0.75, 1))
+rifle_mat = make_mat("Rifle", (0.15, 0.12, 0.1, 1))
 
-# Ground
-add_ground(mat_ground)
+gale_mat = make_mat("Gale", (0.5, 0.2, 0.2, 1))
+nomad1_mat = make_mat("Nomad1", (0.3, 0.4, 0.2, 1))
+nomad2_mat = make_mat("Nomad2", (0.25, 0.18, 0.1, 1))
+nomad3_mat = make_mat("Nomad3", (0.6, 0.6, 0.65, 1))
+goggles_mat = make_mat("Goggles", (0.5, 0.2, 0.2, 1))
+hockey_mat = make_mat("Hockey", (0.2, 0.35, 0.5, 1))
 
-# ── Standing figure (left) — threatening, holding blade under chin ───────────
-# Using fighting_stance for the aggressive posture
-build_regular_male("Standing", mat_standing, (-0.6, 0, 0), pose="fighting_stance")
+# ── Ground & Road ────────────────────────────────────────────
+add_ground(ground_mat, size=15)
+add_mesh("Road", bpy.ops.mesh.primitive_cube_add, road_mat,
+         (0, 0, 0.01), (12, 3, 0.02))
 
-# Blade — thin cylinder angled from standing figure's right hand toward kneeling figure's chin
-add_mesh("Blade", bpy.ops.mesh.primitive_cylinder_add, mat_blade,
-         (0.15, -0.3, 1.35), (0.02, 0.02, 0.35),
-         rot=(math.radians(10), math.radians(70), 0))
+# ── Cab-Over Box Truck (parked beside road, +Y side) ────────
+# Cargo box
+add_mesh("TruckBox", bpy.ops.mesh.primitive_cube_add, truck_mat,
+         (1.0, 4.5, 1.5), (1.3, 2.8, 1.5))
+# Cab (front of truck, slightly shorter)
+add_mesh("TruckCab", bpy.ops.mesh.primitive_cube_add, truck_cab_mat,
+         (1.0, 1.2, 1.2), (1.3, 1.0, 1.2))
+# Wheels
+add_mesh("WheelFL", bpy.ops.mesh.primitive_cylinder_add, wheel_mat,
+         (-0.3, 0.8, 0.35), (0.35, 0.35, 0.15),
+         rot=(math.radians(90), 0, 0))
+add_mesh("WheelFR", bpy.ops.mesh.primitive_cylinder_add, wheel_mat,
+         (2.3, 0.8, 0.35), (0.35, 0.35, 0.15),
+         rot=(math.radians(90), 0, 0))
+add_mesh("WheelRL", bpy.ops.mesh.primitive_cylinder_add, wheel_mat,
+         (-0.3, 4.5, 0.35), (0.35, 0.35, 0.15),
+         rot=(math.radians(90), 0, 0))
+add_mesh("WheelRR", bpy.ops.mesh.primitive_cylinder_add, wheel_mat,
+         (2.3, 4.5, 0.35), (0.35, 0.35, 0.15),
+         rot=(math.radians(90), 0, 0))
 
-# ── Kneeling figure (right) — on knees, looking up ──────────────────────────
-# Build a kneeling figure manually: torso raised, legs folded under, head tilted up
-x_k, y_k, z_k = 0.8, 0, 0
+# ── Kneeling Hostages (arms_raised ≈ hands behind head, z lowered for kneel) ─
+# Row along X axis on the road, gale at near end (camera-left)
+build_regular_female("Gale", gale_mat, (-2.5, 0, -0.4), pose="arms_raised")
+build_regular_male("Nomad1", nomad1_mat, (-0.8, 0, -0.5), pose="arms_raised")
+build_regular_male("Nomad2", nomad2_mat, (0.8, 0, -0.5), pose="arms_raised")
+build_regular_male("Nomad3", nomad3_mat, (2.4, 0, -0.5), pose="arms_raised")
 
-# Folded legs (on knees)
-add_mesh("Kneeling_LegL", bpy.ops.mesh.primitive_cylinder_add, mat_kneeling,
-         (x_k - 0.2, y_k, z_k + 0.1), (0.1, 0.1, 0.35),
-         rot=(math.radians(80), 0, 0))
-add_mesh("Kneeling_LegR", bpy.ops.mesh.primitive_cylinder_add, mat_kneeling,
-         (x_k + 0.2, y_k, z_k + 0.1), (0.1, 0.1, 0.35),
-         rot=(math.radians(80), 0, 0))
+# ── Standing Raider — Goggles (facing Gale, blade under chin) ─
+build_regular_male("Goggles", goggles_mat, (-2.5, -1.8, 0), pose="standing")
+# Machete blade angled toward Gale's chin
+add_mesh("Machete", bpy.ops.mesh.primitive_cube_add, blade_mat,
+         (-2.5, -1.0, 1.1), (0.04, 0.35, 0.08),
+         rot=(math.radians(15), 0, math.radians(5)))
 
-# Torso — lower since kneeling
-add_mesh("Kneeling_Body", bpy.ops.mesh.primitive_cube_add, mat_kneeling,
-         (x_k, y_k, z_k + 0.55), (0.4, 0.3, 0.45))
+# ── Standing Raider — Hockey (pacing behind row with rifle) ──
+build_regular_male("Hockey", hockey_mat, (0.5, 1.8, 0), pose="standing")
+# Rifle slung across body
+add_mesh("Rifle", bpy.ops.mesh.primitive_cylinder_add, rifle_mat,
+         (0.8, 1.8, 0.9), (0.04, 0.04, 0.55),
+         rot=(math.radians(-20), math.radians(15), 0))
 
-# Head — tilted up looking at standing figure
-add_mesh("Kneeling_Head", bpy.ops.mesh.primitive_cube_add, mat_kneeling,
-         (x_k - 0.05, y_k, z_k + 1.1), (0.2, 0.18, 0.2),
-         rot=(math.radians(-20), 0, math.radians(-10)))
+# ── Camera — slightly elevated, medium-wide ──────────────────
+setup_camera(scene, loc=(-1, -10, 4.5), target_loc=(0, 0.5, 0.7), lens=28)
 
-# Arms hanging at sides
-add_mesh("Kneeling_ArmL", bpy.ops.mesh.primitive_cylinder_add, mat_kneeling,
-         (x_k - 0.45, y_k, z_k + 0.35), (0.1, 0.1, 0.3))
-add_mesh("Kneeling_ArmR", bpy.ops.mesh.primitive_cylinder_add, mat_kneeling,
-         (x_k + 0.45, y_k, z_k + 0.35), (0.1, 0.1, 0.3))
-
-# ── Camera — tight close-up framing both figures ────────────────────────────
-setup_camera(scene, loc=(0.1, -2.8, 1.4), target_loc=(0.1, 0, 1.1), lens=50)
-
-# ── Render ───────────────────────────────────────────────────────────────────
+# ── Render ───────────────────────────────────────────────────
 scene.frame_set(1)
 scene.render.filepath = "/Users/jmordetsky/directors-chair/assets/generated/videos/raider_ambush_v2/layouts/layout_003.png"
 bpy.ops.render.render(write_still=True)

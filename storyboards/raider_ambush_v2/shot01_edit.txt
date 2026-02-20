@@ -1,0 +1,1 @@
+Remove the muzzle flashes from the two raiders whose guns are aimed at the truck. Keep the muzzle flashes only on the two raiders whose guns are pointed up at the sky. Keep everything else exactly the same — the camera angle, distance, raiders, motorcycles, barricade, truck, desert, letterbox bars, desaturated palette.

@@ -227,95 +227,70 @@ def build_regular_female(name, mat, position, pose="standing"):
                  (x + 0.45, y, z + 0.65), (0.08, 0.08, 0.38))
 
 
-# ============================================================
-# SCENE SETUP
-# ============================================================
-
+# ── Scene Setup ──────────────────────────────────────────────────────────────
 clean_scene()
 scene = bpy.context.scene
 setup_render(scene)
 add_light(scene)
 
-# Materials
-mat_ground = make_mat("Ground", (0.2, 0.15, 0.1, 1))
-mat_road = make_mat("Road", (0.12, 0.1, 0.08, 1))
-mat_truck = make_mat("Truck", (0.35, 0.3, 0.2, 1))
-mat_truck_bed = make_mat("TruckBed", (0.25, 0.2, 0.15, 1))
-mat_wheel = make_mat("Wheel", (0.05, 0.05, 0.05, 1))
-mat_scope = make_mat("Scope", (0.02, 0.02, 0.02, 1))
-mat_crosshair = make_mat("Crosshair", (0.8, 0.1, 0.1, 1))
+# ── Materials ────────────────────────────────────────────────────────────────
+ground_mat = make_mat("Ground", (0.2, 0.15, 0.1, 1))
+road_mat = make_mat("Road", (0.12, 0.1, 0.08, 1))
+truck_body_mat = make_mat("TruckBody", (0.45, 0.38, 0.3, 1))
+truck_cab_mat = make_mat("TruckCab", (0.35, 0.3, 0.25, 1))
+truck_glass_mat = make_mat("TruckGlass", (0.15, 0.18, 0.22, 1))
+wheel_mat = make_mat("Wheel", (0.08, 0.08, 0.08, 1))
 
-# Character materials
-mat_hockey = make_mat("Hockey", (0.2, 0.35, 0.5, 1))
-mat_goggles = make_mat("Goggles", (0.5, 0.2, 0.2, 1))
-mat_greasy = make_mat("Greasy", (0.3, 0.4, 0.2, 1))
-mat_heavy = make_mat("Heavy", (0.25, 0.18, 0.1, 1))
-mat_nomad1 = make_mat("Nomad1", (0.3, 0.4, 0.2, 1))
-mat_nomad2 = make_mat("Nomad2", (0.25, 0.18, 0.1, 1))
-mat_nomad3 = make_mat("Nomad3", (0.6, 0.6, 0.65, 1))
+gale_mat = make_mat("Gale", (0.5, 0.2, 0.2, 1))
+nomad1_mat = make_mat("Nomad1", (0.3, 0.4, 0.2, 1))
+nomad2_mat = make_mat("Nomad2", (0.25, 0.18, 0.1, 1))
+nomad3_mat = make_mat("Nomad3", (0.6, 0.6, 0.65, 1))
+hockey_mat = make_mat("Hockey", (0.2, 0.35, 0.5, 1))
+goggles_mat = make_mat("Goggles", (0.5, 0.2, 0.2, 1))
 
-# Ground
-add_ground(mat_ground, size=15)
+# ── Ground & Road ────────────────────────────────────────────────────────────
+add_ground(ground_mat, size=15)
+add_mesh("Road", bpy.ops.mesh.primitive_cube_add, road_mat,
+         (0, 0, 0.01), (2.0, 15, 0.02))
 
-# Desert road surface (long strip)
-add_mesh("Road", bpy.ops.mesh.primitive_cube_add, mat_road,
-         (0, 0, 0.01), (2.0, 12.0, 0.02))
+# ── Cab-Over Box Truck (stopped on road, facing +Y) ─────────────────────────
+# Cab section (front, boxy cab-over style)
+add_mesh("TruckCab", bpy.ops.mesh.primitive_cube_add, truck_cab_mat,
+         (0, -3.8, 1.2), (1.0, 0.7, 0.9))
+# Windshield
+add_mesh("TruckWindshield", bpy.ops.mesh.primitive_cube_add, truck_glass_mat,
+         (0, -3.1, 1.5), (0.85, 0.05, 0.45))
+# Box cargo area (behind cab)
+add_mesh("TruckBox", bpy.ops.mesh.primitive_cube_add, truck_body_mat,
+         (0, -5.5, 1.5), (1.1, 1.4, 1.2))
+# Wheels
+add_mesh("WheelFL", bpy.ops.mesh.primitive_cylinder_add, wheel_mat,
+         (-1.1, -3.5, 0.3), (0.3, 0.3, 0.15), rot=(0, math.radians(90), 0))
+add_mesh("WheelFR", bpy.ops.mesh.primitive_cylinder_add, wheel_mat,
+         (1.1, -3.5, 0.3), (0.3, 0.3, 0.15), rot=(0, math.radians(90), 0))
+add_mesh("WheelRL", bpy.ops.mesh.primitive_cylinder_add, wheel_mat,
+         (-1.1, -6.2, 0.3), (0.3, 0.3, 0.15), rot=(0, math.radians(90), 0))
+add_mesh("WheelRR", bpy.ops.mesh.primitive_cylinder_add, wheel_mat,
+         (1.1, -6.2, 0.3), (0.3, 0.3, 0.15), rot=(0, math.radians(90), 0))
 
-# Stopped truck — center of the scene
-add_mesh("TruckCab", bpy.ops.mesh.primitive_cube_add, mat_truck,
-         (0, 2.0, 0.9), (1.0, 1.2, 0.8))
-add_mesh("TruckBed", bpy.ops.mesh.primitive_cube_add, mat_truck_bed,
-         (0, -0.5, 0.7), (1.0, 1.8, 0.6))
-add_mesh("WheelFL", bpy.ops.mesh.primitive_cylinder_add, mat_wheel,
-         (-1.1, 1.5, 0.3), (0.3, 0.3, 0.15),
-         rot=(math.radians(90), 0, 0))
-add_mesh("WheelFR", bpy.ops.mesh.primitive_cylinder_add, mat_wheel,
-         (1.1, 1.5, 0.3), (0.3, 0.3, 0.15),
-         rot=(math.radians(90), 0, 0))
-add_mesh("WheelRL", bpy.ops.mesh.primitive_cylinder_add, mat_wheel,
-         (-1.1, -1.0, 0.3), (0.3, 0.3, 0.15),
-         rot=(math.radians(90), 0, 0))
-add_mesh("WheelRR", bpy.ops.mesh.primitive_cylinder_add, mat_wheel,
-         (1.1, -1.0, 0.3), (0.3, 0.3, 0.15),
-         rot=(math.radians(90), 0, 0))
+# ── Kneeling Figures (hands behind heads) ────────────────────────────────────
+# z = -0.45 sinks legs below ground plane to simulate kneeling height
+# arms_raised = hands up behind head
+# Row across the road in front of the truck, facing +Y (toward camera)
+build_regular_female("Gale", gale_mat, (-1.8, 0.5, -0.45), pose="arms_raised")
+build_regular_male("Nomad1", nomad1_mat, (-0.6, 0.5, -0.45), pose="arms_raised")
+build_regular_male("Nomad2", nomad2_mat, (0.6, 0.5, -0.45), pose="arms_raised")
+build_regular_male("Nomad3", nomad3_mat, (1.8, 0.5, -0.45), pose="arms_raised")
 
-# Raiders surrounding the truck — fighting stance, threatening
-build_regular_male("Hockey", mat_hockey, (-2.0, 1.0, 0), pose="fighting_stance")
-build_regular_male("Goggles", mat_goggles, (2.0, 0.5, 0), pose="fighting_stance")
-build_regular_male("Greasy", mat_greasy, (-1.5, -1.5, 0), pose="standing")
-build_large_figure("Heavy", mat_heavy, (1.5, -1.0, 0), pose="fighting_stance")
+# ── Armed Raiders (standing behind kneelers, weapons raised) ─────────────────
+# Between kneeling group and truck, facing the captives
+build_regular_male("Hockey", hockey_mat, (-1.0, -1.5, 0), pose="fighting_stance")
+build_regular_male("Goggles", goggles_mat, (1.0, -1.5, 0), pose="fighting_stance")
 
-# Civilians being pulled from the vehicle — arms raised / distressed
-build_regular_male("Nomad1", mat_nomad1, (0.5, 1.5, 0), pose="arms_raised")
-build_regular_male("Nomad2", mat_nomad2, (-0.5, 0.0, 0), pose="arms_raised")
-build_regular_male("Nomad3", mat_nomad3, (0.0, -0.8, 0), pose="arms_raised")
+# ── Camera — High angle ~30 degrees, in front of kneelers looking back ──────
+setup_camera(scene, loc=(0.5, 6, 5), target_loc=(0, -1, 0.3), lens=30)
 
-# Sniper scope vignette ring — large dark torus framing the view
-bpy.ops.mesh.primitive_torus_add(
-    major_radius=6.5, minor_radius=5.0,
-    location=(0, 0, 1.0),
-    rotation=(math.radians(90), 0, 0)
-)
-scope_ring = bpy.context.active_object
-scope_ring.name = "ScopeRing"
-scope_ring.scale = (1.0, 1.0, 1.2)
-scope_ring.data.materials.append(mat_scope)
-
-# Crosshair lines (thin cylinders)
-add_mesh("CrossH", bpy.ops.mesh.primitive_cylinder_add, mat_crosshair,
-         (0, 0, 1.0), (0.008, 0.008, 3.5),
-         rot=(0, math.radians(90), 0))
-add_mesh("CrossV", bpy.ops.mesh.primitive_cylinder_add, mat_crosshair,
-         (0, 0, 1.0), (0.008, 0.008, 3.5),
-         rot=(math.radians(90), 0, 0))
-
-# Small center dot for crosshair
-add_mesh("CrossDot", bpy.ops.mesh.primitive_uv_sphere_add, mat_crosshair,
-         (0, 0, 1.0), (0.04, 0.04, 0.04))
-
-# Camera — distant sniper POV looking through scope at the group
-setup_camera(scene, loc=(0, -14, 2.5), target_loc=(0, 0, 1.0), lens=50)
-
+# ── Render ───────────────────────────────────────────────────────────────────
 scene.frame_set(1)
 scene.render.filepath = "/Users/jmordetsky/directors-chair/assets/generated/videos/raider_ambush_v2/layouts/layout_002.png"
 bpy.ops.render.render(write_still=True)

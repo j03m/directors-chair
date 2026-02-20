@@ -22,7 +22,8 @@ def main():
     sb = subparsers.add_parser("storyboard", help="Run storyboard pipeline (autonomous)")
     sb.add_argument("--file", required=True, help="Path to storyboard JSON file")
     sb.add_argument("--keyframes-only", action="store_true", help="Stop after keyframe generation (skip video)")
-    sb.add_argument("--regen-keyframes", type=str, help="Comma-separated keyframe numbers matching filenames (0-indexed), e.g. '2,3,4' = keyframe_002, keyframe_003, keyframe_004")
+    sb.add_argument("--regen-keyframes", type=str, help="Comma-separated keyframe numbers (0-indexed), 'all' to regen everything, or 'missing' to only generate missing keyframes. e.g. '2,3,4' = keyframe_002, keyframe_003, keyframe_004")
+    sb.add_argument("--edit-keyframes", type=str, help="Comma-separated keyframe numbers (0-indexed) to run ONLY the edit pass on existing keyframes. e.g. '0,1' = edit keyframe_000, keyframe_001")
 
     # --- generate subcommand ---
     gen = subparsers.add_parser("generate", help="Generate character images (autonomous)")
@@ -48,12 +49,22 @@ def main():
         from directors_chair.cli.commands.storyboard import storyboard_to_video
         regen_kf = None
         if getattr(args, 'regen_keyframes', None):
-            regen_kf = [int(x.strip()) for x in args.regen_keyframes.split(",")]
+            val = args.regen_keyframes.strip()
+            if val == "all":
+                regen_kf = "all"
+            elif val == "missing":
+                regen_kf = "missing"
+            else:
+                regen_kf = [int(x.strip()) for x in val.split(",")]
+        edit_kf = None
+        if getattr(args, 'edit_keyframes', None):
+            edit_kf = [int(x.strip()) for x in args.edit_keyframes.split(",")]
         storyboard_to_video(
             storyboard_file=args.file,
             auto_mode=True,
-            keyframes_only=getattr(args, 'keyframes_only', False) or bool(regen_kf),
+            keyframes_only=getattr(args, 'keyframes_only', False) or bool(regen_kf) or bool(edit_kf),
             regen_keyframes=regen_kf,
+            edit_keyframes=edit_kf,
         )
 
     elif args.command == "generate":

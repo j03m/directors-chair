@@ -101,7 +101,6 @@ def build_large_figure(name, mat, position, pose="standing"):
              (x, y, z + 1.1), (0.65, 0.45, 0.75))
     add_mesh(f"{name}_Head", bpy.ops.mesh.primitive_uv_sphere_add, mat,
              (x, y, z + 2.2), (0.38, 0.33, 0.33))
-
     add_mesh(f"{name}_LegL", bpy.ops.mesh.primitive_cylinder_add, mat,
              (x - 0.4, y, z + 0.0), (0.16, 0.16, 0.45))
     add_mesh(f"{name}_LegR", bpy.ops.mesh.primitive_cylinder_add, mat,
@@ -156,7 +155,6 @@ def build_regular_male(name, mat, position, pose="standing"):
              (x, y, z + 0.9), (0.4, 0.3, 0.55))
     add_mesh(f"{name}_Head", bpy.ops.mesh.primitive_cube_add, mat,
              (x, y, z + 1.7), (0.2, 0.18, 0.2))
-
     add_mesh(f"{name}_LegL", bpy.ops.mesh.primitive_cylinder_add, mat,
              (x - 0.25, y, z + 0.0), (0.1, 0.1, 0.4))
     add_mesh(f"{name}_LegR", bpy.ops.mesh.primitive_cylinder_add, mat,
@@ -200,7 +198,6 @@ def build_regular_female(name, mat, position, pose="standing"):
              (x, y, z + 0.85), (0.35, 0.25, 0.5))
     add_mesh(f"{name}_Head", bpy.ops.mesh.primitive_uv_sphere_add, mat,
              (x, y, z + 1.55), (0.18, 0.16, 0.18))
-
     add_mesh(f"{name}_LegL", bpy.ops.mesh.primitive_cylinder_add, mat,
              (x - 0.2, y, z + 0.0), (0.09, 0.09, 0.38))
     add_mesh(f"{name}_LegR", bpy.ops.mesh.primitive_cylinder_add, mat,
@@ -227,115 +224,107 @@ def build_regular_female(name, mat, position, pose="standing"):
                  (x + 0.45, y, z + 0.65), (0.08, 0.08, 0.38))
 
 
-# ============================================================
-# SCENE SETUP
-# ============================================================
-
+# === Scene Setup ===
 clean_scene()
 scene = bpy.context.scene
 setup_render(scene)
 add_light(scene)
 
-# Materials
+# === Materials ===
 mat_ground = make_mat("Ground", (0.2, 0.15, 0.1, 1))
-mat_heavy = make_mat("Heavy", (0.25, 0.18, 0.1, 1))
-mat_nomad1 = make_mat("Nomad1", (0.3, 0.4, 0.2, 1))
-mat_nomad2 = make_mat("Nomad2", (0.25, 0.18, 0.1, 1))
-mat_nomad3 = make_mat("Nomad3", (0.6, 0.6, 0.65, 1))
-mat_scope = make_mat("ScopeBlack", (0.0, 0.0, 0.0, 1))
-mat_crosshair = make_mat("Crosshair", (0.05, 0.05, 0.05, 1))
+mat_gorilla = make_mat("Gorilla", (0.6, 0.6, 0.65, 1))
+mat_cliff = make_mat("Cliff", (0.35, 0.25, 0.15, 1))
+mat_rifle = make_mat("Rifle", (0.12, 0.1, 0.08, 1))
+mat_dust = make_mat("Dust", (0.7, 0.6, 0.4, 1))
 
-# Ground
-add_ground(mat_ground)
+# Muzzle flash — bright emissive material
+mat_flash = bpy.data.materials.new("MuzzleFlash")
+mat_flash.use_nodes = True
+bsdf_flash = mat_flash.node_tree.nodes["Principled BSDF"]
+bsdf_flash.inputs["Base Color"].default_value = (1.0, 0.8, 0.2, 1)
+bsdf_flash.inputs["Emission Color"].default_value = (1.0, 0.6, 0.1, 1)
+bsdf_flash.inputs["Emission Strength"].default_value = 15.0
 
-# Heavy raider — standing center, dominant, looming over kneeling figures
-build_large_figure("Heavy", mat_heavy, (0, 0, 0), pose="standing")
+# === Ground & Cliff ===
+add_ground(mat_ground, size=20)
 
-# Kneeling nomads at his feet — use "seated" pose as proxy for kneeling
-# Arranged in a row below the heavy raider
-build_regular_male("Nomad1", mat_nomad1, (-1.2, 0.5, 0), pose="seated")
-build_regular_male("Nomad2", mat_nomad2, (0, 0.8, 0), pose="seated")
-build_regular_male("Nomad3", mat_nomad3, (1.2, 0.5, 0), pose="seated")
+# Cliff edge — elevated rocky ledge, the figure lies on top
+add_mesh("CliffTop", bpy.ops.mesh.primitive_cube_add, mat_cliff,
+         (0, 0, 1.5), (4, 3, 1.5))
 
-# ============================================================
-# SNIPER SCOPE VIGNETTE — black ring with crosshairs
-# ============================================================
+# Cliff face — angled slab below the ledge for depth
+add_mesh("CliffFace", bpy.ops.mesh.primitive_cube_add, mat_cliff,
+         (2, 0, 0.5), (1.5, 3, 1.0),
+         rot=(0, math.radians(25), 0))
 
-# Large black torus to create circular scope vignette framing the scene
-# Placed close to camera to act as a mask
-bpy.ops.mesh.primitive_torus_add(
-    major_radius=1.8,
-    minor_radius=1.4,
-    location=(0, -6.5, 1.5),
-    rotation=(math.radians(90), 0, 0)
-)
-scope_ring = bpy.context.active_object
-scope_ring.name = "ScopeRing"
-scope_ring.scale = (1.0, 1.0, 0.6)
-scope_ring.data.materials.append(mat_scope)
+# Rocky details on cliff edge
+add_mesh("Rock1", bpy.ops.mesh.primitive_cube_add, mat_cliff,
+         (3.2, -0.8, 2.8), (0.4, 0.3, 0.2),
+         rot=(0, math.radians(10), math.radians(15)))
+add_mesh("Rock2", bpy.ops.mesh.primitive_cube_add, mat_cliff,
+         (3.5, 0.6, 2.7), (0.3, 0.25, 0.15),
+         rot=(math.radians(5), 0, math.radians(-10)))
 
-# Crosshair — vertical line
-bpy.ops.mesh.primitive_cube_add(location=(0, -6.4, 1.5))
-ch_v = bpy.context.active_object
-ch_v.name = "CrosshairV"
-ch_v.scale = (0.008, 0.01, 1.6)
-ch_v.data.materials.append(mat_crosshair)
+# === Character — Gorilla prone on cliff edge ===
+# Position on cliff top (z=3), facing +X toward the edge
+build_large_figure("Gorilla", mat_gorilla, (-0.5, 0, 3.0), pose="fallen")
 
-# Crosshair — horizontal line
-bpy.ops.mesh.primitive_cube_add(location=(0, -6.4, 1.5))
-ch_h = bpy.context.active_object
-ch_h.name = "CrosshairH"
-ch_h.scale = (1.6, 0.01, 0.008)
-ch_h.data.materials.append(mat_crosshair)
+# === Rifle — long cylinder extending forward from the prone figure ===
+# Gorilla head is at ~(0.5, -0.4, 3.18), arms extend forward
+add_mesh("Rifle", bpy.ops.mesh.primitive_cylinder_add, mat_rifle,
+         (1.8, -0.2, 3.15), (0.06, 0.06, 1.2),
+         rot=(math.radians(5), math.radians(88), 0))
 
-# Small center dot at crosshair intersection (aimed at heavy's head)
-bpy.ops.mesh.primitive_uv_sphere_add(location=(0, -6.4, 1.5))
-ch_dot = bpy.context.active_object
-ch_dot.name = "CrosshairDot"
-ch_dot.scale = (0.025, 0.01, 0.025)
-ch_dot.data.materials.append(mat_crosshair)
+# Rifle stock near the gorilla's body
+add_mesh("RifleStock", bpy.ops.mesh.primitive_cube_add, mat_rifle,
+         (0.5, -0.1, 3.1), (0.12, 0.08, 0.2),
+         rot=(0, math.radians(85), 0))
 
-# Black corner panels to fill out rectangular frame to circular scope
-# Top panel
-bpy.ops.mesh.primitive_cube_add(location=(0, -6.6, 3.2))
-panel_top = bpy.context.active_object
-panel_top.name = "VignetteTop"
-panel_top.scale = (3, 0.01, 1.0)
-panel_top.data.materials.append(mat_scope)
+# === Muzzle Flash — bright burst at rifle tip ===
+add_mesh("Flash1", bpy.ops.mesh.primitive_uv_sphere_add, mat_flash,
+         (3.0, -0.2, 3.18), (0.25, 0.35, 0.2))
+add_mesh("Flash2", bpy.ops.mesh.primitive_uv_sphere_add, mat_flash,
+         (3.3, -0.15, 3.22), (0.15, 0.2, 0.12))
+add_mesh("Flash3", bpy.ops.mesh.primitive_cone_add, mat_flash,
+         (3.5, -0.2, 3.15), (0.18, 0.18, 0.4),
+         rot=(0, math.radians(90), 0))
 
-# Bottom panel
-bpy.ops.mesh.primitive_cube_add(location=(0, -6.6, -0.2))
-panel_bot = bpy.context.active_object
-panel_bot.name = "VignetteBottom"
-panel_bot.scale = (3, 0.01, 1.0)
-panel_bot.data.materials.append(mat_scope)
+# === Dust kicks — small scattered shapes near the muzzle ===
+add_mesh("Dust1", bpy.ops.mesh.primitive_uv_sphere_add, mat_dust,
+         (2.8, -0.6, 3.0), (0.15, 0.12, 0.08))
+add_mesh("Dust2", bpy.ops.mesh.primitive_uv_sphere_add, mat_dust,
+         (3.1, 0.3, 2.95), (0.12, 0.1, 0.06))
+add_mesh("Dust3", bpy.ops.mesh.primitive_uv_sphere_add, mat_dust,
+         (2.5, -0.4, 3.05), (0.1, 0.15, 0.07))
+add_mesh("Dust4", bpy.ops.mesh.primitive_uv_sphere_add, mat_dust,
+         (3.4, -0.5, 3.1), (0.08, 0.1, 0.05))
 
-# Left panel
-bpy.ops.mesh.primitive_cube_add(location=(-2.8, -6.6, 1.5))
-panel_left = bpy.context.active_object
-panel_left.name = "VignetteLeft"
-panel_left.scale = (1.0, 0.01, 3)
-panel_left.data.materials.append(mat_scope)
+# === Distant desert landscape — low flat shapes beyond the cliff ===
+mat_desert = make_mat("Desert", (0.45, 0.35, 0.2, 1))
+add_mesh("DesertFloor", bpy.ops.mesh.primitive_plane_add, mat_desert,
+         (12, 0, -0.5), (10, 15, 1))
 
-# Right panel
-bpy.ops.mesh.primitive_cube_add(location=(2.8, -6.6, 1.5))
-panel_right = bpy.context.active_object
-panel_right.name = "VignetteRight"
-panel_right.scale = (1.0, 0.01, 3)
-panel_right.data.materials.append(mat_scope)
+mat_mesa = make_mat("Mesa", (0.4, 0.28, 0.15, 1))
+add_mesh("Mesa1", bpy.ops.mesh.primitive_cube_add, mat_mesa,
+         (18, -4, 0.5), (1.5, 1.0, 1.0))
+add_mesh("Mesa2", bpy.ops.mesh.primitive_cube_add, mat_mesa,
+         (15, 5, 0.3), (1.0, 0.8, 0.6))
 
-# ============================================================
-# CAMERA — positioned behind scope elements, looking through at scene
-# ============================================================
+# === Camera — over the shoulder of the prone gorilla ===
+# Behind and above, looking forward past the figure toward the desert
+setup_camera(scene,
+             loc=(-2.5, 1.8, 5.0),
+             target_loc=(3.0, -0.5, 3.0),
+             lens=32)
 
-# Camera straight on, looking through scope at the heavy raider
-# Crosshair centered on heavy's head (z ~2.2)
-setup_camera(scene, loc=(0, -8, 1.5), target_loc=(0, 0, 1.5), lens=35)
+# === Additional muzzle flash point light for dramatic illumination ===
+bpy.ops.object.light_add(type='POINT', location=(3.0, -0.2, 3.2))
+flash_light = bpy.context.active_object
+flash_light.name = "FlashLight"
+flash_light.data.energy = 500
+flash_light.data.color = (1.0, 0.7, 0.2)
 
-# ============================================================
-# RENDER
-# ============================================================
-
+# === Render ===
 scene.frame_set(1)
 scene.render.filepath = "/Users/jmordetsky/directors-chair/assets/generated/videos/raider_ambush_v2/layouts/layout_008.png"
 bpy.ops.render.render(write_still=True)

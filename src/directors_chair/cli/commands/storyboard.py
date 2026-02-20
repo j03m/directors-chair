@@ -9,14 +9,15 @@ from directors_chair.storyboard import load_storyboard, validate_storyboard
 from directors_chair.cli.utils import console
 
 
-def storyboard_to_video(storyboard_file=None, auto_mode=False, keyframes_only=False, regen_keyframes=None):
+def storyboard_to_video(storyboard_file=None, auto_mode=False, keyframes_only=False, regen_keyframes=None, edit_keyframes=None):
     """Main storyboard pipeline: Layout → Keyframe → Video.
 
     Args:
         storyboard_file: Path to storyboard JSON (skips file selection if provided).
         auto_mode: If True, skip all interactive prompts and review loops.
         keyframes_only: If True, stop after keyframe generation (skip video).
-        regen_keyframes: List of 1-indexed shot numbers whose keyframes should be regenerated.
+        regen_keyframes: List of 0-indexed shot numbers whose keyframes should be regenerated.
+        edit_keyframes: List of 0-indexed shot numbers to run ONLY the edit pass on (skips generation).
     """
     config = load_config()
 
@@ -131,6 +132,60 @@ def storyboard_to_video(storyboard_file=None, auto_mode=False, keyframes_only=Fa
     os.makedirs(keyframes_dir, exist_ok=True)
     os.makedirs(clips_dir, exist_ok=True)
 
+    # --- Edit-only mode: skip generation, just run edit passes ---
+    if edit_keyframes:
+        from directors_chair.keyframe import edit_keyframe
+        edit_indices = set(edit_keyframes)
+        console.print(f"[bold]Edit-only mode — targeting keyframes: {sorted(edit_indices)}[/bold]")
+        console.print(Panel("[bold]Keyframe Edit Pass[/bold]", border_style="magenta"))
+
+        for i in sorted(edit_indices):
+            if i >= num_shots:
+                console.print(f"  [red]Shot index {i} out of range (max {num_shots - 1}), skipping.[/red]")
+                continue
+            shot = shots[i]
+            kf_path = os.path.join(keyframes_dir, f"keyframe_{i:03d}.png")
+            edit_prompt = shot.get("keyframe_edit_prompt")
+
+            if not os.path.exists(kf_path):
+                console.print(f"  [red]keyframe_{i:03d}.png does not exist, skipping.[/red]")
+                continue
+            if not edit_prompt:
+                console.print(f"  [yellow]Shot {i} ({shot.get('name', '')}) has no keyframe_edit_prompt, skipping.[/yellow]")
+                continue
+
+            # Scope characters for this shot
+            shot_characters = characters
+            if "characters" in shot and isinstance(shot["characters"], list):
+                shot_characters = {k: characters[k] for k in shot["characters"] if k in characters}
+
+            console.print(f"\n[bold]Editing keyframe {i}: {shot.get('name', '')}[/bold]")
+            edit_ok = edit_keyframe(
+                prompt=edit_prompt,
+                keyframe_path=kf_path,
+                output_path=kf_path,
+                kling_params=kling_params,
+                characters=shot_characters,
+            )
+            if not edit_ok:
+                console.print(f"  [yellow]Edit failed for keyframe {i}, original preserved.[/yellow]")
+
+        console.print("\n[green]Edit pass complete.[/green]")
+        console.print(f"  Keyframes: {keyframes_dir}/")
+        return
+
+    # --- Determine which shots to process ---
+    # regen_keyframes can be: None (all), list of indices, "all", or "missing"
+    if isinstance(regen_keyframes, list):
+        target_indices = set(regen_keyframes)
+        console.print(f"[bold]Targeting shots: {sorted(target_indices)}[/bold]")
+    elif regen_keyframes == "all":
+        target_indices = None  # process all
+    elif regen_keyframes == "missing":
+        target_indices = None  # process all, but don't delete existing (default behavior)
+    else:
+        target_indices = None  # no filter, process all
+
     # --- Phase 1: Layout Generation ---
     console.print(Panel("[bold]Phase 1: Layout Generation[/bold]", border_style="cyan"))
 
@@ -140,6 +195,10 @@ def storyboard_to_video(storyboard_file=None, auto_mode=False, keyframes_only=Fa
     for i, shot in enumerate(shots):
         layout_path = os.path.join(layouts_dir, f"layout_{i:03d}.png")
         layout_paths.append(layout_path)
+
+        # Skip shots not in target list (when targeting specific shots)
+        if target_indices is not None and i not in target_indices:
+            continue
 
         if os.path.exists(layout_path):
             console.print(f"  [dim]Layout {i + 1}/{num_shots} already exists, skipping.[/dim]")
@@ -225,17 +284,23 @@ def storyboard_to_video(storyboard_file=None, auto_mode=False, keyframes_only=Fa
     engine_label = "Kling O3 i2i" if keyframe_engine == "kling" else "Nano Banana Pro (Gemini)"
     console.print(Panel(f"[bold]Phase 2: Keyframe Generation ({engine_label})[/bold]", border_style="cyan"))
 
-    from directors_chair.keyframe import generate_keyframe_kling, generate_keyframe_nano_banana
+    from directors_chair.keyframe import generate_keyframe_kling, generate_keyframe_nano_banana, edit_keyframe
 
     keyframe_paths = []
     for i, shot in enumerate(shots):
         kf_path = os.path.join(keyframes_dir, f"keyframe_{i:03d}.png")
         keyframe_paths.append(kf_path)
 
-        # If regen requested for this keyframe, delete existing first
-        # regen_keyframes uses 0-indexed keyframe numbers matching filenames
-        # (e.g. "6" = keyframe_006.png)
-        if regen_keyframes and i in regen_keyframes:
+        # Skip shots not in target list (when targeting specific shots)
+        if target_indices is not None and i not in target_indices:
+            continue
+
+        # If regen requested for this specific keyframe, or "all", delete existing first
+        if isinstance(regen_keyframes, list) and i in regen_keyframes:
+            if os.path.exists(kf_path):
+                os.remove(kf_path)
+                console.print(f"  [yellow]Deleted keyframe_{i:03d}.png for regeneration.[/yellow]")
+        elif regen_keyframes == "all":
             if os.path.exists(kf_path):
                 os.remove(kf_path)
                 console.print(f"  [yellow]Deleted keyframe_{i:03d}.png for regeneration.[/yellow]")
@@ -248,7 +313,7 @@ def storyboard_to_video(storyboard_file=None, auto_mode=False, keyframes_only=Fa
         # Per-shot character scoping: if shot has "characters" list, only use those
         shot_characters = characters
         if "characters" in shot and isinstance(shot["characters"], list):
-            shot_characters = {k: v for k, v in characters.items() if k in shot["characters"]}
+            shot_characters = {k: characters[k] for k in shot["characters"] if k in characters}
             console.print(f"  [dim]Shot characters: {list(shot_characters.keys())}[/dim]")
 
         if keyframe_engine == "gemini":
@@ -270,6 +335,21 @@ def storyboard_to_video(storyboard_file=None, auto_mode=False, keyframes_only=Fa
             )
         if not ok:
             console.print(f"[red]Keyframe generation failed for shot {i + 1}, continuing...[/red]")
+            continue
+
+        # Optional post-generation edit pass
+        edit_prompt = shot.get("keyframe_edit_prompt")
+        if edit_prompt and os.path.exists(kf_path):
+            console.print(f"  [cyan]Applying keyframe edit...[/cyan]")
+            edit_ok = edit_keyframe(
+                prompt=edit_prompt,
+                keyframe_path=kf_path,
+                output_path=kf_path,
+                kling_params=kling_params,
+                characters=shot_characters,
+            )
+            if not edit_ok:
+                console.print(f"  [yellow]Keyframe edit failed for shot {i + 1}, keeping original.[/yellow]")
 
     # Keyframe review
     if not auto_mode:

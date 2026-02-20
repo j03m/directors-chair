@@ -79,7 +79,9 @@ def add_ground(mat, size=15):
 
 
 def build_large_figure(name, mat, position, pose="standing"):
+    """Build a large/heavy character from primitives (gorilla-like proportions)."""
     x, y, z = position
+
     if pose == "fallen":
         add_mesh(f"{name}_Body", bpy.ops.mesh.primitive_cube_add, mat,
                  (x, y, z + 0.3), (0.6, 0.4, 0.7),
@@ -94,14 +96,17 @@ def build_large_figure(name, mat, position, pose="standing"):
                  (x + 0.5, y - 0.7, z + 0.1), (0.15, 0.15, 0.45),
                  rot=(math.radians(85), 0, math.radians(-30)))
         return
+
     add_mesh(f"{name}_Body", bpy.ops.mesh.primitive_cube_add, mat,
              (x, y, z + 1.1), (0.65, 0.45, 0.75))
     add_mesh(f"{name}_Head", bpy.ops.mesh.primitive_uv_sphere_add, mat,
              (x, y, z + 2.2), (0.38, 0.33, 0.33))
+
     add_mesh(f"{name}_LegL", bpy.ops.mesh.primitive_cylinder_add, mat,
              (x - 0.4, y, z + 0.0), (0.16, 0.16, 0.45))
     add_mesh(f"{name}_LegR", bpy.ops.mesh.primitive_cylinder_add, mat,
              (x + 0.4, y, z + 0.0), (0.16, 0.16, 0.45))
+
     if pose == "arms_raised":
         add_mesh(f"{name}_ArmL", bpy.ops.mesh.primitive_cylinder_add, mat,
                  (x - 0.8, y, z + 2.4), (0.14, 0.14, 0.55),
@@ -129,7 +134,9 @@ def build_large_figure(name, mat, position, pose="standing"):
 
 
 def build_regular_male(name, mat, position, pose="standing"):
+    """Build a regular male character from primitives."""
     x, y, z = position
+
     if pose == "fallen":
         add_mesh(f"{name}_Body", bpy.ops.mesh.primitive_cube_add, mat,
                  (x, y, z + 0.25), (0.4, 0.3, 0.55),
@@ -144,14 +151,17 @@ def build_regular_male(name, mat, position, pose="standing"):
                  (x + 0.4, y - 0.5, z + 0.08), (0.1, 0.1, 0.4),
                  rot=(math.radians(85), 0, math.radians(-25)))
         return
+
     add_mesh(f"{name}_Body", bpy.ops.mesh.primitive_cube_add, mat,
              (x, y, z + 0.9), (0.4, 0.3, 0.55))
     add_mesh(f"{name}_Head", bpy.ops.mesh.primitive_cube_add, mat,
              (x, y, z + 1.7), (0.2, 0.18, 0.2))
+
     add_mesh(f"{name}_LegL", bpy.ops.mesh.primitive_cylinder_add, mat,
              (x - 0.25, y, z + 0.0), (0.1, 0.1, 0.4))
     add_mesh(f"{name}_LegR", bpy.ops.mesh.primitive_cylinder_add, mat,
              (x + 0.25, y, z + 0.0), (0.1, 0.1, 0.4))
+
     if pose == "arms_raised":
         add_mesh(f"{name}_ArmL", bpy.ops.mesh.primitive_cylinder_add, mat,
                  (x - 0.6, y, z + 2.0), (0.1, 0.1, 0.45),
@@ -174,7 +184,9 @@ def build_regular_male(name, mat, position, pose="standing"):
 
 
 def build_regular_female(name, mat, position, pose="standing"):
+    """Build a regular female character from primitives."""
     x, y, z = position
+
     if pose == "fallen":
         add_mesh(f"{name}_Body", bpy.ops.mesh.primitive_cube_add, mat,
                  (x, y, z + 0.22), (0.35, 0.25, 0.5),
@@ -183,14 +195,17 @@ def build_regular_female(name, mat, position, pose="standing"):
                  (x + 0.7, y - 0.3, z + 0.15), (0.18, 0.16, 0.18),
                  rot=(math.radians(40), math.radians(30), 0))
         return
+
     add_mesh(f"{name}_Body", bpy.ops.mesh.primitive_cube_add, mat,
              (x, y, z + 0.85), (0.35, 0.25, 0.5))
     add_mesh(f"{name}_Head", bpy.ops.mesh.primitive_uv_sphere_add, mat,
              (x, y, z + 1.55), (0.18, 0.16, 0.18))
+
     add_mesh(f"{name}_LegL", bpy.ops.mesh.primitive_cylinder_add, mat,
              (x - 0.2, y, z + 0.0), (0.09, 0.09, 0.38))
     add_mesh(f"{name}_LegR", bpy.ops.mesh.primitive_cylinder_add, mat,
              (x + 0.2, y, z + 0.0), (0.09, 0.09, 0.38))
+
     if pose == "arms_raised":
         add_mesh(f"{name}_ArmL", bpy.ops.mesh.primitive_cylinder_add, mat,
                  (x - 0.5, y, z + 1.8), (0.08, 0.08, 0.4),
@@ -220,80 +235,49 @@ setup_render(scene)
 add_light(scene)
 
 # Materials
-ground_mat = make_mat("Ground", (0.2, 0.15, 0.1, 1))
-hockey_mat = make_mat("Hockey", (0.2, 0.35, 0.5, 1))
-mask_mat = make_mat("Mask", (0.75, 0.72, 0.65, 1))
-mask_dark_mat = make_mat("MaskDark", (0.35, 0.32, 0.28, 1))
-eye_mat = make_mat("Eyes", (0.4, 0.25, 0.15, 1))
-crack_mat = make_mat("Crack", (0.12, 0.1, 0.08, 1))
+mat_ground = make_mat("Ground", (0.2, 0.15, 0.1, 1))
+mat_gorilla = make_mat("Gorilla", (0.6, 0.6, 0.65, 1))
+mat_cranial = make_mat("Cranial", (0.25, 0.18, 0.1, 1))
+mat_rifle = make_mat("Rifle", (0.12, 0.12, 0.12, 1))
+mat_cliff = make_mat("Cliff", (0.35, 0.25, 0.15, 1))
 
-# Ground
-add_ground(ground_mat)
+# Ground plane
+add_ground(mat_ground)
 
-# ── Extreme Close-Up: Hockey Mask Face ───────────────────────────────────────
-# This is an extreme close-up of hockey's face/mask filling the frame.
-# We build a custom mask geometry rather than a full body figure.
-
-# Main mask shape — slightly flattened sphere for the hockey mask
-add_mesh("Mask_Base", bpy.ops.mesh.primitive_uv_sphere_add, mask_mat,
-         (0, 0, 1.5), (0.45, 0.35, 0.55))
-
-# Mask forehead ridge
-add_mesh("Mask_Brow", bpy.ops.mesh.primitive_cube_add, mask_dark_mat,
-         (0, -0.28, 1.75), (0.38, 0.05, 0.08))
-
-# Left eye hole — dark opening
-add_mesh("Mask_EyeL", bpy.ops.mesh.primitive_cube_add, eye_mat,
-         (-0.15, -0.32, 1.6), (0.1, 0.06, 0.06))
-
-# Right eye hole — dark opening
-add_mesh("Mask_EyeR", bpy.ops.mesh.primitive_cube_add, eye_mat,
-         (0.15, -0.32, 1.6), (0.1, 0.06, 0.06))
-
-# Menacing eyes visible through holes — slightly recessed glinting spheres
-add_mesh("Eye_L", bpy.ops.mesh.primitive_uv_sphere_add, crack_mat,
-         (-0.15, -0.28, 1.6), (0.06, 0.04, 0.04))
-add_mesh("Eye_R", bpy.ops.mesh.primitive_uv_sphere_add, crack_mat,
-         (0.15, -0.28, 1.6), (0.06, 0.04, 0.04))
-
-# Nose/mouth ventilation holes area
-add_mesh("Mask_Nose", bpy.ops.mesh.primitive_cube_add, mask_dark_mat,
-         (0, -0.33, 1.45), (0.06, 0.04, 0.12))
-
-# Mouth area vent slits
-for i in range(3):
-    offset = (i - 1) * 0.1
-    add_mesh(f"Mask_Vent_{i}", bpy.ops.mesh.primitive_cube_add, mask_dark_mat,
-             (offset, -0.34, 1.3), (0.03, 0.03, 0.06))
-
-# Crack lines across the mask — thin dark strips
-add_mesh("Crack_1", bpy.ops.mesh.primitive_cube_add, crack_mat,
-         (0.08, -0.34, 1.65), (0.01, 0.02, 0.2),
+# Cliff edge — a raised rocky ledge the figures lie on
+add_mesh("CliffEdge", bpy.ops.mesh.primitive_cube_add, mat_cliff,
+         (0, 2, 0.15), (4, 1.5, 0.15))
+add_mesh("CliffRock1", bpy.ops.mesh.primitive_cube_add, mat_cliff,
+         (1.5, 3.2, 0.1), (0.6, 0.3, 0.12),
          rot=(0, 0, math.radians(15)))
-add_mesh("Crack_2", bpy.ops.mesh.primitive_cube_add, crack_mat,
-         (-0.12, -0.33, 1.55), (0.01, 0.02, 0.15),
-         rot=(0, 0, math.radians(-25)))
-add_mesh("Crack_3", bpy.ops.mesh.primitive_cube_add, crack_mat,
-         (0.2, -0.32, 1.45), (0.01, 0.02, 0.12),
-         rot=(0, 0, math.radians(40)))
+add_mesh("CliffRock2", bpy.ops.mesh.primitive_cube_add, mat_cliff,
+         (-1.2, 3.0, 0.08), (0.4, 0.25, 0.1),
+         rot=(0, 0, math.radians(-10)))
 
-# Grime/dirt patches — slightly raised darker areas on mask surface
-add_mesh("Grime_1", bpy.ops.mesh.primitive_cube_add, mask_dark_mat,
-         (-0.25, -0.3, 1.7), (0.08, 0.04, 0.06),
-         rot=(0, 0, math.radians(10)))
-add_mesh("Grime_2", bpy.ops.mesh.primitive_cube_add, mask_dark_mat,
-         (0.22, -0.31, 1.35), (0.07, 0.04, 0.05),
-         rot=(0, 0, math.radians(-15)))
+# Cranial (regular male) — prone on the left, facing right toward gorilla
+# "fallen" pose approximates prone/lying flat
+build_regular_male("Cranial", mat_cranial, (-1.2, 2.0, 0.3), pose="fallen")
 
-# Mask edge/chin
-add_mesh("Mask_Chin", bpy.ops.mesh.primitive_cube_add, mask_mat,
-         (0, -0.3, 1.15), (0.3, 0.08, 0.08))
+# Gorilla (large figure) — prone on the right, facing left toward cranial
+# Use fallen pose but mirror direction by adjusting position
+build_large_figure("Gorilla", mat_gorilla, (1.2, 2.0, 0.3), pose="fallen")
 
-# ── Camera: Extreme close-up, very tight on the mask ─────────────────────────
-# Camera placed close and directly in front, tight lens for intimate framing
-setup_camera(scene, loc=(0, -1.8, 1.55), target_loc=(0, 0, 1.5), lens=50)
+# Sniper rifles — long thin cylinders in front of each figure
+add_mesh("Rifle_Cranial", bpy.ops.mesh.primitive_cylinder_add, mat_rifle,
+         (-1.2, 2.8, 0.4), (0.03, 0.03, 0.7),
+         rot=(math.radians(85), 0, math.radians(5)))
+add_mesh("Rifle_Gorilla", bpy.ops.mesh.primitive_cylinder_add, mat_rifle,
+         (1.2, 2.8, 0.45), (0.04, 0.04, 0.8),
+         rot=(math.radians(85), 0, math.radians(-5)))
 
-# ── Render ───────────────────────────────────────────────────────────────────
+# Camera — low angle, ground level, slightly to the side for profile view
+# Camera near ground looking across at the two prone figures
+setup_camera(scene,
+             loc=(-3.5, -1.0, 0.4),
+             target_loc=(0, 2.2, 0.35),
+             lens=32)
+
+# Render
 scene.frame_set(1)
-scene.render.filepath = "/Users/jmordetsky/directors-chair/assets/generated/videos/raider_ambush_v2/layouts/layout_004.png"
+scene.render.filepath = "/Users/jmordetsky/directors-chair/assets/generated/videos/raider_ambush_v2/layouts/layout_005.png"
 bpy.ops.render.render(write_still=True)

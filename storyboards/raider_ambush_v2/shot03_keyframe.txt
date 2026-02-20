@@ -1,5 +1,9 @@
-Use @Image1 as composition reference. Close-up, desert road, threatening.
+Use @Image1 as composition reference. Medium-wide shot on a desert road beside a stopped cab-over box truck. Desaturated color palette: sandy tans, dusty greys, rusted iron.
 
-@Element1 a raider in a cracked hockey mask with makeshift sheet metal armor looms over @Element2 a lean woman with blonde war hawk hair and sleeve tattoos who kneels on the ground. The raider grips her jaw with one hand, tilting her face up to look at him. She stares up at him — defiant but trapped. He towers over her, intimidating.
+Four figures kneel in a row on the road with their hands behind their heads: @Element2 a lean woman with blonde war hawk hair, sleeve tattoos, canvas tank top, and cargo pants kneels at the end of the row nearest camera — she stares up with a fierce, defiant expression. Beside her: @Element4 a civilian man in a denim jacket and baseball cap, @Element5 a civilian man in a mechanic jumpsuit, and @Element6 a civilian man in a military field jacket and keffiyeh scarf — all three kneel with hands behind their heads, looking down.
 
-Tight close-up framing. Desert dust, harsh light. Photorealistic, cinematic. Menace and tension.
+@Element1 a raider in a cracked hockey mask with sheet metal armor stands directly in front of the kneeling woman, pointing at her aggressively with one hand. His other hand holds an AK-47 rifle at his side, pointed down at the ground.
+
+Behind the row of kneeling captives, @Element3 a raider in motorcycle goggles and a spiked leather jacket stands guard with an AK-47 rifle.
+
+A white cab-over box truck with light weathering is visible in the background. Desert road, dust, harsh light. Photorealistic, cinematic.

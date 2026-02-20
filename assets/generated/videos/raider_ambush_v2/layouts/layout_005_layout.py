@@ -227,57 +227,84 @@ def build_regular_female(name, mat, position, pose="standing"):
                  (x + 0.45, y, z + 0.65), (0.08, 0.08, 0.38))
 
 
-# ── Scene Setup ──────────────────────────────────────────────────────────────
-
+# ── Scene Setup ──────────────────────────────────────────────
 clean_scene()
 scene = bpy.context.scene
 setup_render(scene)
 add_light(scene)
 
-# Materials
+# ── Materials ────────────────────────────────────────────────
 mat_ground = make_mat("Ground", (0.2, 0.15, 0.1, 1))
-mat_gorilla = make_mat("Gorilla", (0.6, 0.6, 0.65, 1))
-mat_cranial = make_mat("Cranial", (0.25, 0.18, 0.1, 1))
-mat_rifle = make_mat("Rifle", (0.12, 0.12, 0.12, 1))
-mat_cliff = make_mat("Cliff", (0.35, 0.25, 0.15, 1))
+mat_road = make_mat("Road", (0.1, 0.08, 0.06, 1))
+mat_truck_cab = make_mat("TruckCab", (0.35, 0.28, 0.2, 1))
+mat_truck_box = make_mat("TruckBox", (0.45, 0.38, 0.28, 1))
+mat_wheel = make_mat("Wheel", (0.05, 0.05, 0.05, 1))
+mat_nomad1 = make_mat("Nomad1Mat", (0.3, 0.4, 0.2, 1))
+mat_nomad2 = make_mat("Nomad2Mat", (0.25, 0.18, 0.1, 1))
+mat_nomad3 = make_mat("Nomad3Mat", (0.6, 0.6, 0.65, 1))
+mat_cranial = make_mat("CranialMat", (0.25, 0.18, 0.1, 1))
+mat_hockey = make_mat("HockeyMat", (0.2, 0.35, 0.5, 1))
+mat_goggles = make_mat("GogglesMat", (0.5, 0.2, 0.2, 1))
 
-# Ground plane
-add_ground(mat_ground)
+# ── Ground & Road ────────────────────────────────────────────
+add_ground(mat_ground, size=25)
+add_mesh("Road", bpy.ops.mesh.primitive_cube_add, mat_road,
+         (0, 0, 0.02), (14, 2.5, 0.02))
 
-# Cliff edge — a raised rocky ledge the figures lie on
-add_mesh("CliffEdge", bpy.ops.mesh.primitive_cube_add, mat_cliff,
-         (0, 2, 0.15), (4, 1.5, 0.15))
-add_mesh("CliffRock1", bpy.ops.mesh.primitive_cube_add, mat_cliff,
-         (1.5, 3.2, 0.1), (0.6, 0.3, 0.12),
-         rot=(0, 0, math.radians(15)))
-add_mesh("CliffRock2", bpy.ops.mesh.primitive_cube_add, mat_cliff,
-         (-1.2, 3.0, 0.08), (0.4, 0.25, 0.1),
-         rot=(0, 0, math.radians(-10)))
+# ── Cab-Over Box Truck (stopped beside road, Y+ side) ───────
+# Cab (flat-front cab-over)
+add_mesh("TruckCab", bpy.ops.mesh.primitive_cube_add, mat_truck_cab,
+         (4.5, 4.0, 1.2), (1.0, 1.1, 1.2))
+# Windshield hint (dark strip)
+mat_glass = make_mat("Glass", (0.08, 0.1, 0.12, 1))
+add_mesh("Windshield", bpy.ops.mesh.primitive_cube_add, mat_glass,
+         (4.5, 2.9, 1.6), (0.85, 0.02, 0.5))
+# Cargo box
+add_mesh("TruckBox", bpy.ops.mesh.primitive_cube_add, mat_truck_box,
+         (1.0, 4.0, 1.5), (3.0, 1.2, 1.5))
+# Wheels
+add_mesh("WheelFL", bpy.ops.mesh.primitive_cylinder_add, mat_wheel,
+         (4.0, 2.8, 0.35), (0.35, 0.35, 0.12),
+         rot=(math.radians(90), 0, 0))
+add_mesh("WheelFR", bpy.ops.mesh.primitive_cylinder_add, mat_wheel,
+         (4.0, 5.2, 0.35), (0.35, 0.35, 0.12),
+         rot=(math.radians(90), 0, 0))
+add_mesh("WheelRL", bpy.ops.mesh.primitive_cylinder_add, mat_wheel,
+         (-1.0, 2.8, 0.35), (0.35, 0.35, 0.12),
+         rot=(math.radians(90), 0, 0))
+add_mesh("WheelRR", bpy.ops.mesh.primitive_cylinder_add, mat_wheel,
+         (-1.0, 5.2, 0.35), (0.35, 0.35, 0.12),
+         rot=(math.radians(90), 0, 0))
 
-# Cranial (regular male) — prone on the left, facing right toward gorilla
-# "fallen" pose approximates prone/lying flat
-build_regular_male("Cranial", mat_cranial, (-1.2, 2.0, 0.3), pose="fallen")
+# ── Four Kneeling Captives (sunk z=-0.45 to simulate kneeling) ──
+# Row on the road, hands behind heads approximated by standing pose sunk down
+build_regular_male("Nomad1", mat_nomad1, (-2.0, 0.0, -0.45), pose="standing")
+build_regular_male("Nomad2", mat_nomad2, (-0.3, 0.0, -0.45), pose="standing")
+build_regular_male("Nomad3", mat_nomad3, (1.4, 0.0, -0.45), pose="standing")
+build_regular_male("Cranial", mat_cranial, (3.1, 0.0, -0.45), pose="standing")
 
-# Gorilla (large figure) — prone on the right, facing left toward cranial
-# Use fallen pose but mirror direction by adjusting position
-build_large_figure("Gorilla", mat_gorilla, (1.2, 2.0, 0.3), pose="fallen")
+# ── Standing Raider — leaning menacingly toward first kneeler ──
+# Hockey-mask raider in fighting stance, close to Nomad1
+build_regular_male("Hockey", mat_hockey, (-2.8, -1.5, 0.0), pose="fighting_stance")
 
-# Sniper rifles — long thin cylinders in front of each figure
-add_mesh("Rifle_Cranial", bpy.ops.mesh.primitive_cylinder_add, mat_rifle,
-         (-1.2, 2.8, 0.4), (0.03, 0.03, 0.7),
-         rot=(math.radians(85), 0, math.radians(5)))
-add_mesh("Rifle_Gorilla", bpy.ops.mesh.primitive_cylinder_add, mat_rifle,
-         (1.2, 2.8, 0.45), (0.04, 0.04, 0.8),
-         rot=(math.radians(85), 0, math.radians(-5)))
+# ── Standing Raider — guarding behind the row with rifle ──
+# Goggles raider standing behind the line
+build_regular_male("Goggles", mat_goggles, (0.5, 2.0, 0.0), pose="standing")
 
-# Camera — low angle, ground level, slightly to the side for profile view
-# Camera near ground looking across at the two prone figures
+# ── Rifle prop for guarding raider ──
+mat_metal = make_mat("Metal", (0.15, 0.15, 0.15, 1))
+add_mesh("Rifle", bpy.ops.mesh.primitive_cylinder_add, mat_metal,
+         (0.9, 1.6, 1.1), (0.03, 0.03, 0.6),
+         rot=(math.radians(-15), math.radians(10), 0))
+
+# ── Camera — telephoto sniper-scope perspective ──────────────
+# Crosshair centered on Hockey raider's head
 setup_camera(scene,
-             loc=(-3.5, -1.0, 0.4),
-             target_loc=(0, 2.2, 0.35),
-             lens=32)
+             loc=(-3.0, -22.0, 3.0),
+             target_loc=(-2.8, -1.5, 1.7),
+             lens=85)
 
-# Render
+# ── Render ───────────────────────────────────────────────────
 scene.frame_set(1)
-scene.render.filepath = "/Users/jmordetsky/directors-chair/assets/generated/videos/raider_ambush_v2/layouts/layout_005.png"
+scene.render.filepath = "/Users/jmordetsky/directors-chair/assets/generated/videos/raider_ambush_v2/layouts/layout_006.png"
 bpy.ops.render.render(write_still=True)

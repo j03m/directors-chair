@@ -79,6 +79,7 @@ def add_ground(mat, size=15):
 
 
 def build_large_figure(name, mat, position, pose="standing"):
+    """Build a large/heavy character from primitives (gorilla-like proportions)."""
     x, y, z = position
 
     if pose == "fallen":
@@ -133,6 +134,7 @@ def build_large_figure(name, mat, position, pose="standing"):
 
 
 def build_regular_male(name, mat, position, pose="standing"):
+    """Build a regular male character from primitives."""
     x, y, z = position
 
     if pose == "fallen":
@@ -182,6 +184,7 @@ def build_regular_male(name, mat, position, pose="standing"):
 
 
 def build_regular_female(name, mat, position, pose="standing"):
+    """Build a regular female character from primitives."""
     x, y, z = position
 
     if pose == "fallen":
@@ -224,8 +227,7 @@ def build_regular_female(name, mat, position, pose="standing"):
                  (x + 0.45, y, z + 0.65), (0.08, 0.08, 0.38))
 
 
-# ── Scene Setup ──────────────────────────────────────────────────────────────
-
+# --- Scene Setup ---
 clean_scene()
 scene = bpy.context.scene
 setup_render(scene)
@@ -233,35 +235,34 @@ add_light(scene)
 
 # Materials
 mat_ground = make_mat("Ground", (0.2, 0.15, 0.1, 1))
-mat_gale = make_mat("Gale", (0.5, 0.2, 0.2, 1))
-mat_cranial = make_mat("Cranial", (0.25, 0.18, 0.1, 1))
 mat_gorilla = make_mat("Gorilla", (0.6, 0.6, 0.65, 1))
+mat_cranial = make_mat("Cranial", (0.25, 0.18, 0.1, 1))
 mat_robot = make_mat("Robot", (0.2, 0.35, 0.5, 1))
 
 # Ground
 add_ground(mat_ground)
 
-# ── Characters ───────────────────────────────────────────────────────────────
+# Cliff edge suggestion — a raised slab behind the figures
+mat_cliff = make_mat("Cliff", (0.3, 0.22, 0.15, 1))
+add_mesh("CliffEdge", bpy.ops.mesh.primitive_cube_add, mat_cliff,
+         (0, 2.0, -0.3), (4, 1.5, 0.3))
 
-# Gale center frame, standing, one arm raised (shielding eyes looking up)
-build_regular_female("Gale", mat_gale, (0, 0, 0), pose="arms_raised")
+# Characters — prone large figure (gorilla) and prone regular male (cranial) side by side,
+# turned toward each other; standing regular male (robot) just behind them
 
-# Cranial getting up from the ground to Gale's left
-build_regular_male("Cranial", mat_cranial, (-2.0, 0.5, 0), pose="fallen")
+# Gorilla — prone (fallen), head turned right toward Cranial
+build_large_figure("Gorilla", mat_gorilla, (-1.0, 0.0, 0.0), pose="fallen")
 
-# Gorilla getting up from the ground to Gale's right
-build_large_figure("Gorilla", mat_gorilla, (2.0, 0.8, 0), pose="fallen")
+# Cranial — prone (fallen), positioned to the right, head turned left toward Gorilla
+build_regular_male("Cranial", mat_cranial, (1.0, 0.0, 0.0), pose="fallen")
 
-# Robot getting up from the ground behind Gale
-build_regular_male("Robot", mat_robot, (0.5, 2.0, 0), pose="fallen")
+# Robot — standing behind the two prone figures
+build_regular_male("Robot", mat_robot, (0.0, 1.5, 0.0), pose="standing")
 
-# ── Camera ───────────────────────────────────────────────────────────────────
+# Camera — slightly above, medium shot framing all three at the cliff edge
+setup_camera(scene, loc=(0.0, -4.5, 3.5), target_loc=(0.0, 0.5, 0.5), lens=32)
 
-# Medium shot, eye level — camera in front of the group looking back at them
-setup_camera(scene, loc=(0, -5.5, 1.5), target_loc=(0, 0, 1.2), lens=35)
-
-# ── Render ───────────────────────────────────────────────────────────────────
-
+# Render
 scene.frame_set(1)
-scene.render.filepath = "/Users/jmordetsky/directors-chair/assets/generated/videos/raider_ambush_v2/layouts/layout_025.png"
+scene.render.filepath = "/Users/jmordetsky/directors-chair/assets/generated/videos/raider_ambush_v2/layouts/layout_026.png"
 bpy.ops.render.render(write_still=True)

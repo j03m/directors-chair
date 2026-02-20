@@ -1,5 +1,7 @@
-Use @Image1 as composition reference. Through a circular sniper scope vignette, black around the edges.
+Use @Image1 as composition reference. High-angle shot looking down at a desert road beside a stopped cab-over box truck. No sniper scope, no vignette — open frame.
 
-View through a rifle scope. The crosshair is now centered on a group of armed raiders surrounding a stopped truck. @Element1 a raider in a hockey mask with sheet metal armor stands over civilians, weapon raised. @Element2 a raider in motorcycle goggles and spiked leather jacket holds a machete. @Element3 a woman with blonde war hawk hair and sleeve tattoos is being forced to her knees. @Element4 a civilian man in a denim jacket is beside her, hands up.
+On the road in front of the truck, four figures kneel in a row with their hands behind their heads: @Element3 a lean woman with blonde war hawk hair, sleeve tattoos, canvas tank top, and cargo pants; and @Element4 a civilian man in a denim jacket and baseball cap; and two other civilian men kneel beside them — all four with hands clasped behind their heads, faces down.
 
-The scope has settled on the holdup. Desert road, harsh light. Photorealistic, cinematic. Sniper POV on the threat.
+Standing behind the kneeling hostages, two raiders hold AK-47 rifles aimed at their backs: @Element1 a raider in a cracked hockey mask with sheet metal armor, and @Element2 a raider in motorcycle goggles and a spiked leather jacket. The raiders loom over the hostages menacingly.
+
+The cab-over box truck sits stopped on the road just behind the scene. Desaturated color palette: sandy tans, dusty greys, rusted iron. Harsh desert sunlight, photorealistic, cinematic.

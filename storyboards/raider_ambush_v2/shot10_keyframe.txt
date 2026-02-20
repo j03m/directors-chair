@@ -1,5 +1,9 @@
-Use @Image1 as composition reference. Ground level, desert road, chaotic action.
+Use @Image1 as composition reference. Medium-wide shot on a desert road beside a stopped cab-over box truck. Desaturated color palette: sandy tans, dusty greys, rusted iron. Chaotic action moment.
 
-@Element1 a raider in a cracked hockey mask and sheet metal armor stands on the left — he is hit by a sniper round from above. Red mist erupts around his head. He is mid-fall, body going limp, knees buckling. His pipe weapon drops from his hand. @Element2 a lean woman with blonde war hawk hair and sleeve tattoos is flat on the desert road to the right, arms over her head, pressing herself into the dirt. A man in a denim jacket lies face-down beside her.
+@Element1 a raider in a cracked white hockey mask with sheet metal armor stands in the center — a sniper round has just hit him in the head. Red mist erupts from the impact. His body is going limp, knees buckling, mid-fall. His AK-47 drops from his hand.
 
-Chaos — dust, red mist, the moment of impact. Desert road, harsh sunlight. Photorealistic, cinematic, intense action scene. No mannequins, no block figures, only photorealistic humans.
+Around him, the hostage lineup is scattering in panic: @Element2 a lean woman with blonde war hawk hair and sleeve tattoos throws herself flat on the ground, arms over her head. @Element4 a civilian man in a denim jacket, @Element5 a civilian man in a mechanic jumpsuit, and @Element6 a civilian man in a military field jacket and keffiyeh — all three diving to the ground, hitting the deck, arms covering their heads.
+
+@Element3 a raider in motorcycle goggles and spiked leather jacket scrambles frantically toward the cab-over box truck for cover, running away from the falling hockey mask raider.
+
+The cab-over box truck is in the background. Desert road, dust, red mist, harsh sunlight. Photorealistic, cinematic. The moment of impact — pure chaos.
