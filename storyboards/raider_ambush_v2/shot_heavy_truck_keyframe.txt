@@ -1,7 +1,7 @@
 Use @Image1 as composition reference. Medium shot from behind the rear of a white cab-over box truck with light weathering, photorealistic, real metal, real paint, real tires. Desaturated color palette: sandy tans, dusty greys, rusted iron.
 
-@Element1 a heavyset raider with a beer gut, wearing an executioner hood, leather vest, and heavy boots crouches behind the truck on the left side of the frame, partially concealed by the truck body. He grips an axe in one hand, watching and waiting. His posture is tense, coiled.
+@Element1 a heavyset raider with a beer gut, wearing an executioner hood, leather vest, and heavy boots stands behind the truck on the left side of the frame, partially concealed by the truck body. He holds an AK-47 in both hands, alert, scanning the road for trouble. His posture is upright and watchful.
 
-To the right of the truck, visible past the truck's edge further down the desert road, the roadblock scene unfolds in the distance — small figures gathered on the road, a group of kneeling captives and armed raiders. The scene is viewed from the opposite end of the road, behind the truck looking toward the confrontation.
+To the right of the truck, visible past the truck's edge further down the desert road, the roadblock scene unfolds in the distance. The scene should be the reference from @Anchor viewed from behind the hostages.
 
 Desert road, harsh light, heat shimmer. Photorealistic, cinematic.

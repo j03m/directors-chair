@@ -171,6 +171,7 @@
             "characters": [
                 "heavy"
             ],
+            "anchor_keyframe": "hockey_threat",
             "layout_prompt_file": "shot_heavy_truck_layout.txt",
             "keyframe_prompt_file": "shot_heavy_truck_keyframe.txt",
             "beats": [

@@ -9,20 +9,29 @@ import fal_client
 from PIL import Image
 
 
-def _translate_prompt(prompt: str, characters: Dict[str, Any]) -> str:
-    """Translate @Image1/@ElementN syntax to positional image references for Gemini.
+def _translate_prompt(prompt: str, characters: Dict[str, Any], has_anchor: bool = False) -> str:
+    """Translate @Image1/@Anchor/@ElementN syntax to positional image references for Gemini.
 
-    Image ordering: image 1 = composition layout, image 2+ = character references
-    in the order they appear in the characters dict.
+    Image ordering:
+      - image 1 = composition layout
+      - image 2 = anchor keyframe (if has_anchor)
+      - image N+ = character references
     """
     # Replace @Image1 with positional reference
     prompt = prompt.replace("@Image1", "image 1 (the composition layout)")
+
+    # Replace @Anchor with positional reference
+    if has_anchor:
+        prompt = prompt.replace("@Anchor", "image 2 (the anchor keyframe from the previous shot)")
+        char_offset = 3  # chars start at image 3
+    else:
+        char_offset = 2  # chars start at image 2
 
     # Replace @ElementN with positional references
     char_names = list(characters.keys())
     for i, char_name in enumerate(char_names):
         element_ref = f"@Element{i + 1}"
-        image_num = i + 2  # image 1 is the comp, chars start at image 2
+        image_num = i + char_offset
         prompt = prompt.replace(element_ref, f"the character from image {image_num}")
 
     return prompt
@@ -35,6 +44,7 @@ def generate_keyframe_nano_banana(
     output_path: str,
     kling_params: Optional[Dict[str, Any]] = None,
     num_images: int = 1,
+    anchor_keyframe_path: Optional[str] = None,
 ) -> bool:
     """Generate a keyframe via Nano Banana Pro (Gemini) image editing.
 
@@ -42,13 +52,15 @@ def generate_keyframe_nano_banana(
     image_urls, with a prompt that references them by position.
 
     Args:
-        prompt: Keyframe prompt (can use @Image1/@ElementN syntax, will be translated)
+        prompt: Keyframe prompt (can use @Image1/@Anchor/@ElementN syntax, will be translated)
         comp_image_path: Path to Blender layout composition PNG
         characters: Dict of character definitions with reference_image
         output_path: Where to save the generated keyframe PNG
         kling_params: Optional dict with aspect_ratio, resolution (reused for consistency)
         num_images: Number of keyframe variants to generate (1-4). If > 1,
                     saves as keyframe_001_v1.png, _v2.png, etc. for review.
+        anchor_keyframe_path: Optional path to an earlier keyframe for scene/style reference.
+                              Passed as image 2; characters shift to image 3+.
     """
     from directors_chair.cli.utils import console
 
@@ -56,13 +68,23 @@ def generate_keyframe_nano_banana(
     aspect_ratio = params.get("aspect_ratio", "16:9")
     resolution = params.get("resolution", "2K")
 
+    has_anchor = anchor_keyframe_path is not None and os.path.exists(anchor_keyframe_path)
+
     # Upload composition reference
     with console.status("[cyan]Uploading composition reference...[/cyan]"):
         comp_url = fal_client.upload_file(comp_image_path)
     console.print(f"  [dim]composition: uploaded[/dim]")
 
-    # Upload character references
     image_urls = [comp_url]
+
+    # Upload anchor keyframe if provided
+    if has_anchor:
+        with console.status("[cyan]Uploading anchor keyframe...[/cyan]"):
+            anchor_url = fal_client.upload_file(anchor_keyframe_path)
+        image_urls.append(anchor_url)
+        console.print(f"  [dim]anchor keyframe: uploaded[/dim]")
+
+    # Upload character references
     char_names = list(characters.keys())
     for char_name in char_names:
         char_def = characters[char_name]
@@ -75,9 +97,20 @@ def generate_keyframe_nano_banana(
     # Build preamble explaining each image
     preamble_parts = ["You are given multiple reference images."]
     preamble_parts.append("Image 1 is a composition layout showing character positions and camera angle.")
+
+    if has_anchor:
+        preamble_parts.append(
+            "Image 2 is an anchor keyframe from a previous shot — use it as a visual reference "
+            "for the scene environment, lighting, and background. Borrow the scene/background "
+            "from this image but apply the composition and camera angle from image 1."
+        )
+        char_offset = 3
+    else:
+        char_offset = 2
+
     for i, char_name in enumerate(char_names):
         desc = characters[char_name].get("description", char_name)
-        preamble_parts.append(f"Image {i + 2} is a reference photo of {char_name}: {desc}.")
+        preamble_parts.append(f"Image {i + char_offset} is a reference photo of {char_name}: {desc}.")
     preamble_parts.append(
         "Generate a single photorealistic cinematic image that matches the composition "
         "layout from image 1, featuring the characters from the reference images in their "
@@ -85,11 +118,12 @@ def generate_keyframe_nano_banana(
     )
     preamble = " ".join(preamble_parts)
 
-    # Translate @Image/@Element references
-    translated_prompt = _translate_prompt(prompt, characters)
+    # Translate @Image/@Anchor/@Element references
+    translated_prompt = _translate_prompt(prompt, characters, has_anchor=has_anchor)
     full_prompt = f"{preamble}\n\n{translated_prompt}"
 
-    console.print(f"  [dim]Images: {len(image_urls)} (1 comp + {len(char_names)} characters)[/dim]")
+    anchor_label = " + 1 anchor" if has_anchor else ""
+    console.print(f"  [dim]Images: {len(image_urls)} (1 comp{anchor_label} + {len(char_names)} characters)[/dim]")
     console.print(f"  [dim]Prompt: {translated_prompt[:80]}...[/dim]")
 
     # Submit to Nano Banana Pro edit (with retry on 500 errors)
