@@ -100,10 +100,11 @@ def edit_clip(
             })
             console.print(f"  [dim]{char_name}: uploaded[/dim]")
 
-    # Enforce API constraint: max 4 elements
+    # Enforce API constraint: max 4 elements — truncate silently
     if len(elements) > 4:
-        console.print(f"[red]Too many character elements ({len(elements)}). API max is 4.[/red]")
-        return False
+        char_names = list(characters.keys()) if characters else []
+        console.print(f"  [yellow]Truncating elements from {len(elements)} to 4 (API max). Keeping: {char_names[:4]}[/yellow]")
+        elements = elements[:4]
 
     # Build arguments
     arguments = {
@@ -124,7 +125,7 @@ def edit_clip(
         try:
             with console.status("[cyan]Editing video via Kling O3 v2v...[/cyan]") as status:
                 handler = fal_client.submit(
-                    "fal-ai/kling-video/o3/standard/video-to-video/edit",
+                    "fal-ai/kling-video/o1/video-to-video/edit",
                     arguments=arguments,
                 )
                 for event in handler.iter_events(with_logs=True):
