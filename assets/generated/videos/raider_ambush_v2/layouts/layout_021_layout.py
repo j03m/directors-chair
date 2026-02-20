@@ -227,68 +227,42 @@ def build_regular_female(name, mat, position, pose="standing"):
                  (x + 0.45, y, z + 0.65), (0.08, 0.08, 0.38))
 
 
-# ── Scene Setup ──────────────────────────────────────────────────────────────
-
+# --- Scene Setup ---
 clean_scene()
 scene = bpy.context.scene
 setup_render(scene)
 add_light(scene)
 
 # Materials
-mat_ground = make_mat("DesertGround", (0.2, 0.15, 0.1, 1))
-mat_gale = make_mat("Gale", (0.5, 0.2, 0.2, 1))
-mat_road = make_mat("Road", (0.12, 0.1, 0.08, 1))
-mat_truck_body = make_mat("TruckBody", (0.35, 0.25, 0.15, 1))
-mat_truck_cab = make_mat("TruckCab", (0.3, 0.2, 0.12, 1))
-mat_truck_wheel = make_mat("TruckWheel", (0.05, 0.05, 0.05, 1))
-mat_truck_window = make_mat("TruckWindow", (0.15, 0.2, 0.3, 1))
-mat_rifle = make_mat("Rifle", (0.08, 0.06, 0.04, 1))
+mat_ground = make_mat("Ground", (0.2, 0.15, 0.1, 1))
+mat_gorilla = make_mat("Gorilla", (0.6, 0.6, 0.65, 1))
+mat_cranial = make_mat("Cranial", (0.25, 0.18, 0.1, 1))
+mat_robot = make_mat("Robot", (0.2, 0.35, 0.5, 1))
 
 # Ground
-add_ground(mat_ground, size=15)
+add_ground(mat_ground)
 
-# Desert road surface
-add_mesh("Road", bpy.ops.mesh.primitive_cube_add, mat_road,
-         (0, 0, 0.01), (2.0, 15.0, 0.01))
+# Cliff edge suggestion — a raised slab behind the figures
+mat_cliff = make_mat("Cliff", (0.3, 0.22, 0.15, 1))
+add_mesh("CliffEdge", bpy.ops.mesh.primitive_cube_add, mat_cliff,
+         (0, 2.0, -0.3), (4, 1.5, 0.3))
 
-# Gale — bent down, using fighting_stance as closest approximation
-# Position her center-frame, slightly left
-build_regular_female("Gale", mat_gale, (0.0, 0.0, 0.0), pose="fighting_stance")
+# Characters — prone large figure (gorilla) and prone regular male (cranial) side by side,
+# turned toward each other; standing regular male (robot) just behind them
 
-# Rifle on the ground near Gale's feet
-add_mesh("Rifle", bpy.ops.mesh.primitive_cylinder_add, mat_rifle,
-         (0.3, -0.2, 0.05), (0.03, 0.03, 0.5),
-         rot=(math.radians(90), 0, math.radians(15)))
+# Gorilla — prone (fallen), head turned right toward Cranial
+build_large_figure("Gorilla", mat_gorilla, (-1.0, 0.0, 0.0), pose="fallen")
 
-# Cab-over truck in background
-# Main cargo box
-add_mesh("Truck_Cargo", bpy.ops.mesh.primitive_cube_add, mat_truck_body,
-         (0.5, 5.0, 1.2), (1.2, 2.0, 1.2))
-# Cab section (over front axle — cab-over style)
-add_mesh("Truck_Cab", bpy.ops.mesh.primitive_cube_add, mat_truck_cab,
-         (0.5, 3.0, 1.3), (1.0, 0.8, 1.0))
-# Windshield
-add_mesh("Truck_Windshield", bpy.ops.mesh.primitive_cube_add, mat_truck_window,
-         (0.5, 2.2, 1.6), (0.85, 0.05, 0.5))
-# Wheels — front pair
-add_mesh("Truck_WheelFL", bpy.ops.mesh.primitive_cylinder_add, mat_truck_wheel,
-         (-0.7, 2.8, 0.3), (0.3, 0.3, 0.12),
-         rot=(math.radians(90), math.radians(90), 0))
-add_mesh("Truck_WheelFR", bpy.ops.mesh.primitive_cylinder_add, mat_truck_wheel,
-         (1.7, 2.8, 0.3), (0.3, 0.3, 0.12),
-         rot=(math.radians(90), math.radians(90), 0))
-# Wheels — rear pair
-add_mesh("Truck_WheelRL", bpy.ops.mesh.primitive_cylinder_add, mat_truck_wheel,
-         (-0.7, 5.5, 0.3), (0.3, 0.3, 0.12),
-         rot=(math.radians(90), math.radians(90), 0))
-add_mesh("Truck_WheelRR", bpy.ops.mesh.primitive_cylinder_add, mat_truck_wheel,
-         (1.7, 5.5, 0.3), (0.3, 0.3, 0.12),
-         rot=(math.radians(90), math.radians(90), 0))
+# Cranial — prone (fallen), positioned to the right, head turned left toward Gorilla
+build_regular_male("Cranial", mat_cranial, (1.0, 0.0, 0.0), pose="fallen")
 
-# Camera — medium shot, eye level (~1.2m height), facing Gale
-setup_camera(scene, loc=(0.0, -4.5, 1.2), target_loc=(0.0, 0.0, 0.9), lens=35)
+# Robot — standing behind the two prone figures
+build_regular_male("Robot", mat_robot, (0.0, 1.5, 0.0), pose="standing")
+
+# Camera — slightly above, medium shot framing all three at the cliff edge
+setup_camera(scene, loc=(0.0, -4.5, 3.5), target_loc=(0.0, 0.5, 0.5), lens=32)
 
 # Render
 scene.frame_set(1)
-scene.render.filepath = "/Users/jmordetsky/directors-chair/assets/generated/videos/raider_ambush_v2/layouts/layout_021.png"
+scene.render.filepath = "/Users/jmordetsky/directors-chair/assets/generated/videos/raider_ambush_v2/layouts/layout_026.png"
 bpy.ops.render.render(write_still=True)

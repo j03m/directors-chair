@@ -79,9 +79,7 @@ def add_ground(mat, size=15):
 
 
 def build_large_figure(name, mat, position, pose="standing"):
-    """Build a large/heavy character from primitives (gorilla-like proportions)."""
     x, y, z = position
-
     if pose == "fallen":
         add_mesh(f"{name}_Body", bpy.ops.mesh.primitive_cube_add, mat,
                  (x, y, z + 0.3), (0.6, 0.4, 0.7),
@@ -96,17 +94,14 @@ def build_large_figure(name, mat, position, pose="standing"):
                  (x + 0.5, y - 0.7, z + 0.1), (0.15, 0.15, 0.45),
                  rot=(math.radians(85), 0, math.radians(-30)))
         return
-
     add_mesh(f"{name}_Body", bpy.ops.mesh.primitive_cube_add, mat,
              (x, y, z + 1.1), (0.65, 0.45, 0.75))
     add_mesh(f"{name}_Head", bpy.ops.mesh.primitive_uv_sphere_add, mat,
              (x, y, z + 2.2), (0.38, 0.33, 0.33))
-
     add_mesh(f"{name}_LegL", bpy.ops.mesh.primitive_cylinder_add, mat,
              (x - 0.4, y, z + 0.0), (0.16, 0.16, 0.45))
     add_mesh(f"{name}_LegR", bpy.ops.mesh.primitive_cylinder_add, mat,
              (x + 0.4, y, z + 0.0), (0.16, 0.16, 0.45))
-
     if pose == "arms_raised":
         add_mesh(f"{name}_ArmL", bpy.ops.mesh.primitive_cylinder_add, mat,
                  (x - 0.8, y, z + 2.4), (0.14, 0.14, 0.55),
@@ -134,9 +129,7 @@ def build_large_figure(name, mat, position, pose="standing"):
 
 
 def build_regular_male(name, mat, position, pose="standing"):
-    """Build a regular male character from primitives."""
     x, y, z = position
-
     if pose == "fallen":
         add_mesh(f"{name}_Body", bpy.ops.mesh.primitive_cube_add, mat,
                  (x, y, z + 0.25), (0.4, 0.3, 0.55),
@@ -151,17 +144,14 @@ def build_regular_male(name, mat, position, pose="standing"):
                  (x + 0.4, y - 0.5, z + 0.08), (0.1, 0.1, 0.4),
                  rot=(math.radians(85), 0, math.radians(-25)))
         return
-
     add_mesh(f"{name}_Body", bpy.ops.mesh.primitive_cube_add, mat,
              (x, y, z + 0.9), (0.4, 0.3, 0.55))
     add_mesh(f"{name}_Head", bpy.ops.mesh.primitive_cube_add, mat,
              (x, y, z + 1.7), (0.2, 0.18, 0.2))
-
     add_mesh(f"{name}_LegL", bpy.ops.mesh.primitive_cylinder_add, mat,
              (x - 0.25, y, z + 0.0), (0.1, 0.1, 0.4))
     add_mesh(f"{name}_LegR", bpy.ops.mesh.primitive_cylinder_add, mat,
              (x + 0.25, y, z + 0.0), (0.1, 0.1, 0.4))
-
     if pose == "arms_raised":
         add_mesh(f"{name}_ArmL", bpy.ops.mesh.primitive_cylinder_add, mat,
                  (x - 0.6, y, z + 2.0), (0.1, 0.1, 0.45),
@@ -184,9 +174,7 @@ def build_regular_male(name, mat, position, pose="standing"):
 
 
 def build_regular_female(name, mat, position, pose="standing"):
-    """Build a regular female character from primitives."""
     x, y, z = position
-
     if pose == "fallen":
         add_mesh(f"{name}_Body", bpy.ops.mesh.primitive_cube_add, mat,
                  (x, y, z + 0.22), (0.35, 0.25, 0.5),
@@ -195,17 +183,14 @@ def build_regular_female(name, mat, position, pose="standing"):
                  (x + 0.7, y - 0.3, z + 0.15), (0.18, 0.16, 0.18),
                  rot=(math.radians(40), math.radians(30), 0))
         return
-
     add_mesh(f"{name}_Body", bpy.ops.mesh.primitive_cube_add, mat,
              (x, y, z + 0.85), (0.35, 0.25, 0.5))
     add_mesh(f"{name}_Head", bpy.ops.mesh.primitive_uv_sphere_add, mat,
              (x, y, z + 1.55), (0.18, 0.16, 0.18))
-
     add_mesh(f"{name}_LegL", bpy.ops.mesh.primitive_cylinder_add, mat,
              (x - 0.2, y, z + 0.0), (0.09, 0.09, 0.38))
     add_mesh(f"{name}_LegR", bpy.ops.mesh.primitive_cylinder_add, mat,
              (x + 0.2, y, z + 0.0), (0.09, 0.09, 0.38))
-
     if pose == "arms_raised":
         add_mesh(f"{name}_ArmL", bpy.ops.mesh.primitive_cylinder_add, mat,
                  (x - 0.5, y, z + 1.8), (0.08, 0.08, 0.4),
@@ -227,84 +212,88 @@ def build_regular_female(name, mat, position, pose="standing"):
                  (x + 0.45, y, z + 0.65), (0.08, 0.08, 0.38))
 
 
-# ── Scene Setup ──────────────────────────────────────────────
+# ── Scene Setup ──────────────────────────────────────────────────────────────
+
 clean_scene()
 scene = bpy.context.scene
 setup_render(scene)
 add_light(scene)
 
-# ── Materials ────────────────────────────────────────────────
-mat_ground = make_mat("Ground", (0.2, 0.15, 0.1, 1))
-mat_road = make_mat("Road", (0.1, 0.08, 0.06, 1))
-mat_truck_cab = make_mat("TruckCab", (0.35, 0.28, 0.2, 1))
-mat_truck_box = make_mat("TruckBox", (0.45, 0.38, 0.28, 1))
-mat_wheel = make_mat("Wheel", (0.05, 0.05, 0.05, 1))
-mat_nomad1 = make_mat("Nomad1Mat", (0.3, 0.4, 0.2, 1))
-mat_nomad2 = make_mat("Nomad2Mat", (0.25, 0.18, 0.1, 1))
-mat_nomad3 = make_mat("Nomad3Mat", (0.6, 0.6, 0.65, 1))
-mat_cranial = make_mat("CranialMat", (0.25, 0.18, 0.1, 1))
-mat_hockey = make_mat("HockeyMat", (0.2, 0.35, 0.5, 1))
-mat_goggles = make_mat("GogglesMat", (0.5, 0.2, 0.2, 1))
+# Materials
+ground_mat = make_mat("Ground", (0.2, 0.15, 0.1, 1))
+hockey_mat = make_mat("Hockey", (0.2, 0.35, 0.5, 1))
+mask_mat = make_mat("Mask", (0.75, 0.72, 0.65, 1))
+mask_dark_mat = make_mat("MaskDark", (0.35, 0.32, 0.28, 1))
+eye_mat = make_mat("Eyes", (0.4, 0.25, 0.15, 1))
+crack_mat = make_mat("Crack", (0.12, 0.1, 0.08, 1))
 
-# ── Ground & Road ────────────────────────────────────────────
-add_ground(mat_ground, size=25)
-add_mesh("Road", bpy.ops.mesh.primitive_cube_add, mat_road,
-         (0, 0, 0.02), (14, 2.5, 0.02))
+# Ground
+add_ground(ground_mat)
 
-# ── Cab-Over Box Truck (stopped beside road, Y+ side) ───────
-# Cab (flat-front cab-over)
-add_mesh("TruckCab", bpy.ops.mesh.primitive_cube_add, mat_truck_cab,
-         (4.5, 4.0, 1.2), (1.0, 1.1, 1.2))
-# Windshield hint (dark strip)
-mat_glass = make_mat("Glass", (0.08, 0.1, 0.12, 1))
-add_mesh("Windshield", bpy.ops.mesh.primitive_cube_add, mat_glass,
-         (4.5, 2.9, 1.6), (0.85, 0.02, 0.5))
-# Cargo box
-add_mesh("TruckBox", bpy.ops.mesh.primitive_cube_add, mat_truck_box,
-         (1.0, 4.0, 1.5), (3.0, 1.2, 1.5))
-# Wheels
-add_mesh("WheelFL", bpy.ops.mesh.primitive_cylinder_add, mat_wheel,
-         (4.0, 2.8, 0.35), (0.35, 0.35, 0.12),
-         rot=(math.radians(90), 0, 0))
-add_mesh("WheelFR", bpy.ops.mesh.primitive_cylinder_add, mat_wheel,
-         (4.0, 5.2, 0.35), (0.35, 0.35, 0.12),
-         rot=(math.radians(90), 0, 0))
-add_mesh("WheelRL", bpy.ops.mesh.primitive_cylinder_add, mat_wheel,
-         (-1.0, 2.8, 0.35), (0.35, 0.35, 0.12),
-         rot=(math.radians(90), 0, 0))
-add_mesh("WheelRR", bpy.ops.mesh.primitive_cylinder_add, mat_wheel,
-         (-1.0, 5.2, 0.35), (0.35, 0.35, 0.12),
-         rot=(math.radians(90), 0, 0))
+# ── Extreme Close-Up: Hockey Mask Face ───────────────────────────────────────
+# This is an extreme close-up of hockey's face/mask filling the frame.
+# We build a custom mask geometry rather than a full body figure.
 
-# ── Four Kneeling Captives (sunk z=-0.45 to simulate kneeling) ──
-# Row on the road, hands behind heads approximated by standing pose sunk down
-build_regular_male("Nomad1", mat_nomad1, (-2.0, 0.0, -0.45), pose="standing")
-build_regular_male("Nomad2", mat_nomad2, (-0.3, 0.0, -0.45), pose="standing")
-build_regular_male("Nomad3", mat_nomad3, (1.4, 0.0, -0.45), pose="standing")
-build_regular_male("Cranial", mat_cranial, (3.1, 0.0, -0.45), pose="standing")
+# Main mask shape — slightly flattened sphere for the hockey mask
+add_mesh("Mask_Base", bpy.ops.mesh.primitive_uv_sphere_add, mask_mat,
+         (0, 0, 1.5), (0.45, 0.35, 0.55))
 
-# ── Standing Raider — leaning menacingly toward first kneeler ──
-# Hockey-mask raider in fighting stance, close to Nomad1
-build_regular_male("Hockey", mat_hockey, (-2.8, -1.5, 0.0), pose="fighting_stance")
+# Mask forehead ridge
+add_mesh("Mask_Brow", bpy.ops.mesh.primitive_cube_add, mask_dark_mat,
+         (0, -0.28, 1.75), (0.38, 0.05, 0.08))
 
-# ── Standing Raider — guarding behind the row with rifle ──
-# Goggles raider standing behind the line
-build_regular_male("Goggles", mat_goggles, (0.5, 2.0, 0.0), pose="standing")
+# Left eye hole — dark opening
+add_mesh("Mask_EyeL", bpy.ops.mesh.primitive_cube_add, eye_mat,
+         (-0.15, -0.32, 1.6), (0.1, 0.06, 0.06))
 
-# ── Rifle prop for guarding raider ──
-mat_metal = make_mat("Metal", (0.15, 0.15, 0.15, 1))
-add_mesh("Rifle", bpy.ops.mesh.primitive_cylinder_add, mat_metal,
-         (0.9, 1.6, 1.1), (0.03, 0.03, 0.6),
-         rot=(math.radians(-15), math.radians(10), 0))
+# Right eye hole — dark opening
+add_mesh("Mask_EyeR", bpy.ops.mesh.primitive_cube_add, eye_mat,
+         (0.15, -0.32, 1.6), (0.1, 0.06, 0.06))
 
-# ── Camera — telephoto sniper-scope perspective ──────────────
-# Crosshair centered on Hockey raider's head
-setup_camera(scene,
-             loc=(-3.0, -22.0, 3.0),
-             target_loc=(-2.8, -1.5, 1.7),
-             lens=85)
+# Menacing eyes visible through holes — slightly recessed glinting spheres
+add_mesh("Eye_L", bpy.ops.mesh.primitive_uv_sphere_add, crack_mat,
+         (-0.15, -0.28, 1.6), (0.06, 0.04, 0.04))
+add_mesh("Eye_R", bpy.ops.mesh.primitive_uv_sphere_add, crack_mat,
+         (0.15, -0.28, 1.6), (0.06, 0.04, 0.04))
 
-# ── Render ───────────────────────────────────────────────────
+# Nose/mouth ventilation holes area
+add_mesh("Mask_Nose", bpy.ops.mesh.primitive_cube_add, mask_dark_mat,
+         (0, -0.33, 1.45), (0.06, 0.04, 0.12))
+
+# Mouth area vent slits
+for i in range(3):
+    offset = (i - 1) * 0.1
+    add_mesh(f"Mask_Vent_{i}", bpy.ops.mesh.primitive_cube_add, mask_dark_mat,
+             (offset, -0.34, 1.3), (0.03, 0.03, 0.06))
+
+# Crack lines across the mask — thin dark strips
+add_mesh("Crack_1", bpy.ops.mesh.primitive_cube_add, crack_mat,
+         (0.08, -0.34, 1.65), (0.01, 0.02, 0.2),
+         rot=(0, 0, math.radians(15)))
+add_mesh("Crack_2", bpy.ops.mesh.primitive_cube_add, crack_mat,
+         (-0.12, -0.33, 1.55), (0.01, 0.02, 0.15),
+         rot=(0, 0, math.radians(-25)))
+add_mesh("Crack_3", bpy.ops.mesh.primitive_cube_add, crack_mat,
+         (0.2, -0.32, 1.45), (0.01, 0.02, 0.12),
+         rot=(0, 0, math.radians(40)))
+
+# Grime/dirt patches — slightly raised darker areas on mask surface
+add_mesh("Grime_1", bpy.ops.mesh.primitive_cube_add, mask_dark_mat,
+         (-0.25, -0.3, 1.7), (0.08, 0.04, 0.06),
+         rot=(0, 0, math.radians(10)))
+add_mesh("Grime_2", bpy.ops.mesh.primitive_cube_add, mask_dark_mat,
+         (0.22, -0.31, 1.35), (0.07, 0.04, 0.05),
+         rot=(0, 0, math.radians(-15)))
+
+# Mask edge/chin
+add_mesh("Mask_Chin", bpy.ops.mesh.primitive_cube_add, mask_mat,
+         (0, -0.3, 1.15), (0.3, 0.08, 0.08))
+
+# ── Camera: Extreme close-up, very tight on the mask ─────────────────────────
+# Camera placed close and directly in front, tight lens for intimate framing
+setup_camera(scene, loc=(0, -1.8, 1.55), target_loc=(0, 0, 1.5), lens=50)
+
+# ── Render ───────────────────────────────────────────────────────────────────
 scene.frame_set(1)
-scene.render.filepath = "/Users/jmordetsky/directors-chair/assets/generated/videos/raider_ambush_v2/layouts/layout_006.png"
+scene.render.filepath = "/Users/jmordetsky/directors-chair/assets/generated/videos/raider_ambush_v2/layouts/layout_004.png"
 bpy.ops.render.render(write_still=True)

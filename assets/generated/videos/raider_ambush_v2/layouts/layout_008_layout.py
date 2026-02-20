@@ -224,107 +224,71 @@ def build_regular_female(name, mat, position, pose="standing"):
                  (x + 0.45, y, z + 0.65), (0.08, 0.08, 0.38))
 
 
-# === Scene Setup ===
+# ── Scene Setup ──────────────────────────────────────────────
 clean_scene()
 scene = bpy.context.scene
 setup_render(scene)
 add_light(scene)
 
-# === Materials ===
-mat_ground = make_mat("Ground", (0.2, 0.15, 0.1, 1))
-mat_gorilla = make_mat("Gorilla", (0.6, 0.6, 0.65, 1))
-mat_cliff = make_mat("Cliff", (0.35, 0.25, 0.15, 1))
-mat_rifle = make_mat("Rifle", (0.12, 0.1, 0.08, 1))
-mat_dust = make_mat("Dust", (0.7, 0.6, 0.4, 1))
+# Materials
+ground_mat = make_mat("Ground", (0.2, 0.15, 0.1, 1))
+road_mat = make_mat("Road", (0.12, 0.1, 0.08, 1))
+truck_body_mat = make_mat("TruckBody", (0.35, 0.28, 0.18, 1))
+truck_cab_mat = make_mat("TruckCab", (0.3, 0.22, 0.14, 1))
+wheel_mat = make_mat("Wheel", (0.05, 0.05, 0.05, 1))
+cranial_mat = make_mat("Cranial", (0.25, 0.18, 0.1, 1))
+gorilla_mat = make_mat("Gorilla", (0.6, 0.6, 0.65, 1))
+robot_mat = make_mat("Robot", (0.2, 0.35, 0.5, 1))
+gale_mat = make_mat("Gale", (0.5, 0.2, 0.2, 1))
+nomad1_mat = make_mat("Nomad1", (0.3, 0.4, 0.2, 1))
+nomad2_mat = make_mat("Nomad2", (0.25, 0.18, 0.1, 1))
 
-# Muzzle flash — bright emissive material
-mat_flash = bpy.data.materials.new("MuzzleFlash")
-mat_flash.use_nodes = True
-bsdf_flash = mat_flash.node_tree.nodes["Principled BSDF"]
-bsdf_flash.inputs["Base Color"].default_value = (1.0, 0.8, 0.2, 1)
-bsdf_flash.inputs["Emission Color"].default_value = (1.0, 0.6, 0.1, 1)
-bsdf_flash.inputs["Emission Strength"].default_value = 15.0
+# Ground
+add_ground(ground_mat, size=20)
 
-# === Ground & Cliff ===
-add_ground(mat_ground, size=20)
+# Desert road — long strip running along X axis
+add_mesh("Road", bpy.ops.mesh.primitive_plane_add, road_mat,
+         (0, 0, 0.01), (20, 2.5, 1))
 
-# Cliff edge — elevated rocky ledge, the figure lies on top
-add_mesh("CliffTop", bpy.ops.mesh.primitive_cube_add, mat_cliff,
-         (0, 0, 1.5), (4, 3, 1.5))
+# ── Cab-Over Box Truck (background, right side of road) ─────
+# Cab (front, boxy cab-over style)
+add_mesh("TruckCab", bpy.ops.mesh.primitive_cube_add, truck_cab_mat,
+         (5.5, 4, 1.3), (1.0, 1.0, 1.3))
+# Cargo box (behind cab)
+add_mesh("TruckBox", bpy.ops.mesh.primitive_cube_add, truck_body_mat,
+         (5.5, 7.5, 1.6), (1.1, 2.5, 1.6))
+# Wheels
+add_mesh("WheelFL", bpy.ops.mesh.primitive_cylinder_add, wheel_mat,
+         (4.3, 3.2, 0.35), (0.35, 0.35, 0.15),
+         rot=(math.radians(90), 0, 0))
+add_mesh("WheelFR", bpy.ops.mesh.primitive_cylinder_add, wheel_mat,
+         (6.7, 3.2, 0.35), (0.35, 0.35, 0.15),
+         rot=(math.radians(90), 0, 0))
+add_mesh("WheelRL", bpy.ops.mesh.primitive_cylinder_add, wheel_mat,
+         (4.3, 8.5, 0.35), (0.35, 0.35, 0.15),
+         rot=(math.radians(90), 0, 0))
+add_mesh("WheelRR", bpy.ops.mesh.primitive_cylinder_add, wheel_mat,
+         (6.7, 8.5, 0.35), (0.35, 0.35, 0.15),
+         rot=(math.radians(90), 0, 0))
 
-# Cliff face — angled slab below the ledge for depth
-add_mesh("CliffFace", bpy.ops.mesh.primitive_cube_add, mat_cliff,
-         (2, 0, 0.5), (1.5, 3, 1.0),
-         rot=(0, math.radians(25), 0))
+# ── Characters ───────────────────────────────────────────────
+# Center figure falling mid-collapse
+build_regular_male("Cranial", cranial_mat, (0, 2, 0), pose="fallen")
 
-# Rocky details on cliff edge
-add_mesh("Rock1", bpy.ops.mesh.primitive_cube_add, mat_cliff,
-         (3.2, -0.8, 2.8), (0.4, 0.3, 0.2),
-         rot=(0, math.radians(10), math.radians(15)))
-add_mesh("Rock2", bpy.ops.mesh.primitive_cube_add, mat_cliff,
-         (3.5, 0.6, 2.7), (0.3, 0.25, 0.15),
-         rot=(math.radians(5), 0, math.radians(-10)))
+# Four figures diving flat, arms over heads
+build_large_figure("Gorilla", gorilla_mat, (-3.5, 1.0, 0), pose="fallen")
+build_regular_female("Gale", gale_mat, (-1.5, -0.5, 0), pose="fallen")
+build_regular_male("Robot", robot_mat, (2.0, -0.5, 0), pose="fallen")
+build_regular_male("Nomad1", nomad1_mat, (3.0, 1.5, 0), pose="fallen")
 
-# === Character — Gorilla prone on cliff edge ===
-# Position on cliff top (z=3), facing +X toward the edge
-build_large_figure("Gorilla", mat_gorilla, (-0.5, 0, 3.0), pose="fallen")
+# One figure running toward truck for cover
+build_regular_male("Nomad2", nomad2_mat, (4.0, 3.5, 0), pose="standing")
 
-# === Rifle — long cylinder extending forward from the prone figure ===
-# Gorilla head is at ~(0.5, -0.4, 3.18), arms extend forward
-add_mesh("Rifle", bpy.ops.mesh.primitive_cylinder_add, mat_rifle,
-         (1.8, -0.2, 3.15), (0.06, 0.06, 1.2),
-         rot=(math.radians(5), math.radians(88), 0))
+# ── Camera ───────────────────────────────────────────────────
+# Medium-wide, medium height, wide enough to capture all chaos
+setup_camera(scene, loc=(-1, -10, 3.5), target_loc=(1, 2, 0.5), lens=26)
 
-# Rifle stock near the gorilla's body
-add_mesh("RifleStock", bpy.ops.mesh.primitive_cube_add, mat_rifle,
-         (0.5, -0.1, 3.1), (0.12, 0.08, 0.2),
-         rot=(0, math.radians(85), 0))
-
-# === Muzzle Flash — bright burst at rifle tip ===
-add_mesh("Flash1", bpy.ops.mesh.primitive_uv_sphere_add, mat_flash,
-         (3.0, -0.2, 3.18), (0.25, 0.35, 0.2))
-add_mesh("Flash2", bpy.ops.mesh.primitive_uv_sphere_add, mat_flash,
-         (3.3, -0.15, 3.22), (0.15, 0.2, 0.12))
-add_mesh("Flash3", bpy.ops.mesh.primitive_cone_add, mat_flash,
-         (3.5, -0.2, 3.15), (0.18, 0.18, 0.4),
-         rot=(0, math.radians(90), 0))
-
-# === Dust kicks — small scattered shapes near the muzzle ===
-add_mesh("Dust1", bpy.ops.mesh.primitive_uv_sphere_add, mat_dust,
-         (2.8, -0.6, 3.0), (0.15, 0.12, 0.08))
-add_mesh("Dust2", bpy.ops.mesh.primitive_uv_sphere_add, mat_dust,
-         (3.1, 0.3, 2.95), (0.12, 0.1, 0.06))
-add_mesh("Dust3", bpy.ops.mesh.primitive_uv_sphere_add, mat_dust,
-         (2.5, -0.4, 3.05), (0.1, 0.15, 0.07))
-add_mesh("Dust4", bpy.ops.mesh.primitive_uv_sphere_add, mat_dust,
-         (3.4, -0.5, 3.1), (0.08, 0.1, 0.05))
-
-# === Distant desert landscape — low flat shapes beyond the cliff ===
-mat_desert = make_mat("Desert", (0.45, 0.35, 0.2, 1))
-add_mesh("DesertFloor", bpy.ops.mesh.primitive_plane_add, mat_desert,
-         (12, 0, -0.5), (10, 15, 1))
-
-mat_mesa = make_mat("Mesa", (0.4, 0.28, 0.15, 1))
-add_mesh("Mesa1", bpy.ops.mesh.primitive_cube_add, mat_mesa,
-         (18, -4, 0.5), (1.5, 1.0, 1.0))
-add_mesh("Mesa2", bpy.ops.mesh.primitive_cube_add, mat_mesa,
-         (15, 5, 0.3), (1.0, 0.8, 0.6))
-
-# === Camera — over the shoulder of the prone gorilla ===
-# Behind and above, looking forward past the figure toward the desert
-setup_camera(scene,
-             loc=(-2.5, 1.8, 5.0),
-             target_loc=(3.0, -0.5, 3.0),
-             lens=32)
-
-# === Additional muzzle flash point light for dramatic illumination ===
-bpy.ops.object.light_add(type='POINT', location=(3.0, -0.2, 3.2))
-flash_light = bpy.context.active_object
-flash_light.name = "FlashLight"
-flash_light.data.energy = 500
-flash_light.data.color = (1.0, 0.7, 0.2)
-
-# === Render ===
+# ── Render ───────────────────────────────────────────────────
 scene.frame_set(1)
-scene.render.filepath = "/Users/jmordetsky/directors-chair/assets/generated/videos/raider_ambush_v2/layouts/layout_008.png"
+scene.render.filepath = "/Users/jmordetsky/directors-chair/assets/generated/videos/raider_ambush_v2/layouts/layout_009.png"
 bpy.ops.render.render(write_still=True)

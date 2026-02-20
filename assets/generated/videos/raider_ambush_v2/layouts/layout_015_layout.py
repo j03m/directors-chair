@@ -101,7 +101,6 @@ def build_large_figure(name, mat, position, pose="standing"):
              (x, y, z + 1.1), (0.65, 0.45, 0.75))
     add_mesh(f"{name}_Head", bpy.ops.mesh.primitive_uv_sphere_add, mat,
              (x, y, z + 2.2), (0.38, 0.33, 0.33))
-
     add_mesh(f"{name}_LegL", bpy.ops.mesh.primitive_cylinder_add, mat,
              (x - 0.4, y, z + 0.0), (0.16, 0.16, 0.45))
     add_mesh(f"{name}_LegR", bpy.ops.mesh.primitive_cylinder_add, mat,
@@ -156,7 +155,6 @@ def build_regular_male(name, mat, position, pose="standing"):
              (x, y, z + 0.9), (0.4, 0.3, 0.55))
     add_mesh(f"{name}_Head", bpy.ops.mesh.primitive_cube_add, mat,
              (x, y, z + 1.7), (0.2, 0.18, 0.2))
-
     add_mesh(f"{name}_LegL", bpy.ops.mesh.primitive_cylinder_add, mat,
              (x - 0.25, y, z + 0.0), (0.1, 0.1, 0.4))
     add_mesh(f"{name}_LegR", bpy.ops.mesh.primitive_cylinder_add, mat,
@@ -200,7 +198,6 @@ def build_regular_female(name, mat, position, pose="standing"):
              (x, y, z + 0.85), (0.35, 0.25, 0.5))
     add_mesh(f"{name}_Head", bpy.ops.mesh.primitive_uv_sphere_add, mat,
              (x, y, z + 1.55), (0.18, 0.16, 0.18))
-
     add_mesh(f"{name}_LegL", bpy.ops.mesh.primitive_cylinder_add, mat,
              (x - 0.2, y, z + 0.0), (0.09, 0.09, 0.38))
     add_mesh(f"{name}_LegR", bpy.ops.mesh.primitive_cylinder_add, mat,
@@ -227,7 +224,7 @@ def build_regular_female(name, mat, position, pose="standing"):
                  (x + 0.45, y, z + 0.65), (0.08, 0.08, 0.38))
 
 
-# ── Scene Setup ──────────────────────────────────────────────────────────────
+# ── Scene setup ──────────────────────────────────────────────────────────────
 
 clean_scene()
 scene = bpy.context.scene
@@ -235,119 +232,81 @@ setup_render(scene)
 add_light(scene)
 
 # Materials
-ground_mat = make_mat("Ground", (0.2, 0.15, 0.1, 1))
-cliff_mat = make_mat("Cliff", (0.35, 0.25, 0.15, 1))
-sky_mat = make_mat("Sky", (0.4, 0.55, 0.75, 1))
-cranial_mat = make_mat("Cranial", (0.25, 0.18, 0.1, 1))
-rifle_mat = make_mat("Rifle", (0.12, 0.12, 0.12, 1))
-flash_mat = make_mat("MuzzleFlash", (1.0, 0.85, 0.2, 1))
-flash_mat.use_nodes = True
-bsdf = flash_mat.node_tree.nodes["Principled BSDF"]
-bsdf.inputs["Emission Color"].default_value = (1.0, 0.85, 0.2, 1)
-bsdf.inputs["Emission Strength"].default_value = 15.0
+mat_ground = make_mat("Ground", (0.2, 0.15, 0.1, 1))
+mat_road = make_mat("Road", (0.12, 0.1, 0.08, 1))
+mat_truck = make_mat("TruckBody", (0.35, 0.25, 0.15, 1))
+mat_truck_cab = make_mat("TruckCab", (0.28, 0.2, 0.12, 1))
+mat_wheels = make_mat("Wheels", (0.05, 0.05, 0.05, 1))
+mat_windshield = make_mat("Windshield", (0.3, 0.35, 0.4, 1))
+mat_hockey = make_mat("Hockey", (0.2, 0.35, 0.5, 1))
+mat_rifle = make_mat("Rifle", (0.15, 0.12, 0.08, 1))
+mat_dust = make_mat("Dust", (0.5, 0.4, 0.25, 1))
 
-# Ground plane (far below — this is the base of the cliff)
-add_ground(ground_mat, size=20)
+# Ground
+add_ground(mat_ground, size=15)
 
-# ── Cliff structure ──────────────────────────────────────────────────────────
-# Large cliff block — the camera looks UP at its edge
-# Cliff top is at z~4, representing a high ledge
-add_mesh("CliffFace", bpy.ops.mesh.primitive_cube_add, cliff_mat,
-         (0, 2, 2.0), (6, 3, 2.0))
+# Desert road — a long flat strip
+add_mesh("Road", bpy.ops.mesh.primitive_cube_add, mat_road,
+         (0, 0, 0.01), (12, 2.5, 0.02))
 
-# Cliff top surface extension
-add_mesh("CliffTop", bpy.ops.mesh.primitive_cube_add, cliff_mat,
-         (0, 4, 3.9), (7, 4, 0.15))
+# ── Cab-over truck on right side ─────────────────────────────────────────────
+truck_x, truck_y = 3.5, 0.5
 
-# Rocky texture blocks on cliff face
-add_mesh("Rock1", bpy.ops.mesh.primitive_cube_add, cliff_mat,
-         (-1.5, 0.2, 1.5), (0.8, 0.4, 0.6),
-         rot=(0, 0, math.radians(12)))
-add_mesh("Rock2", bpy.ops.mesh.primitive_cube_add, cliff_mat,
-         (1.2, 0.5, 2.5), (0.6, 0.3, 0.5),
-         rot=(0, 0, math.radians(-8)))
-add_mesh("Rock3", bpy.ops.mesh.primitive_cube_add, cliff_mat,
-         (0.3, 0.1, 0.8), (1.0, 0.5, 0.4),
-         rot=(math.radians(5), 0, math.radians(5)))
+# Cargo bed (long rectangular box)
+add_mesh("TruckBed", bpy.ops.mesh.primitive_cube_add, mat_truck,
+         (truck_x + 1.5, truck_y, 1.2), (2.0, 1.0, 1.0))
 
-# ── Cranial (prone sniper at cliff edge) ─────────────────────────────────────
-# Prone figure on the cliff top, peering over the edge
-# Position on the cliff top surface, near the lip (low y = closer to edge)
-cx, cy, cz = 0, 2.5, 4.05
+# Cab (flat-front cab-over, sits above front axle)
+add_mesh("TruckCab", bpy.ops.mesh.primitive_cube_add, mat_truck_cab,
+         (truck_x - 0.8, truck_y, 1.3), (0.8, 1.0, 1.1))
 
-# Prone body — rotated to lie flat, oriented toward camera (toward -y)
-add_mesh("Cranial_Body", bpy.ops.mesh.primitive_cube_add, cranial_mat,
-         (cx, cy + 0.5, cz + 0.25), (0.4, 0.3, 0.6),
-         rot=(math.radians(85), 0, 0))
+# Windshield
+add_mesh("Windshield", bpy.ops.mesh.primitive_cube_add, mat_windshield,
+         (truck_x - 1.55, truck_y, 1.6), (0.05, 0.8, 0.6))
 
-# Head — peeking over the edge
-add_mesh("Cranial_Head", bpy.ops.mesh.primitive_cube_add, cranial_mat,
-         (cx, cy - 0.3, cz + 0.2), (0.2, 0.18, 0.2),
-         rot=(math.radians(70), 0, 0))
-
-# Arms — extended forward along rifle
-add_mesh("Cranial_ArmL", bpy.ops.mesh.primitive_cylinder_add, cranial_mat,
-         (cx - 0.25, cy - 0.1, cz + 0.18), (0.08, 0.08, 0.4),
-         rot=(math.radians(85), 0, math.radians(-5)))
-add_mesh("Cranial_ArmR", bpy.ops.mesh.primitive_cylinder_add, cranial_mat,
-         (cx + 0.25, cy - 0.1, cz + 0.18), (0.08, 0.08, 0.4),
-         rot=(math.radians(85), 0, math.radians(5)))
-
-# Legs — stretched back on cliff top
-add_mesh("Cranial_LegL", bpy.ops.mesh.primitive_cylinder_add, cranial_mat,
-         (cx - 0.2, cy + 1.3, cz + 0.12), (0.09, 0.09, 0.5),
-         rot=(math.radians(88), 0, math.radians(-3)))
-add_mesh("Cranial_LegR", bpy.ops.mesh.primitive_cylinder_add, cranial_mat,
-         (cx + 0.2, cy + 1.3, cz + 0.12), (0.09, 0.09, 0.5),
-         rot=(math.radians(88), 0, math.radians(3)))
-
-# ── Rifle ────────────────────────────────────────────────────────────────────
-# Long barrel extending over the cliff lip
-add_mesh("Rifle_Barrel", bpy.ops.mesh.primitive_cylinder_add, rifle_mat,
-         (cx, cy - 0.9, cz + 0.15), (0.03, 0.03, 0.7),
-         rot=(math.radians(88), 0, 0))
-
-# Rifle stock (behind the barrel, under the body)
-add_mesh("Rifle_Stock", bpy.ops.mesh.primitive_cube_add, rifle_mat,
-         (cx, cy + 0.3, cz + 0.12), (0.06, 0.04, 0.25),
-         rot=(math.radians(85), 0, 0))
-
-# ── Muzzle flash ─────────────────────────────────────────────────────────────
-# Bright burst at the tip of the rifle barrel
-flash_x, flash_y, flash_z = cx, cy - 1.6, cz + 0.12
-
-add_mesh("Flash_Core", bpy.ops.mesh.primitive_uv_sphere_add, flash_mat,
-         (flash_x, flash_y, flash_z), (0.15, 0.15, 0.15))
-
-# Flash spikes radiating outward
-add_mesh("Flash_Spike1", bpy.ops.mesh.primitive_cone_add, flash_mat,
-         (flash_x, flash_y - 0.25, flash_z), (0.08, 0.08, 0.2),
+# Wheels
+add_mesh("WheelFL", bpy.ops.mesh.primitive_cylinder_add, mat_wheels,
+         (truck_x - 0.8, truck_y - 1.05, 0.35), (0.35, 0.35, 0.15),
          rot=(math.radians(90), 0, 0))
-add_mesh("Flash_Spike2", bpy.ops.mesh.primitive_cone_add, flash_mat,
-         (flash_x - 0.15, flash_y - 0.1, flash_z + 0.1), (0.06, 0.06, 0.15),
-         rot=(math.radians(60), 0, math.radians(-40)))
-add_mesh("Flash_Spike3", bpy.ops.mesh.primitive_cone_add, flash_mat,
-         (flash_x + 0.15, flash_y - 0.1, flash_z + 0.1), (0.06, 0.06, 0.15),
-         rot=(math.radians(60), 0, math.radians(40)))
-add_mesh("Flash_Spike4", bpy.ops.mesh.primitive_cone_add, flash_mat,
-         (flash_x, flash_y - 0.1, flash_z - 0.12), (0.06, 0.06, 0.15),
-         rot=(math.radians(120), 0, 0))
+add_mesh("WheelFR", bpy.ops.mesh.primitive_cylinder_add, mat_wheels,
+         (truck_x - 0.8, truck_y + 1.05, 0.35), (0.35, 0.35, 0.15),
+         rot=(math.radians(90), 0, 0))
+add_mesh("WheelRL", bpy.ops.mesh.primitive_cylinder_add, mat_wheels,
+         (truck_x + 2.5, truck_y - 1.05, 0.35), (0.35, 0.35, 0.15),
+         rot=(math.radians(90), 0, 0))
+add_mesh("WheelRR", bpy.ops.mesh.primitive_cylinder_add, mat_wheels,
+         (truck_x + 2.5, truck_y + 1.05, 0.35), (0.35, 0.35, 0.15),
+         rot=(math.radians(90), 0, 0))
 
-# Add a point light at the muzzle flash for glow
-bpy.ops.object.light_add(type='POINT', location=(flash_x, flash_y, flash_z))
-flash_light = bpy.context.active_object
-flash_light.name = "FlashLight"
-flash_light.data.energy = 500
-flash_light.data.color = (1.0, 0.85, 0.3)
+# ── Figure staggering backward from behind truck ─────────────────────────────
+# Positioned just left of the truck cab, leaning/falling backward after being hit
+build_regular_male("hockey", mat_hockey, (truck_x - 2.5, truck_y - 0.3, 0), pose="fallen")
 
-# ── Camera — low angle looking up at cliff edge ─────────────────────────────
-# Camera is below and in front of the cliff, looking up at the prone sniper
+# ── Rifle flying from his hands ──────────────────────────────────────────────
+# Rifle tumbling in the air between the figure and the road
+add_mesh("Rifle_Barrel", bpy.ops.mesh.primitive_cylinder_add, mat_rifle,
+         (truck_x - 3.5, truck_y - 0.8, 0.6), (0.03, 0.03, 0.5),
+         rot=(math.radians(70), math.radians(25), math.radians(-40)))
+add_mesh("Rifle_Stock", bpy.ops.mesh.primitive_cube_add, mat_rifle,
+         (truck_x - 3.2, truck_y - 0.6, 0.85), (0.05, 0.12, 0.15),
+         rot=(math.radians(70), math.radians(25), math.radians(-40)))
+
+# ── Dust clouds for chaos ────────────────────────────────────────────────────
+add_mesh("Dust1", bpy.ops.mesh.primitive_uv_sphere_add, mat_dust,
+         (truck_x - 2.0, truck_y + 0.5, 0.3), (0.6, 0.4, 0.25))
+add_mesh("Dust2", bpy.ops.mesh.primitive_uv_sphere_add, mat_dust,
+         (truck_x - 3.0, truck_y - 1.0, 0.15), (0.5, 0.35, 0.2))
+add_mesh("Dust3", bpy.ops.mesh.primitive_uv_sphere_add, mat_dust,
+         (truck_x - 1.5, truck_y - 0.8, 0.4), (0.4, 0.3, 0.2))
+
+# ── Camera — medium shot framing the action ──────────────────────────────────
+# Camera positioned front-left, capturing the truck, falling figure, and flying rifle
 setup_camera(scene,
-             loc=(0, -6, 0.5),
-             target_loc=(0, 1, 4.0),
-             lens=24)
+             loc=(truck_x - 6.0, truck_y - 5.0, 2.5),
+             target_loc=(truck_x - 1.5, truck_y, 0.8),
+             lens=35)
 
-# ── Render ───────────────────────────────────────────────────────────────────
+# ── Render ────────────────────────────────────────────────────────────────────
 scene.frame_set(1)
-scene.render.filepath = "/Users/jmordetsky/directors-chair/assets/generated/videos/raider_ambush_v2/layouts/layout_017.png"
+scene.render.filepath = "/Users/jmordetsky/directors-chair/assets/generated/videos/raider_ambush_v2/layouts/layout_015.png"
 bpy.ops.render.render(write_still=True)

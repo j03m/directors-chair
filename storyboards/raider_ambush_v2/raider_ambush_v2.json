@@ -99,25 +99,6 @@
             ]
         },
         {
-            "name": "scope_holdup",
-            "characters": [
-                "hockey",
-                "goggles",
-                "gale",
-                "nomad1",
-                "nomad2",
-                "nomad3"
-            ],
-            "layout_prompt_file": "shot02b_layout.txt",
-            "keyframe_prompt_file": "shot02b_keyframe.txt",
-            "beats": [
-                {
-                    "prompt_file": "shot02b_beat.txt",
-                    "duration": "3"
-                }
-            ]
-        },
-        {
             "name": "hockey_threat",
             "characters": [
                 "hockey",
@@ -391,20 +372,6 @@
             ]
         },
         {
-            "name": "gale_grabs_gun",
-            "characters": [
-                "gale"
-            ],
-            "layout_prompt_file": "shot22_layout.txt",
-            "keyframe_prompt_file": "shot22_keyframe.txt",
-            "beats": [
-                {
-                    "prompt_file": "shot22_beat.txt",
-                    "duration": "5"
-                }
-            ]
-        },
-        {
             "name": "gale_aims_heavy",
             "characters": [
                 "gale",
@@ -415,34 +382,6 @@
             "beats": [
                 {
                     "prompt_file": "shot23_beat.txt",
-                    "duration": "3"
-                }
-            ]
-        },
-        {
-            "name": "heavy_knocked_down",
-            "characters": [
-                "heavy"
-            ],
-            "layout_prompt_file": "shot24_layout.txt",
-            "keyframe_prompt_file": "shot24_keyframe.txt",
-            "beats": [
-                {
-                    "prompt_file": "shot24_beat.txt",
-                    "duration": "3"
-                }
-            ]
-        },
-        {
-            "name": "gale_looks_up",
-            "characters": [
-                "gale"
-            ],
-            "layout_prompt_file": "shot25_layout.txt",
-            "keyframe_prompt_file": "shot25_keyframe.txt",
-            "beats": [
-                {
-                    "prompt_file": "shot25_beat.txt",
                     "duration": "3"
                 }
             ]
@@ -460,6 +399,20 @@
                 {
                     "prompt_file": "shot26_beat.txt",
                     "duration": "5"
+                }
+            ]
+        },
+        {
+            "name": "gale_looks_up",
+            "characters": [
+                "gale"
+            ],
+            "layout_prompt_file": "shot25_layout.txt",
+            "keyframe_prompt_file": "shot25_keyframe.txt",
+            "beats": [
+                {
+                    "prompt_file": "shot25_beat.txt",
+                    "duration": "3"
                 }
             ]
         },

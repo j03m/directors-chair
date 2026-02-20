@@ -79,7 +79,6 @@ def add_ground(mat, size=15):
 
 
 def build_large_figure(name, mat, position, pose="standing"):
-    """Build a large/heavy character from primitives (gorilla-like proportions)."""
     x, y, z = position
 
     if pose == "fallen":
@@ -134,7 +133,6 @@ def build_large_figure(name, mat, position, pose="standing"):
 
 
 def build_regular_male(name, mat, position, pose="standing"):
-    """Build a regular male character from primitives."""
     x, y, z = position
 
     if pose == "fallen":
@@ -184,7 +182,6 @@ def build_regular_male(name, mat, position, pose="standing"):
 
 
 def build_regular_female(name, mat, position, pose="standing"):
-    """Build a regular female character from primitives."""
     x, y, z = position
 
     if pose == "fallen":
@@ -227,8 +224,7 @@ def build_regular_female(name, mat, position, pose="standing"):
                  (x + 0.45, y, z + 0.65), (0.08, 0.08, 0.38))
 
 
-# ── Scene Setup ──────────────────────────────────────────────────────────────
-
+# --- Scene Setup ---
 clean_scene()
 scene = bpy.context.scene
 setup_render(scene)
@@ -237,51 +233,26 @@ add_light(scene)
 # Materials
 mat_ground = make_mat("Ground", (0.2, 0.15, 0.1, 1))
 mat_gale = make_mat("Gale", (0.5, 0.2, 0.2, 1))
-mat_heavy = make_mat("Heavy", (0.25, 0.18, 0.1, 1))
-mat_truck = make_mat("Truck", (0.35, 0.25, 0.15, 1))
-mat_road = make_mat("Road", (0.12, 0.1, 0.08, 1))
+mat_cranial = make_mat("Cranial", (0.25, 0.18, 0.1, 1))
+mat_gorilla = make_mat("Gorilla", (0.6, 0.6, 0.65, 1))
+mat_robot = make_mat("Robot", (0.2, 0.35, 0.5, 1))
 
 # Ground
-add_ground(mat_ground, size=20)
+add_ground(mat_ground)
 
-# Desert road strip running from foreground-left to background-right
-add_mesh("Road", bpy.ops.mesh.primitive_cube_add, mat_road,
-         (3, 2, 0.01), (12, 1.2, 0.01),
-         rot=(0, 0, math.radians(25)))
+# Characters
+# Gale center, standing, hand shielding eyes (arms_raised approximates this)
+build_regular_female("Gale", mat_gale, (0, 0, 0), pose="arms_raised")
 
-# Gale — left foreground, fighting stance (aiming weapon)
-build_regular_female("Gale", mat_gale, (-1.5, -0.5, 0), pose="fighting_stance")
+# Other figures getting up from the ground around her
+build_regular_male("Cranial", mat_cranial, (-2.0, 1.0, 0), pose="fallen")
+build_large_figure("Gorilla", mat_gorilla, (2.5, 0.5, 0), pose="fallen")
+build_regular_male("Robot", mat_robot, (-1.5, -1.5, 0), pose="fallen")
 
-# Weapon — small cylinder extending forward from Gale's right arm
-add_mesh("Gale_Weapon", bpy.ops.mesh.primitive_cylinder_add, mat_truck,
-         (-1.1, -1.0, 1.15), (0.03, 0.03, 0.5),
-         rot=(math.radians(-70), 0, math.radians(10)))
-
-# Heavy — distant right, standing near truck
-build_large_figure("Heavy", mat_heavy, (8, 6, 0), pose="standing")
-
-# Truck — simple box shapes near Heavy
-add_mesh("Truck_Cab", bpy.ops.mesh.primitive_cube_add, mat_truck,
-         (9.5, 6.5, 1.0), (1.0, 0.8, 0.9))
-add_mesh("Truck_Bed", bpy.ops.mesh.primitive_cube_add, mat_truck,
-         (11.5, 6.5, 0.7), (1.5, 0.8, 0.6))
-add_mesh("Truck_WheelFL", bpy.ops.mesh.primitive_cylinder_add, mat_ground,
-         (8.8, 5.6, 0.3), (0.3, 0.3, 0.15),
-         rot=(math.radians(90), 0, 0))
-add_mesh("Truck_WheelFR", bpy.ops.mesh.primitive_cylinder_add, mat_ground,
-         (8.8, 7.4, 0.3), (0.3, 0.3, 0.15),
-         rot=(math.radians(90), 0, 0))
-add_mesh("Truck_WheelRL", bpy.ops.mesh.primitive_cylinder_add, mat_ground,
-         (12.0, 5.6, 0.3), (0.3, 0.3, 0.15),
-         rot=(math.radians(90), 0, 0))
-add_mesh("Truck_WheelRR", bpy.ops.mesh.primitive_cylinder_add, mat_ground,
-         (12.0, 7.4, 0.3), (0.3, 0.3, 0.15),
-         rot=(math.radians(90), 0, 0))
-
-# Camera — over Gale's right shoulder, looking toward Heavy
-setup_camera(scene, loc=(-1.0, -1.8, 1.6), target_loc=(8, 6, 1.0), lens=35)
+# Camera — medium shot, eye level, facing Gale
+setup_camera(scene, loc=(0, -5.0, 1.5), target_loc=(0, 0, 1.2), lens=35)
 
 # Render
 scene.frame_set(1)
-scene.render.filepath = "/Users/jmordetsky/directors-chair/assets/generated/videos/raider_ambush_v2/layouts/layout_022.png"
+scene.render.filepath = "/Users/jmordetsky/directors-chair/assets/generated/videos/raider_ambush_v2/layouts/layout_023.png"
 bpy.ops.render.render(write_still=True)

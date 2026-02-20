@@ -79,7 +79,6 @@ def add_ground(mat, size=15):
 
 
 def build_large_figure(name, mat, position, pose="standing"):
-    """Build a large/heavy character from primitives (gorilla-like proportions)."""
     x, y, z = position
 
     if pose == "fallen":
@@ -101,6 +100,7 @@ def build_large_figure(name, mat, position, pose="standing"):
              (x, y, z + 1.1), (0.65, 0.45, 0.75))
     add_mesh(f"{name}_Head", bpy.ops.mesh.primitive_uv_sphere_add, mat,
              (x, y, z + 2.2), (0.38, 0.33, 0.33))
+
     add_mesh(f"{name}_LegL", bpy.ops.mesh.primitive_cylinder_add, mat,
              (x - 0.4, y, z + 0.0), (0.16, 0.16, 0.45))
     add_mesh(f"{name}_LegR", bpy.ops.mesh.primitive_cylinder_add, mat,
@@ -133,7 +133,6 @@ def build_large_figure(name, mat, position, pose="standing"):
 
 
 def build_regular_male(name, mat, position, pose="standing"):
-    """Build a regular male character from primitives."""
     x, y, z = position
 
     if pose == "fallen":
@@ -155,6 +154,7 @@ def build_regular_male(name, mat, position, pose="standing"):
              (x, y, z + 0.9), (0.4, 0.3, 0.55))
     add_mesh(f"{name}_Head", bpy.ops.mesh.primitive_cube_add, mat,
              (x, y, z + 1.7), (0.2, 0.18, 0.2))
+
     add_mesh(f"{name}_LegL", bpy.ops.mesh.primitive_cylinder_add, mat,
              (x - 0.25, y, z + 0.0), (0.1, 0.1, 0.4))
     add_mesh(f"{name}_LegR", bpy.ops.mesh.primitive_cylinder_add, mat,
@@ -182,7 +182,6 @@ def build_regular_male(name, mat, position, pose="standing"):
 
 
 def build_regular_female(name, mat, position, pose="standing"):
-    """Build a regular female character from primitives."""
     x, y, z = position
 
     if pose == "fallen":
@@ -198,6 +197,7 @@ def build_regular_female(name, mat, position, pose="standing"):
              (x, y, z + 0.85), (0.35, 0.25, 0.5))
     add_mesh(f"{name}_Head", bpy.ops.mesh.primitive_uv_sphere_add, mat,
              (x, y, z + 1.55), (0.18, 0.16, 0.18))
+
     add_mesh(f"{name}_LegL", bpy.ops.mesh.primitive_cylinder_add, mat,
              (x - 0.2, y, z + 0.0), (0.09, 0.09, 0.38))
     add_mesh(f"{name}_LegR", bpy.ops.mesh.primitive_cylinder_add, mat,
@@ -224,86 +224,51 @@ def build_regular_female(name, mat, position, pose="standing"):
                  (x + 0.45, y, z + 0.65), (0.08, 0.08, 0.38))
 
 
-# ── Scene Setup ──────────────────────────────────────────────
+# === SCENE SETUP ===
 clean_scene()
 scene = bpy.context.scene
 setup_render(scene)
 add_light(scene)
 
-# ── Materials ────────────────────────────────────────────────
-ground_mat = make_mat("Ground", (0.2, 0.15, 0.1, 1))
-road_mat = make_mat("Road", (0.12, 0.1, 0.08, 1))
-heavy_mat = make_mat("Heavy", (0.25, 0.18, 0.1, 1))
-truck_body_mat = make_mat("TruckBody", (0.35, 0.28, 0.2, 1))
-truck_cab_mat = make_mat("TruckCab", (0.4, 0.32, 0.22, 1))
-truck_dark_mat = make_mat("TruckDark", (0.1, 0.08, 0.06, 1))
-windshield_mat = make_mat("Windshield", (0.25, 0.35, 0.45, 1))
-headlight_mat = make_mat("Headlight", (0.9, 0.85, 0.6, 1))
+# Materials
+mat_ground = make_mat("Ground", (0.2, 0.15, 0.1, 1))
+mat_cliff = make_mat("Cliff", (0.35, 0.25, 0.15, 1))
+mat_cliff_dark = make_mat("CliffDark", (0.25, 0.18, 0.1, 1))
+mat_silhouette = make_mat("Silhouette", (0.05, 0.04, 0.03, 1))
 
-# ── Ground + Road ────────────────────────────────────────────
-add_ground(ground_mat, size=20)
-# Desert road strip running along Y axis
-add_mesh("Road", bpy.ops.mesh.primitive_cube_add, road_mat,
-         (0, 0, 0.01), (2.5, 20, 0.01))
-# Road edge markings
-road_edge_mat = make_mat("RoadEdge", (0.25, 0.2, 0.15, 1))
-add_mesh("RoadEdgeL", bpy.ops.mesh.primitive_cube_add, road_edge_mat,
-         (-2.5, 0, 0.02), (0.05, 20, 0.01))
-add_mesh("RoadEdgeR", bpy.ops.mesh.primitive_cube_add, road_edge_mat,
-         (2.5, 0, 0.02), (0.05, 20, 0.01))
+# Ground plane (desert floor far below)
+add_ground(mat_ground, size=30)
 
-# ── Heavy Character — knocked backwards, airborne ───────────
-# Elevated z=0.6 to convey being airborne off his feet
-build_large_figure("Heavy", heavy_mat, (0, -0.5, 0.6), pose="fallen")
+# Massive cliff structure — tall vertical wall
+add_mesh("CliffBase", bpy.ops.mesh.primitive_cube_add, mat_cliff,
+         (0, 8, 5), (6, 3, 5))
+add_mesh("CliffMid", bpy.ops.mesh.primitive_cube_add, mat_cliff_dark,
+         (1, 9, 12), (5, 2.5, 3))
+add_mesh("CliffTop", bpy.ops.mesh.primitive_cube_add, mat_cliff,
+         (0, 10, 17), (7, 2, 2))
+add_mesh("CliffLedge", bpy.ops.mesh.primitive_cube_add, mat_cliff_dark,
+         (-2, 7, 8), (3, 2, 4))
+add_mesh("CliffSpire", bpy.ops.mesh.primitive_cube_add, mat_cliff,
+         (3, 11, 14), (2, 1.5, 5))
 
-# ── Cab-Over Truck — behind the heavy figure ─────────────────
-tx, ty = 0, 4.5
-# Cab (flat-front cab-over design)
-add_mesh("TruckCab", bpy.ops.mesh.primitive_cube_add, truck_cab_mat,
-         (tx, ty, 1.4), (1.1, 0.9, 1.1))
-# Windshield (angled glass on front of cab)
-add_mesh("Windshield", bpy.ops.mesh.primitive_cube_add, windshield_mat,
-         (tx, ty - 0.85, 1.8), (0.85, 0.05, 0.5),
-         rot=(math.radians(10), 0, 0))
-# Cargo bed / flatbed behind cab
-add_mesh("TruckBed", bpy.ops.mesh.primitive_cube_add, truck_body_mat,
-         (tx, ty + 2.5, 1.0), (1.15, 2.0, 0.7))
-# Bed side rails
-add_mesh("RailL", bpy.ops.mesh.primitive_cube_add, truck_dark_mat,
-         (tx - 1.15, ty + 2.5, 1.5), (0.05, 2.0, 0.2))
-add_mesh("RailR", bpy.ops.mesh.primitive_cube_add, truck_dark_mat,
-         (tx + 1.15, ty + 2.5, 1.5), (0.05, 2.0, 0.2))
-# Front bumper / bull bar
-add_mesh("Bumper", bpy.ops.mesh.primitive_cube_add, truck_dark_mat,
-         (tx, ty - 1.0, 0.55), (1.2, 0.12, 0.35))
-# Headlights
-add_mesh("HeadlightL", bpy.ops.mesh.primitive_cube_add, headlight_mat,
-         (tx - 0.7, ty - 0.95, 1.1), (0.2, 0.06, 0.15))
-add_mesh("HeadlightR", bpy.ops.mesh.primitive_cube_add, headlight_mat,
-         (tx + 0.7, ty - 0.95, 1.1), (0.2, 0.06, 0.15))
-# Wheels — front pair
-add_mesh("WheelFL", bpy.ops.mesh.primitive_cylinder_add, truck_dark_mat,
-         (tx - 1.2, ty - 0.3, 0.35), (0.35, 0.35, 0.18),
-         rot=(0, math.radians(90), 0))
-add_mesh("WheelFR", bpy.ops.mesh.primitive_cylinder_add, truck_dark_mat,
-         (tx + 1.2, ty - 0.3, 0.35), (0.35, 0.35, 0.18),
-         rot=(0, math.radians(90), 0))
-# Wheels — rear pair
-add_mesh("WheelRL", bpy.ops.mesh.primitive_cylinder_add, truck_dark_mat,
-         (tx - 1.2, ty + 3.5, 0.35), (0.35, 0.35, 0.18),
-         rot=(0, math.radians(90), 0))
-add_mesh("WheelRR", bpy.ops.mesh.primitive_cylinder_add, truck_dark_mat,
-         (tx + 1.2, ty + 3.5, 0.35), (0.35, 0.35, 0.18),
-         rot=(0, math.radians(90), 0))
-# Exhaust stack on cab
-add_mesh("Exhaust", bpy.ops.mesh.primitive_cylinder_add, truck_dark_mat,
-         (tx + 0.9, ty + 0.3, 2.5), (0.08, 0.08, 0.6))
+# Three tiny silhouetted figures at the top edge of the cliff
+# They should be very small — this is a very wide shot, figures are distant
+build_regular_male("Figure1", mat_silhouette, (-1.5, 10, 19), pose="standing")
+build_regular_male("Figure2", mat_silhouette, (0, 10, 19), pose="standing")
+build_regular_male("Figure3", mat_silhouette, (1.5, 10, 19), pose="standing")
 
-# ── Camera — medium shot from front-side ─────────────────────
-# Positioned to frame the heavy figure mid-air with truck visible behind
-setup_camera(scene, (4.5, -3.5, 2.0), (0, 0.5, 1.0), lens=32)
+# Scale figures down to appear tiny and distant on the cliff edge
+for suffix in ["_Body", "_Head", "_LegL", "_LegR", "_ArmL", "_ArmR"]:
+    for fig_name in ["Figure1", "Figure2", "Figure3"]:
+        obj_name = f"{fig_name}{suffix}"
+        if obj_name in bpy.data.objects:
+            obj = bpy.data.objects[obj_name]
+            obj.scale = tuple(s * 0.35 for s in obj.scale)
 
-# ── Render ───────────────────────────────────────────────────
+# Camera far below and far away, looking up at the cliff top
+setup_camera(scene, loc=(0, -25, 3), target_loc=(0, 10, 16), lens=24)
+
+# Render
 scene.frame_set(1)
-scene.render.filepath = "/Users/jmordetsky/directors-chair/assets/generated/videos/raider_ambush_v2/layouts/layout_023.png"
+scene.render.filepath = "/Users/jmordetsky/directors-chair/assets/generated/videos/raider_ambush_v2/layouts/layout_027.png"
 bpy.ops.render.render(write_still=True)

@@ -224,89 +224,113 @@ def build_regular_female(name, mat, position, pose="standing"):
                  (x + 0.45, y, z + 0.65), (0.08, 0.08, 0.38))
 
 
-# ── Scene setup ──────────────────────────────────────────────────────────────
+# ── Scene Setup ──────────────────────────────────────────────────────────────
 
 clean_scene()
 scene = bpy.context.scene
 setup_render(scene)
 add_light(scene)
 
-# Materials
-mat_ground = make_mat("Ground", (0.2, 0.15, 0.1, 1))
-mat_road = make_mat("Road", (0.12, 0.1, 0.08, 1))
-mat_truck = make_mat("TruckBody", (0.35, 0.25, 0.15, 1))
-mat_truck_cab = make_mat("TruckCab", (0.28, 0.2, 0.12, 1))
-mat_wheels = make_mat("Wheels", (0.05, 0.05, 0.05, 1))
-mat_windshield = make_mat("Windshield", (0.3, 0.35, 0.4, 1))
-mat_hockey = make_mat("Hockey", (0.2, 0.35, 0.5, 1))
-mat_rifle = make_mat("Rifle", (0.15, 0.12, 0.08, 1))
-mat_dust = make_mat("Dust", (0.5, 0.4, 0.25, 1))
+# ── Materials ────────────────────────────────────────────────────────────────
 
-# Ground
-add_ground(mat_ground, size=15)
+ground_mat = make_mat("Ground", (0.2, 0.15, 0.1, 1))
+road_mat = make_mat("Road", (0.25, 0.22, 0.18, 1))
+rifle_metal_mat = make_mat("RifleMetal", (0.12, 0.12, 0.13, 1))
+rifle_wood_mat = make_mat("RifleWood", (0.3, 0.18, 0.08, 1))
+truck_mat = make_mat("Truck", (0.35, 0.28, 0.2, 1))
+tire_mat = make_mat("Tire", (0.08, 0.08, 0.08, 1))
+cranial_mat = make_mat("Cranial", (0.25, 0.18, 0.1, 1))
 
-# Desert road — a long flat strip
-add_mesh("Road", bpy.ops.mesh.primitive_cube_add, mat_road,
-         (0, 0, 0.01), (12, 2.5, 0.02))
+# ── Ground ───────────────────────────────────────────────────────────────────
 
-# ── Cab-over truck on right side ─────────────────────────────────────────────
-truck_x, truck_y = 3.5, 0.5
+add_ground(ground_mat, size=15)
 
-# Cargo bed (long rectangular box)
-add_mesh("TruckBed", bpy.ops.mesh.primitive_cube_add, mat_truck,
-         (truck_x + 1.5, truck_y, 1.2), (2.0, 1.0, 1.0))
+# Desert road surface strip
+add_mesh("Road", bpy.ops.mesh.primitive_cube_add, road_mat,
+         (0, 0, 0.005), (2.0, 15.0, 0.005))
 
-# Cab (flat-front cab-over, sits above front axle)
-add_mesh("TruckCab", bpy.ops.mesh.primitive_cube_add, mat_truck_cab,
-         (truck_x - 0.8, truck_y, 1.3), (0.8, 1.0, 1.1))
+# Scattered ground debris near the rifle for detail
+add_mesh("Debris1", bpy.ops.mesh.primitive_cube_add, ground_mat,
+         (0.3, -0.2, 0.01), (0.06, 0.04, 0.01),
+         rot=(0, 0, math.radians(35)))
+add_mesh("Debris2", bpy.ops.mesh.primitive_cube_add, ground_mat,
+         (-0.15, 0.1, 0.01), (0.04, 0.03, 0.008),
+         rot=(0, 0, math.radians(-20)))
+add_mesh("Debris3", bpy.ops.mesh.primitive_cube_add, ground_mat,
+         (0.12, 0.25, 0.008), (0.05, 0.025, 0.008),
+         rot=(0, 0, math.radians(55)))
 
-# Windshield
-add_mesh("Windshield", bpy.ops.mesh.primitive_cube_add, mat_windshield,
-         (truck_x - 1.55, truck_y, 1.6), (0.05, 0.8, 0.6))
+# ── Rifle (center of frame, lying on ground) ────────────────────────────────
 
-# Wheels
-add_mesh("WheelFL", bpy.ops.mesh.primitive_cylinder_add, mat_wheels,
-         (truck_x - 0.8, truck_y - 1.05, 0.35), (0.35, 0.35, 0.15),
-         rot=(math.radians(90), 0, 0))
-add_mesh("WheelFR", bpy.ops.mesh.primitive_cylinder_add, mat_wheels,
-         (truck_x - 0.8, truck_y + 1.05, 0.35), (0.35, 0.35, 0.15),
-         rot=(math.radians(90), 0, 0))
-add_mesh("WheelRL", bpy.ops.mesh.primitive_cylinder_add, mat_wheels,
-         (truck_x + 2.5, truck_y - 1.05, 0.35), (0.35, 0.35, 0.15),
-         rot=(math.radians(90), 0, 0))
-add_mesh("WheelRR", bpy.ops.mesh.primitive_cylinder_add, mat_wheels,
-         (truck_x + 2.5, truck_y + 1.05, 0.35), (0.35, 0.35, 0.15),
-         rot=(math.radians(90), 0, 0))
+# Barrel — long thin cylinder lying flat
+add_mesh("Rifle_Barrel", bpy.ops.mesh.primitive_cylinder_add, rifle_metal_mat,
+         (0.0, 0.15, 0.04), (0.018, 0.018, 0.45),
+         rot=(math.radians(90), 0, math.radians(8)))
 
-# ── Figure staggering backward from behind truck ─────────────────────────────
-# Positioned just left of the truck cab, leaning/falling backward after being hit
-build_regular_male("hockey", mat_hockey, (truck_x - 2.5, truck_y - 0.3, 0), pose="fallen")
+# Receiver/action body
+add_mesh("Rifle_Receiver", bpy.ops.mesh.primitive_cube_add, rifle_metal_mat,
+         (0.0, -0.18, 0.04), (0.03, 0.12, 0.04),
+         rot=(0, 0, math.radians(8)))
 
-# ── Rifle flying from his hands ──────────────────────────────────────────────
-# Rifle tumbling in the air between the figure and the road
-add_mesh("Rifle_Barrel", bpy.ops.mesh.primitive_cylinder_add, mat_rifle,
-         (truck_x - 3.5, truck_y - 0.8, 0.6), (0.03, 0.03, 0.5),
-         rot=(math.radians(70), math.radians(25), math.radians(-40)))
-add_mesh("Rifle_Stock", bpy.ops.mesh.primitive_cube_add, mat_rifle,
-         (truck_x - 3.2, truck_y - 0.6, 0.85), (0.05, 0.12, 0.15),
-         rot=(math.radians(70), math.radians(25), math.radians(-40)))
+# Stock — wooden
+add_mesh("Rifle_Stock", bpy.ops.mesh.primitive_cube_add, rifle_wood_mat,
+         (0.02, -0.45, 0.035), (0.025, 0.15, 0.05),
+         rot=(0, 0, math.radians(8)))
 
-# ── Dust clouds for chaos ────────────────────────────────────────────────────
-add_mesh("Dust1", bpy.ops.mesh.primitive_uv_sphere_add, mat_dust,
-         (truck_x - 2.0, truck_y + 0.5, 0.3), (0.6, 0.4, 0.25))
-add_mesh("Dust2", bpy.ops.mesh.primitive_uv_sphere_add, mat_dust,
-         (truck_x - 3.0, truck_y - 1.0, 0.15), (0.5, 0.35, 0.2))
-add_mesh("Dust3", bpy.ops.mesh.primitive_uv_sphere_add, mat_dust,
-         (truck_x - 1.5, truck_y - 0.8, 0.4), (0.4, 0.3, 0.2))
+# Magazine
+add_mesh("Rifle_Mag", bpy.ops.mesh.primitive_cube_add, rifle_metal_mat,
+         (-0.01, -0.1, 0.06), (0.015, 0.04, 0.035),
+         rot=(0, math.radians(5), math.radians(8)))
 
-# ── Camera — medium shot framing the action ──────────────────────────────────
-# Camera positioned front-left, capturing the truck, falling figure, and flying rifle
-setup_camera(scene,
-             loc=(truck_x - 6.0, truck_y - 5.0, 2.5),
-             target_loc=(truck_x - 1.5, truck_y, 0.8),
-             lens=35)
+# Scope mount
+add_mesh("Rifle_Scope", bpy.ops.mesh.primitive_cylinder_add, rifle_metal_mat,
+         (0.0, -0.05, 0.075), (0.012, 0.012, 0.08),
+         rot=(math.radians(90), 0, math.radians(8)))
 
-# ── Render ────────────────────────────────────────────────────────────────────
+# ── Truck (background, blurred) ─────────────────────────────────────────────
+
+truck_x, truck_y = 1.2, 5.5
+
+# Truck cab
+add_mesh("Truck_Cab", bpy.ops.mesh.primitive_cube_add, truck_mat,
+         (truck_x, truck_y, 1.0), (0.8, 0.7, 0.7))
+
+# Truck bed
+add_mesh("Truck_Bed", bpy.ops.mesh.primitive_cube_add, truck_mat,
+         (truck_x, truck_y + 1.5, 0.7), (0.85, 1.2, 0.45))
+
+# Truck wheels
+add_mesh("Truck_WheelFL", bpy.ops.mesh.primitive_cylinder_add, tire_mat,
+         (truck_x - 0.85, truck_y - 0.3, 0.25), (0.25, 0.25, 0.1),
+         rot=(0, math.radians(90), 0))
+add_mesh("Truck_WheelFR", bpy.ops.mesh.primitive_cylinder_add, tire_mat,
+         (truck_x + 0.85, truck_y - 0.3, 0.25), (0.25, 0.25, 0.1),
+         rot=(0, math.radians(90), 0))
+add_mesh("Truck_WheelRL", bpy.ops.mesh.primitive_cylinder_add, tire_mat,
+         (truck_x - 0.85, truck_y + 2.0, 0.25), (0.25, 0.25, 0.1),
+         rot=(0, math.radians(90), 0))
+add_mesh("Truck_WheelRR", bpy.ops.mesh.primitive_cylinder_add, tire_mat,
+         (truck_x + 0.85, truck_y + 2.0, 0.25), (0.25, 0.25, 0.1),
+         rot=(0, math.radians(90), 0))
+
+# ── Fallen Figure (background near truck) ───────────────────────────────────
+
+build_regular_male("Cranial", cranial_mat, (-0.8, 4.5, 0), pose="fallen")
+
+# ── Camera (low angle, close to ground, detail shot on rifle) ────────────────
+
+camera = setup_camera(scene,
+                      loc=(0.1, -1.2, 0.15),
+                      target_loc=(0.0, 0.0, 0.04),
+                      lens=35)
+
+# Enable depth of field to blur the background
+camera.data.dof.use_dof = True
+camera.data.dof.focus_distance = 1.2
+camera.data.dof.aperture_fstop = 1.4
+
+# ── Render ───────────────────────────────────────────────────────────────────
+
 scene.frame_set(1)
-scene.render.filepath = "/Users/jmordetsky/directors-chair/assets/generated/videos/raider_ambush_v2/layouts/layout_015.png"
+scene.render.filepath = "/Users/jmordetsky/directors-chair/assets/generated/videos/raider_ambush_v2/layouts/layout_017.png"
 bpy.ops.render.render(write_still=True)
