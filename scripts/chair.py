@@ -30,6 +30,24 @@ def main():
     gen.add_argument("--theme", required=True, help="Theme name from config.json")
     gen.add_argument("--count", type=int, help="Override number of images")
 
+    # --- edit-clip subcommand ---
+    ec = subparsers.add_parser("edit-clip", help="Edit an existing video clip (v2v)")
+    ec.add_argument("--file", required=True, help="Path to storyboard JSON file")
+    ec.add_argument("--clip", required=True, type=int, help="0-based clip index to edit")
+    ec.add_argument("--prompt", required=True, help="Edit prompt describing desired changes")
+    ec.add_argument("--save-as-new", action="store_true", help="Save as new file instead of overwriting")
+
+    # --- edit-keyframe subcommand ---
+    ek = subparsers.add_parser("edit-keyframe", help="Edit an existing keyframe image")
+    ek.add_argument("--file", required=True, help="Path to storyboard JSON file")
+    ek.add_argument("--keyframe", required=True, type=int, help="0-based keyframe index to edit")
+    ek.add_argument("--prompt", required=True, help="Edit prompt describing desired changes")
+
+    # --- regen-clip subcommand ---
+    rc = subparsers.add_parser("regen-clip", help="Regenerate a single video clip")
+    rc.add_argument("--file", required=True, help="Path to storyboard JSON file")
+    rc.add_argument("--clip", required=True, type=int, help="0-based clip index to regenerate")
+
     # --- assemble subcommand ---
     asm = subparsers.add_parser("assemble", help="Assemble movie from storyboard videos")
     asm.add_argument(
@@ -73,6 +91,33 @@ def main():
             theme_name=args.theme,
             auto_mode=True,
             count_override=args.count,
+        )
+
+    elif args.command == "edit-clip":
+        from directors_chair.cli.commands.clip_tools import edit_clip_command
+        edit_clip_command(
+            storyboard_file=args.file,
+            clip_index=args.clip,
+            edit_prompt=args.prompt,
+            auto_mode=True,
+            save_as_new=getattr(args, 'save_as_new', False),
+        )
+
+    elif args.command == "edit-keyframe":
+        from directors_chair.cli.commands.clip_tools import edit_keyframe_command
+        edit_keyframe_command(
+            storyboard_file=args.file,
+            keyframe_index=args.keyframe,
+            edit_prompt=args.prompt,
+            auto_mode=True,
+        )
+
+    elif args.command == "regen-clip":
+        from directors_chair.cli.commands.clip_tools import regen_clip_command
+        regen_clip_command(
+            storyboard_file=args.file,
+            clip_index=args.clip,
+            auto_mode=True,
         )
 
     elif args.command == "assemble":

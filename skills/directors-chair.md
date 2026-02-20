@@ -75,6 +75,7 @@ Everything is driven from `scripts/chair.py` and configured through storyboard J
     {
       "name": "shot_name",
       "characters": ["char1", "char2"],
+      "anchor_keyframe": 0,
       "layout_prompt_file": "shot01_layout.txt",
       "keyframe_prompt_file": "shot01_keyframe.txt",
       "beats": [
@@ -89,6 +90,7 @@ Everything is driven from `scripts/chair.py` and configured through storyboard J
 - `keyframe_engine`: `"gemini"` (default, best) or `"kling"`
 - `characters` at storyboard level: defines all available characters
 - `characters` at shot level: optional list of character names to scope this shot (only these get uploaded as references)
+- `anchor_keyframe`: optional integer index of a previous shot whose keyframe to use as composition reference (must be < current shot index). More powerful than layouts for visual continuity.
 - `keyframe_edit_prompt_file`: optional post-generation edit pass (use sparingly — see pitfalls)
 - `keyframe_passes`: list of `{"characters": ["name"], "prompt_file": "..."}` for multi-pass Kling (rarely needed with Gemini)
 - Prompt files are resolved relative to the JSON file's directory
@@ -103,7 +105,7 @@ Everything is driven from `scripts/chair.py` and configured through storyboard J
 ```bash
 python scripts/chair.py
 ```
-Menu-driven: "Generate Character" or "Storyboard to Video"
+Menu-driven: "Generate Character", "Storyboard to Video", "Clip & Keyframe Tools", "Assemble Movie"
 
 ### Autonomous Storyboard Pipeline
 ```bash
@@ -126,6 +128,21 @@ python scripts/chair.py storyboard --file path.json --edit-keyframes 5,9
 ### Character Generation
 ```bash
 python scripts/chair.py generate --theme theme_name --count 5
+```
+
+### Clip & Keyframe Tools
+```bash
+# Edit a clip (Kling O1 v2v — preserves motion, tweaks visuals)
+python scripts/chair.py edit-clip --file path.json --clip 15 --prompt "Make the truck bright red"
+
+# Edit a clip and save as new file (don't overwrite original)
+python scripts/chair.py edit-clip --file path.json --clip 15 --prompt "Add rain" --save-as-new
+
+# Edit a keyframe (Nano Banana Pro — modify existing keyframe image)
+python scripts/chair.py edit-keyframe --file path.json --keyframe 9 --prompt "Move gorilla farther away"
+
+# Regenerate a single clip (from existing keyframe + beats)
+python scripts/chair.py regen-clip --file path.json --clip 15
 ```
 
 ### Assemble Movie
@@ -178,18 +195,33 @@ Use @Image1 as composition reference. [Shot description]. Desaturated color pale
 - **Edit** (`--edit-keyframes N`): modifies existing keyframe with an edit prompt. Use when composition is right but details are wrong.
 - Layout references heavily influence composition — if you copy keyframe_003 as layout_005, the model will follow that visual composition more than text changes
 
-### Cross-Keyframe Composition References
-For shot continuity, copy an approved keyframe as the layout for a related shot:
-```bash
-cp keyframes/keyframe_003.png layouts/layout_005.png
+### Keyframe Anchoring (Composition Continuity)
+Use `anchor_keyframe` to reference a previous shot's keyframe as the composition reference instead of a Blender layout. This is MORE powerful than layout files for keeping visual continuity between related shots (matching lighting, style, camera feel).
+
+```json
+{
+    "name": "cliff_distance",
+    "anchor_keyframe": 22,
+    "keyframe_prompt_file": "shot27_keyframe.txt",
+    "beats": [{"prompt_file": "shot27_beat.txt", "duration": "3"}]
+}
 ```
-Then regen shot 5 — it will use the approved keyframe's composition as reference.
+
+Rules:
+- `anchor_keyframe` must reference a shot that comes BEFORE the current shot in the array (lower index)
+- The anchored keyframe must already exist (from a previous pipeline run or generated earlier in the same run)
+- The pipeline falls back to the Blender layout if the anchor keyframe is missing
+- Best for: matching lighting/atmosphere, maintaining visual style across a sequence, shots that share the same setting
+
+Manual alternative (still works): `cp keyframes/keyframe_003.png layouts/layout_005.png` then regen shot 5.
 
 ### Manual Edit Workflow
 1. Add `"keyframe_edit_prompt_file": "shotNN_edit.txt"` to the shot in JSON
 2. Write the edit prompt file
 3. Run `--edit-keyframes N`
 4. Remove the `keyframe_edit_prompt_file` entry when done (don't leave stale edits)
+
+Alternatively, use the interactive UI: **Clip & Keyframe Tools → Edit Keyframe** — enter the edit prompt directly, no JSON changes needed.
 
 ### Common Fixes
 - **Extra/duplicate characters**: edit prompt "Remove the extra person on the far left"

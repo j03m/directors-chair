@@ -94,6 +94,14 @@ def validate_storyboard(storyboard: Dict[str, Any]) -> Tuple[bool, List[str]]:
                             errors.append(f"Shot {i + 1}, pass {pi + 1}: missing 'prompt' (or 'prompt_file')")
                         if "characters" not in kp or not isinstance(kp.get("characters"), list):
                             errors.append(f"Shot {i + 1}, pass {pi + 1}: missing 'characters' list")
+            # Anchor keyframe (optional — must reference an earlier shot)
+            if "anchor_keyframe" in shot:
+                anchor = shot["anchor_keyframe"]
+                if not isinstance(anchor, int) or anchor < 0:
+                    errors.append(f"Shot {i + 1}: 'anchor_keyframe' must be a non-negative integer")
+                elif anchor >= i:
+                    errors.append(f"Shot {i + 1}: 'anchor_keyframe' ({anchor}) must reference an earlier shot (< {i})")
+
             # Beats required for Kling i2v
             if "beats" not in shot:
                 errors.append(f"Shot {i + 1}: missing 'beats' (multi-prompt narrative beats)")

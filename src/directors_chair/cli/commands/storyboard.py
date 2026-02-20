@@ -316,10 +316,23 @@ def storyboard_to_video(storyboard_file=None, auto_mode=False, keyframes_only=Fa
             shot_characters = {k: characters[k] for k in shot["characters"] if k in characters}
             console.print(f"  [dim]Shot characters: {list(shot_characters.keys())}[/dim]")
 
+        # Determine composition reference — anchor to previous keyframe or use layout
+        anchor_idx = shot.get("anchor_keyframe")
+        if anchor_idx is not None and isinstance(anchor_idx, int) and anchor_idx < i:
+            anchor_kf = keyframe_paths[anchor_idx]
+            if os.path.exists(anchor_kf):
+                comp_path = anchor_kf
+                console.print(f"  [dim]Anchored to keyframe {anchor_idx:03d}[/dim]")
+            else:
+                comp_path = layout_paths[i]
+                console.print(f"  [yellow]Anchor keyframe {anchor_idx:03d} not found, using layout[/yellow]")
+        else:
+            comp_path = layout_paths[i]
+
         if keyframe_engine == "gemini":
             ok = generate_keyframe_nano_banana(
                 prompt=shot.get("keyframe_prompt", ""),
-                comp_image_path=layout_paths[i],
+                comp_image_path=comp_path,
                 characters=shot_characters,
                 output_path=kf_path,
                 kling_params=kling_params,
@@ -327,7 +340,7 @@ def storyboard_to_video(storyboard_file=None, auto_mode=False, keyframes_only=Fa
         else:
             ok = generate_keyframe_kling(
                 prompt=shot.get("keyframe_prompt"),
-                comp_image_path=layout_paths[i],
+                comp_image_path=comp_path,
                 characters=shot_characters,
                 output_path=kf_path,
                 kling_params=kling_params,
