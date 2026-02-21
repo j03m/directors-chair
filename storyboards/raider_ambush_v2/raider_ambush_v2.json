@@ -71,11 +71,11 @@
                 "heavy",
                 "gale"
             ],
-            "layout_prompt_file": "shot01_layout.txt",
-            "keyframe_prompt_file": "shot01_keyframe.txt",
+            "layout_prompt_file": "wide_establishing_layout.txt",
+            "keyframe_prompt_file": "wide_establishing_keyframe.txt",
             "beats": [
                 {
-                    "prompt_file": "shot01_beat.txt",
+                    "prompt_file": "wide_establishing_beat.txt",
                     "duration": "5"
                 }
             ]
@@ -89,11 +89,11 @@
                 "heavy",
                 "gale"
             ],
-            "layout_prompt_file": "shot02a_layout.txt",
-            "keyframe_prompt_file": "shot02a_keyframe.txt",
+            "layout_prompt_file": "scope_pan_roadblock_layout.txt",
+            "keyframe_prompt_file": "scope_pan_roadblock_keyframe.txt",
             "beats": [
                 {
-                    "prompt_file": "shot02a_beat.txt",
+                    "prompt_file": "scope_pan_roadblock_beat.txt",
                     "duration": "5"
                 }
             ]
@@ -108,11 +108,11 @@
                 "nomad2",
                 "nomad3"
             ],
-            "layout_prompt_file": "shot03_layout.txt",
-            "keyframe_prompt_file": "shot03_keyframe.txt",
+            "layout_prompt_file": "hockey_threat_layout.txt",
+            "keyframe_prompt_file": "hockey_threat_keyframe.txt",
             "beats": [
                 {
-                    "prompt_file": "shot03_beat.txt",
+                    "prompt_file": "hockey_threat_beat.txt",
                     "duration": "5"
                 }
             ]
@@ -123,11 +123,11 @@
                 "greasy"
             ],
             "anchor_keyframe": "hockey_threat",
-            "layout_prompt_file": "shot_greasy_cig_layout.txt",
-            "keyframe_prompt_file": "shot_greasy_cig_keyframe.txt",
+            "layout_prompt_file": "greasy_cigarette_layout.txt",
+            "keyframe_prompt_file": "greasy_cigarette_keyframe.txt",
             "beats": [
                 {
-                    "prompt_file": "shot_greasy_cig_beat.txt",
+                    "prompt_file": "greasy_cigarette_beat.txt",
                     "duration": "5"
                 }
             ]
@@ -138,11 +138,11 @@
                 "cranial",
                 "gorilla"
             ],
-            "layout_prompt_file": "shot05_layout.txt",
-            "keyframe_prompt_file": "shot05_keyframe.txt",
+            "layout_prompt_file": "cliff_exchange_layout.txt",
+            "keyframe_prompt_file": "cliff_exchange_keyframe.txt",
             "beats": [
                 {
-                    "prompt_file": "shot05_beat.txt",
+                    "prompt_file": "cliff_exchange_beat.txt",
                     "duration": "5"
                 }
             ]
@@ -157,11 +157,11 @@
                 "nomad2",
                 "nomad3"
             ],
-            "layout_prompt_file": "shot08_layout.txt",
-            "keyframe_prompt_file": "shot08_keyframe.txt",
+            "layout_prompt_file": "scope_on_hockey_head_layout.txt",
+            "keyframe_prompt_file": "scope_on_hockey_head_keyframe.txt",
             "beats": [
                 {
-                    "prompt_file": "shot08_beat.txt",
+                    "prompt_file": "scope_on_hockey_head_beat.txt",
                     "duration": "3"
                 }
             ]
@@ -172,11 +172,11 @@
                 "heavy"
             ],
             "anchor_keyframe": "hockey_threat",
-            "layout_prompt_file": "shot_heavy_truck_layout.txt",
-            "keyframe_prompt_file": "shot_heavy_truck_keyframe.txt",
+            "layout_prompt_file": "heavy_behind_truck_layout.txt",
+            "keyframe_prompt_file": "heavy_behind_truck_keyframe.txt",
             "beats": [
                 {
-                    "prompt_file": "shot_heavy_truck_beat.txt",
+                    "prompt_file": "heavy_behind_truck_beat.txt",
                     "duration": "5"
                 }
             ]
@@ -186,11 +186,11 @@
             "characters": [
                 "hockey"
             ],
-            "layout_prompt_file": "shot04_layout.txt",
-            "keyframe_prompt_file": "shot04_keyframe.txt",
+            "layout_prompt_file": "hockey_face_layout.txt",
+            "keyframe_prompt_file": "hockey_face_keyframe.txt",
             "beats": [
                 {
-                    "prompt_file": "shot04_beat.txt",
+                    "prompt_file": "hockey_face_beat.txt",
                     "duration": "3"
                 }
             ]
@@ -200,11 +200,11 @@
             "characters": [
                 "gorilla"
             ],
-            "layout_prompt_file": "shot07_layout.txt",
-            "keyframe_prompt_file": "shot07_keyframe.txt",
+            "layout_prompt_file": "gorilla_boom_layout.txt",
+            "keyframe_prompt_file": "gorilla_boom_keyframe.txt",
             "beats": [
                 {
-                    "prompt_file": "shot07_beat.txt",
+                    "prompt_file": "gorilla_boom_beat.txt",
                     "duration": "3"
                 }
             ]
@@ -214,11 +214,11 @@
             "characters": [
                 "gorilla"
             ],
-            "layout_prompt_file": "shot09_layout.txt",
-            "keyframe_prompt_file": "shot09_keyframe.txt",
+            "layout_prompt_file": "gorilla_muzzle_flash_layout.txt",
+            "keyframe_prompt_file": "gorilla_muzzle_flash_keyframe.txt",
             "beats": [
                 {
-                    "prompt_file": "shot09_beat.txt",
+                    "prompt_file": "gorilla_muzzle_flash_beat.txt",
                     "duration": "3"
                 }
             ]
@@ -233,11 +233,11 @@
                 "nomad2",
                 "nomad3"
             ],
-            "layout_prompt_file": "shot10_layout.txt",
-            "keyframe_prompt_file": "shot10_keyframe.txt",
+            "layout_prompt_file": "hockey_headshot_layout.txt",
+            "keyframe_prompt_file": "hockey_headshot_keyframe.txt",
             "beats": [
                 {
-                    "prompt_file": "shot10_beat.txt",
+                    "prompt_file": "hockey_headshot_beat.txt",
                     "duration": "5"
                 }
             ]
@@ -251,11 +251,11 @@
                 "gale",
                 "nomad1"
             ],
-            "layout_prompt_file": "shot11_layout.txt",
-            "keyframe_prompt_file": "shot11_keyframe.txt",
+            "layout_prompt_file": "over_shoulder_distance_layout.txt",
+            "keyframe_prompt_file": "over_shoulder_distance_keyframe.txt",
             "beats": [
                 {
-                    "prompt_file": "shot11_beat.txt",
+                    "prompt_file": "over_shoulder_distance_beat.txt",
                     "duration": "3"
                 }
             ]
@@ -265,11 +265,11 @@
             "characters": [
                 "greasy"
             ],
-            "layout_prompt_file": "shot12_layout.txt",
-            "keyframe_prompt_file": "shot12_keyframe.txt",
+            "layout_prompt_file": "greasy_recognition_layout.txt",
+            "keyframe_prompt_file": "greasy_recognition_keyframe.txt",
             "beats": [
                 {
-                    "prompt_file": "shot12_beat.txt",
+                    "prompt_file": "greasy_recognition_beat.txt",
                     "duration": "3"
                 }
             ]
@@ -280,11 +280,11 @@
                 "goggles",
                 "heavy"
             ],
-            "layout_prompt_file": "shot13_layout.txt",
-            "keyframe_prompt_file": "shot13_keyframe.txt",
+            "layout_prompt_file": "raiders_scatter_layout.txt",
+            "keyframe_prompt_file": "raiders_scatter_keyframe.txt",
             "beats": [
                 {
-                    "prompt_file": "shot13_beat.txt",
+                    "prompt_file": "raiders_scatter_beat.txt",
                     "duration": "3"
                 }
             ]
@@ -294,11 +294,11 @@
             "characters": [
                 "cranial"
             ],
-            "layout_prompt_file": "shot14_layout.txt",
-            "keyframe_prompt_file": "shot14_keyframe.txt",
+            "layout_prompt_file": "cranial_muzzle_flash_layout.txt",
+            "keyframe_prompt_file": "cranial_muzzle_flash_keyframe.txt",
             "beats": [
                 {
-                    "prompt_file": "shot14_beat.txt",
+                    "prompt_file": "cranial_muzzle_flash_beat.txt",
                     "duration": "3"
                 }
             ]
@@ -308,11 +308,11 @@
             "characters": [
                 "greasy"
             ],
-            "layout_prompt_file": "shot15_layout.txt",
-            "keyframe_prompt_file": "shot15_keyframe.txt",
+            "layout_prompt_file": "greasy_neck_shot_layout.txt",
+            "keyframe_prompt_file": "greasy_neck_shot_keyframe.txt",
             "beats": [
                 {
-                    "prompt_file": "shot15_beat.txt",
+                    "prompt_file": "greasy_neck_shot_beat.txt",
                     "duration": "3"
                 }
             ]
@@ -322,11 +322,11 @@
             "characters": [
                 "gorilla"
             ],
-            "layout_prompt_file": "shot17_layout.txt",
-            "keyframe_prompt_file": "shot17_keyframe.txt",
+            "layout_prompt_file": "gorilla_muzzle_flash_below_layout.txt",
+            "keyframe_prompt_file": "gorilla_muzzle_flash_below_keyframe.txt",
             "beats": [
                 {
-                    "prompt_file": "shot17_beat.txt",
+                    "prompt_file": "gorilla_muzzle_flash_below_beat.txt",
                     "duration": "3"
                 }
             ]
@@ -336,11 +336,11 @@
             "characters": [
                 "goggles"
             ],
-            "layout_prompt_file": "shot16_layout.txt",
-            "keyframe_prompt_file": "shot16_keyframe.txt",
+            "layout_prompt_file": "goggles_torso_shot_layout.txt",
+            "keyframe_prompt_file": "goggles_torso_shot_keyframe.txt",
             "beats": [
                 {
-                    "prompt_file": "shot16_beat.txt",
+                    "prompt_file": "goggles_torso_shot_beat.txt",
                     "duration": "3"
                 }
             ]
@@ -348,11 +348,11 @@
         {
             "name": "ak47_on_road",
             "characters": [],
-            "layout_prompt_file": "shot18_layout.txt",
-            "keyframe_prompt_file": "shot18_keyframe.txt",
+            "layout_prompt_file": "ak47_on_road_layout.txt",
+            "keyframe_prompt_file": "ak47_on_road_keyframe.txt",
             "beats": [
                 {
-                    "prompt_file": "shot18_beat.txt",
+                    "prompt_file": "ak47_on_road_beat.txt",
                     "duration": "3"
                 }
             ]
@@ -363,11 +363,11 @@
                 "heavy",
                 "goggles"
             ],
-            "layout_prompt_file": "shot19_layout.txt",
-            "keyframe_prompt_file": "shot19_keyframe.txt",
+            "layout_prompt_file": "heavy_fumbling_reload_layout.txt",
+            "keyframe_prompt_file": "heavy_fumbling_reload_keyframe.txt",
             "beats": [
                 {
-                    "prompt_file": "shot19_beat.txt",
+                    "prompt_file": "heavy_fumbling_reload_beat.txt",
                     "duration": "3"
                 }
             ]
@@ -378,11 +378,11 @@
                 "cranial",
                 "gorilla"
             ],
-            "layout_prompt_file": "shot20_layout.txt",
-            "keyframe_prompt_file": "shot20_keyframe.txt",
+            "layout_prompt_file": "cranial_barks_layout.txt",
+            "keyframe_prompt_file": "cranial_barks_keyframe.txt",
             "beats": [
                 {
-                    "prompt_file": "shot20_beat.txt",
+                    "prompt_file": "cranial_barks_beat.txt",
                     "duration": "3"
                 }
             ]
@@ -392,11 +392,11 @@
             "characters": [
                 "gale"
             ],
-            "layout_prompt_file": "shot21_layout.txt",
-            "keyframe_prompt_file": "shot21_keyframe.txt",
+            "layout_prompt_file": "gale_recognition_layout.txt",
+            "keyframe_prompt_file": "gale_recognition_keyframe.txt",
             "beats": [
                 {
-                    "prompt_file": "shot21_beat.txt",
+                    "prompt_file": "gale_recognition_beat.txt",
                     "duration": "3"
                 }
             ]
@@ -407,11 +407,11 @@
                 "gale",
                 "heavy"
             ],
-            "layout_prompt_file": "shot23_layout.txt",
-            "keyframe_prompt_file": "shot23_keyframe.txt",
+            "layout_prompt_file": "gale_aims_heavy_layout.txt",
+            "keyframe_prompt_file": "gale_aims_heavy_keyframe.txt",
             "beats": [
                 {
-                    "prompt_file": "shot23_beat.txt",
+                    "prompt_file": "gale_aims_heavy_beat.txt",
                     "duration": "3"
                 }
             ]
@@ -423,11 +423,11 @@
                 "gorilla",
                 "robot"
             ],
-            "layout_prompt_file": "shot26_layout.txt",
-            "keyframe_prompt_file": "shot26_keyframe.txt",
+            "layout_prompt_file": "cliff_celebration_layout.txt",
+            "keyframe_prompt_file": "cliff_celebration_keyframe.txt",
             "beats": [
                 {
-                    "prompt_file": "shot26_beat.txt",
+                    "prompt_file": "cliff_celebration_beat.txt",
                     "duration": "5"
                 }
             ]
@@ -437,11 +437,11 @@
             "characters": [
                 "gale"
             ],
-            "layout_prompt_file": "shot25_layout.txt",
-            "keyframe_prompt_file": "shot25_keyframe.txt",
+            "layout_prompt_file": "gale_looks_up_layout.txt",
+            "keyframe_prompt_file": "gale_looks_up_keyframe.txt",
             "beats": [
                 {
-                    "prompt_file": "shot25_beat.txt",
+                    "prompt_file": "gale_looks_up_beat.txt",
                     "duration": "3"
                 }
             ]
@@ -453,11 +453,11 @@
                 "gorilla",
                 "robot"
             ],
-            "layout_prompt_file": "shot27_layout.txt",
-            "keyframe_prompt_file": "shot27_keyframe.txt",
+            "layout_prompt_file": "cliff_distance_layout.txt",
+            "keyframe_prompt_file": "cliff_distance_keyframe.txt",
             "beats": [
                 {
-                    "prompt_file": "shot27_beat.txt",
+                    "prompt_file": "cliff_distance_beat.txt",
                     "duration": "3"
                 }
             ]

@@ -339,26 +339,17 @@ pip install -e .  # Install directors-chair
 
 ---
 
-## Audio Pipeline (Researched, Not Yet Implemented)
+## Audio & Dialogue — Kling 3.0 Native Audio (ACTIVE)
 
-### Sound Effects — MMAudio V2
+Kling 3.0 generates dialogue + SFX + ambient audio natively in the video model. No separate TTS/lip-sync pipeline needed.
+
+- See **`skills/kling-3-prompting.md`** for full prompting guide, API reference, and dialogue syntax
+- Key constraint: `voice_ids` and `elements` CANNOT be combined
+- Voice references created via `fal-ai/kling-video/create-voice` (5-30s clean audio)
+- Max 2 custom voices per clip. Use `<<<voice_1>>>` and `<<<voice_2>>>` in prompt
+- Bind voices to characters via spatial description when not using elements
+
+### MMAudio V2 (supplemental SFX)
 - `fal-ai/mmaudio-v2` — video-synced audio generation
-- Analyzes video frames, generates matching SFX (engine rumbles, wind, impacts)
+- Can layer additional SFX on top of Kling's native audio
 - Cost: ~$0.001/sec
-
-### Speech — Orpheus TTS
-- `fal-ai/orpheus-tts` — emotion tags: `<laugh>`, `<sigh>`, `<gasp>`
-- Voices: tara, leah, jess, leo, dan, mia, zac, zoe
-- Can clone custom voices with reference audio
-
-### Lip Sync — LatentSync
-- `fal-ai/latentsync` — works on non-human characters (robot CRT, gorilla)
-- Takes video + audio → lip-synced video
-- Cost: ~$0.20/video
-
-### Proposed Pipeline (not yet built)
-1. Generate video clips (existing pipeline)
-2. MMAudio: video → ambient SFX per clip
-3. Orpheus TTS: generate dialogue lines
-4. LatentSync: apply audio to video for lip movement
-5. ffmpeg: mix SFX + dialogue + video

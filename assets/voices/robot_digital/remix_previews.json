@@ -1,0 +1,25 @@
+{
+  "base_voice_id": "tANgZItHRND5GBiBE1GO",
+  "description": "More computerized and digital sounding. Add subtle electronic processing, slight metallic resonance, like speech coming through a speaker or synthesizer. Keep the friendly cheerful personality but make it sound less human and more machine.",
+  "sample_text": "[electronic whirring] Greetings, carbon-based lifeforms! My circuits are currently operating at optimal efficiency. I am delighted to be communicating with you today. [beeps] My primary function is to assist and engage, and I find this interaction quite\u2026 stimulating. [synthesized chuckle] Do you require any data processing or perhaps a witty anecdote? I have a vast library of both!",
+  "previews": [
+    {
+      "file": "remix_preview_1.mp3",
+      "generated_voice_id": "GXwkIyKC2Dod1iL4AsQp",
+      "duration_secs": 20.35125,
+      "media_type": "audio/mpeg"
+    },
+    {
+      "file": "remix_preview_2.mp3",
+      "generated_voice_id": "10319ej5SCuvEBamZ8cX",
+      "duration_secs": 20.612458333333333,
+      "media_type": "audio/mpeg"
+    },
+    {
+      "file": "remix_preview_3.mp3",
+      "generated_voice_id": "egjznggqSViKcyhNM1qX",
+      "duration_secs": 20.612458333333333,
+      "media_type": "audio/mpeg"
+    }
+  ]
+}

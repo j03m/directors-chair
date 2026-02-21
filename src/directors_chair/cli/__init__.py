@@ -5,6 +5,7 @@ from directors_chair.cli.commands.generation import generate_images
 from directors_chair.cli.commands.storyboard import storyboard_to_video
 from directors_chair.cli.commands.clip_tools import clip_tools_menu
 from directors_chair.cli.commands.assemble import assemble_movie
+from directors_chair.cli.commands.voice import voice_menu
 
 def main_menu():
     while True:
@@ -17,7 +18,8 @@ def main_menu():
                 "2. Storyboard to Video",
                 "3. Clip & Keyframe Tools",
                 "4. Assemble Movie",
-                "5. Exit"
+                "5. Voice Design",
+                "6. Exit"
             ]
         ).ask()
 
@@ -33,5 +35,7 @@ def main_menu():
         elif "4." in choice:
             assemble_movie()
         elif "5." in choice:
+            voice_menu()
+        elif "6." in choice:
             console.print("Goodbye!")
             sys.exit(0)

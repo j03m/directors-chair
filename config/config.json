@@ -54,7 +54,11 @@
             "count": 3,
             "generator": "fal-flux",
             "loras": [],
-            "parameters": { "steps": 28, "guidance": 3.5, "aspect_ratio": "1:1" }
+            "parameters": {
+                "steps": 28,
+                "guidance": 3.5,
+                "aspect_ratio": "1:1"
+            }
         },
         "nomad2": {
             "prompt_file": "prompts/nomad2.txt",
@@ -62,7 +66,11 @@
             "count": 3,
             "generator": "fal-flux",
             "loras": [],
-            "parameters": { "steps": 28, "guidance": 3.5, "aspect_ratio": "1:1" }
+            "parameters": {
+                "steps": 28,
+                "guidance": 3.5,
+                "aspect_ratio": "1:1"
+            }
         },
         "nomad3": {
             "prompt_file": "prompts/nomad3.txt",
@@ -70,7 +78,11 @@
             "count": 3,
             "generator": "fal-flux",
             "loras": [],
-            "parameters": { "steps": 28, "guidance": 3.5, "aspect_ratio": "1:1" }
+            "parameters": {
+                "steps": 28,
+                "guidance": 3.5,
+                "aspect_ratio": "1:1"
+            }
         },
         "gale": {
             "prompt_file": "prompts/gale.txt",
@@ -78,7 +90,11 @@
             "count": 5,
             "generator": "fal-flux",
             "loras": [],
-            "parameters": { "steps": 28, "guidance": 3.5, "aspect_ratio": "1:1" }
+            "parameters": {
+                "steps": 28,
+                "guidance": 3.5,
+                "aspect_ratio": "1:1"
+            }
         },
         "raider_hockey": {
             "prompt_file": "prompts/raider_hockey.txt",
@@ -86,7 +102,11 @@
             "count": 3,
             "generator": "fal-flux",
             "loras": [],
-            "parameters": { "steps": 28, "guidance": 3.5, "aspect_ratio": "1:1" }
+            "parameters": {
+                "steps": 28,
+                "guidance": 3.5,
+                "aspect_ratio": "1:1"
+            }
         },
         "raider_heavy": {
             "prompt_file": "prompts/raider_heavy.txt",
@@ -94,7 +114,11 @@
             "count": 3,
             "generator": "fal-flux",
             "loras": [],
-            "parameters": { "steps": 28, "guidance": 3.5, "aspect_ratio": "1:1" }
+            "parameters": {
+                "steps": 28,
+                "guidance": 3.5,
+                "aspect_ratio": "1:1"
+            }
         },
         "raider_goggles": {
             "prompt_file": "prompts/raider_goggles.txt",
@@ -102,7 +126,11 @@
             "count": 3,
             "generator": "fal-flux",
             "loras": [],
-            "parameters": { "steps": 28, "guidance": 3.5, "aspect_ratio": "1:1" }
+            "parameters": {
+                "steps": 28,
+                "guidance": 3.5,
+                "aspect_ratio": "1:1"
+            }
         },
         "raider_greasy": {
             "prompt_file": "prompts/raider_greasy.txt",
@@ -110,7 +138,31 @@
             "count": 3,
             "generator": "fal-flux",
             "loras": [],
-            "parameters": { "steps": 28, "guidance": 3.5, "aspect_ratio": "1:1" }
+            "parameters": {
+                "steps": 28,
+                "guidance": 3.5,
+                "aspect_ratio": "1:1"
+            }
+        }
+    },
+    "voices": {
+        "gorilla": {
+            "voice_id": "t4rkzTnWhvhaPiMEXOrx",
+            "name": "gorilla_voice",
+            "description": "Deep gravelly Boston bro gorilla, gruff and thuggish",
+            "source": "cloned"
+        },
+        "robot": {
+            "voice_id": "GXwkIyKC2Dod1iL4AsQp",
+            "name": "robot_voice_digital",
+            "description": "Friendly robotic AI voice, computerized and digital with metallic resonance",
+            "source": "remixed"
+        },
+        "cranial": {
+            "voice_id": "7saisKRO8fXyn8YKreaH",
+            "name": "cranial_voice",
+            "description": "Human male voice, natural conversational tone",
+            "source": "cloned"
         }
     },
     "loras": {

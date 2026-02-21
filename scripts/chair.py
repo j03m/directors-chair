@@ -56,6 +56,32 @@ def main():
     )
     asm.add_argument("--name", required=True, help="Output movie name")
 
+    # --- voice subcommand ---
+    vp = subparsers.add_parser("voice", help="Voice design and management")
+    voice_sub = vp.add_subparsers(dest="voice_command")
+
+    vd = voice_sub.add_parser("design", help="Design a voice from description")
+    vd.add_argument("--name", required=True, help="Character name")
+    vd.add_argument("--description", required=True, help="Voice description prompt")
+    vd.add_argument("--text", help="Sample text for preview")
+
+    vc = voice_sub.add_parser("clone", help="Clone voice from audio files")
+    vc.add_argument("--name", required=True, help="Character name")
+    vc.add_argument("--description", required=True, help="Voice description")
+    vc.add_argument("--files", required=True, help="Comma-separated audio file paths")
+    vc.add_argument("--remove-noise", action="store_true", help="Remove background noise")
+
+    vr = voice_sub.add_parser("remix", help="Remix an existing voice")
+    vr.add_argument("--name", required=True, help="Existing voice character name")
+    vr.add_argument("--description", required=True, help="Modification description")
+    vr.add_argument("--new-name", help="Name for remixed voice")
+
+    voice_sub.add_parser("list", help="List configured voices")
+
+    vt = voice_sub.add_parser("test", help="Generate test speech")
+    vt.add_argument("--name", required=True, help="Voice character name")
+    vt.add_argument("--text", default="The wasteland stretches on forever. We ride at dawn.", help="Text to speak")
+
     args = parser.parse_args()
 
     if args.command is None:
@@ -128,6 +154,46 @@ def main():
             movie_name=args.name,
             auto_mode=True,
         )
+
+    elif args.command == "voice":
+        if not hasattr(args, 'voice_command') or args.voice_command is None:
+            from directors_chair.cli.commands.voice import voice_menu
+            voice_menu()
+        elif args.voice_command == "design":
+            from directors_chair.cli.commands.voice import design_voice_command
+            design_voice_command(
+                char_name=args.name,
+                description=args.description,
+                sample_text=getattr(args, 'text', None),
+                auto_mode=True,
+            )
+        elif args.voice_command == "clone":
+            from directors_chair.cli.commands.voice import clone_voice_command
+            clone_voice_command(
+                char_name=args.name,
+                description=args.description,
+                files_str=args.files,
+                remove_noise=getattr(args, 'remove_noise', False),
+                auto_mode=True,
+            )
+        elif args.voice_command == "remix":
+            from directors_chair.cli.commands.voice import remix_voice_command
+            remix_voice_command(
+                char_name=args.name,
+                description=args.description,
+                new_name=getattr(args, 'new_name', None),
+                auto_mode=True,
+            )
+        elif args.voice_command == "list":
+            from directors_chair.cli.commands.voice import list_voices_command
+            list_voices_command()
+        elif args.voice_command == "test":
+            from directors_chair.cli.commands.voice import test_voice_command
+            test_voice_command(
+                char_name=args.name,
+                text=args.text,
+                auto_mode=True,
+            )
 
 
 if __name__ == "__main__":

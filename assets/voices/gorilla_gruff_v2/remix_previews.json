@@ -1,0 +1,25 @@
+{
+  "base_voice_id": "3JlsAVwUkcSlBoTYbc3D",
+  "description": "More gruffness, thuggish enunciation, harsher tone. Like a massive gorilla who is a total bro. Deep and gravelly.",
+  "sample_text": "The wasteland stretches on forever. We ride at dawn. Hey bro, you see those raiders over there? Yeah, they are totally dead.",
+  "previews": [
+    {
+      "file": "remix_preview_1.mp3",
+      "generated_voice_id": "ReR8N2k8bBrhXB4F3ojk",
+      "duration_secs": 9.562666666666667,
+      "media_type": "audio/mpeg"
+    },
+    {
+      "file": "remix_preview_2.mp3",
+      "generated_voice_id": "y1lKPUBpznQGLMQ0fTUF",
+      "duration_secs": 9.719416666666667,
+      "media_type": "audio/mpeg"
+    },
+    {
+      "file": "remix_preview_3.mp3",
+      "generated_voice_id": "xryNdQ42cOTTAKtGIHKO",
+      "duration_secs": 10.842666666666666,
+      "media_type": "audio/mpeg"
+    }
+  ]
+}

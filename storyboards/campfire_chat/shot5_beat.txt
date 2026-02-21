@@ -1,1 +1,6 @@
-@Element1 the bearded warrior lazily reaches over and takes the brown whiskey bottle from @Element2 the gorilla. He takes a slow sip and hands it back without urgency. They both settle deeper into their colorful beach chairs, slumped and content, looking out at the desert like they've got nowhere to be. Easy companionable boredom. Warm golden light, dust drifting.
+The bearded warrior reaches over and takes the brown whiskey bottle from the gorilla. He takes a slow sip, smirks, hands it back.
+
+The warrior says matter of factly:
+<<<cranial>>> Fair enough.
+
+The gorilla shakes his head slightly — a quiet "you're an idiot" headshake but with affection. They settle into their colorful beach chairs, both quietly smirking at nothing in particular. Easy companionable silence between two friends who don't need to fill it. Warm golden light, dust drifting.

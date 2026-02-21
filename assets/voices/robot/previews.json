@@ -1,0 +1,24 @@
+{
+  "description": "Friendly robotic AI voice, cheerful and upbeat but clearly synthetic. Clean digital tone with slight electronic warmth. Enthusiastic and helpful, like a machine that genuinely loves its friends. Gender neutral, medium pitch, precise enunciation with occasional playful inflection.",
+  "sample_text": "Oh boy, friends! I have calculated a 97 percent chance that those guys are going to try and kill us. This is going to be so much fun!",
+  "previews": [
+    {
+      "file": "preview_1.mp3",
+      "generated_voice_id": "xqlHg9ZLKAmnBkfL1Qog",
+      "duration_secs": 8.72675,
+      "media_type": "audio/mpeg"
+    },
+    {
+      "file": "preview_2.mp3",
+      "generated_voice_id": "tANgZItHRND5GBiBE1GO",
+      "duration_secs": 8.439416666666666,
+      "media_type": "audio/mpeg"
+    },
+    {
+      "file": "preview_3.mp3",
+      "generated_voice_id": "9BHYKntHAGQXMUMcUnvb",
+      "duration_secs": 8.805125,
+      "media_type": "audio/mpeg"
+    }
+  ]
+}
